@@ -1,1 +1,1 @@
-admin_ip = "58.84.62.38/32"
+admin_ip = "YOUR_PUBLIC_IP/32"
