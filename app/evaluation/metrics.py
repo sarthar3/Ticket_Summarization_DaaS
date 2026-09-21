@@ -1,6 +1,6 @@
 import numpy as np
 from typing import List, Dict, Any, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class QualityMetrics(BaseModel):
     rouge1: Optional[float] = None
@@ -22,6 +22,8 @@ class CostMetrics(BaseModel):
     estimated_cost_per_1k_tickets_usd: float
 
 class EvaluationResult(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     model_name: str
     sample_count: int
     quality: QualityMetrics

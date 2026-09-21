@@ -39,6 +39,7 @@ venv.bak/
 .cache/
 huggingface/
 wandb/
+checkpoints/
 
 # Datasets & Outputs
 data/raw/*

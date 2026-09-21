@@ -25,3 +25,11 @@ class HealthResponse(BaseModel):
     model_name: str
     precision: str
     device: str
+
+class MetricsResponse(BaseModel):
+    total_requests: int
+    successful_requests: int
+    failed_requests: int
+    average_latency_ms: float
+    total_input_tokens: int
+    total_output_tokens: int

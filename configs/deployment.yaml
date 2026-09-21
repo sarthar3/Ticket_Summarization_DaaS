@@ -1,0 +1,24 @@
+server:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  timeout_seconds: 60
+  max_concurrency: 100
+
+optimization:
+  precision: "fp16" # Options: fp16, bf16, int8, int4
+  enable_dynamic_batching: true
+  max_batch_size: 16
+  batch_timeout_ms: 20
+  vllm_engine:
+    enabled: false
+    gpu_memory_utilization: 0.90
+    tensor_parallel_size: 1
+
+hardware:
+  target_instance: "aws_g6_2xlarge"
+  gpu_type: "nvidia_l4"
+  vram_mb: 24576
+  recommended_models:
+    - "Qwen/Qwen2.5-1.5B-Instruct"
+    - "meta-llama/Llama-3.2-1B-Instruct"

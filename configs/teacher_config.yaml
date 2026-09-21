@@ -1,0 +1,18 @@
+teacher:
+  provider: "mock" # Options: openai, anthropic, gemini, huggingface, mock
+  model_name: "gpt-4o"
+  temperature: 0.2
+  top_p: 0.95
+  max_tokens: 256
+  api_key_env_var: "OPENAI_API_KEY"
+
+prompt:
+  teacher_template: |
+    You are an expert customer support operations manager. Analyze the following customer ticket and write an exceptionally clear, accurate, and concise 2-sentence summary highlighting:
+    1. Core technical issue or customer request
+    2. Current status and required resolution action
+
+    Ticket Text:
+    {ticket_text}
+
+    Expert Summary:

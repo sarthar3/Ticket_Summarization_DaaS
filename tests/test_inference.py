@@ -5,14 +5,16 @@ from app.inference.student_model import StudentModelWrapper
 
 def test_pipeline_format_prompt():
     settings = get_settings()
-    pipeline = SummarizationPipeline(settings=settings)
+    mock_model = MagicMock(spec=StudentModelWrapper)
+    pipeline = SummarizationPipeline(settings=settings, model_wrapper=mock_model)
     formatted = pipeline.format_prompt("Sample ticket content")
     assert "Sample ticket content" in formatted
     assert "Summary:" in formatted
 
 def test_pipeline_post_processing():
     settings = get_settings()
-    pipeline = SummarizationPipeline(settings=settings)
+    mock_model = MagicMock(spec=StudentModelWrapper)
+    pipeline = SummarizationPipeline(settings=settings, model_wrapper=mock_model)
     raw = "Summary :- User reported payment failure on credit card."
     cleaned = pipeline.post_process_summary(raw)
     assert cleaned == "User reported payment failure on credit card."

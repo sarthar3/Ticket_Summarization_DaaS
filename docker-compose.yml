@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  daas-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ticket-summarization-daas
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_NAME=Qwen/Qwen2.5-1.5B-Instruct
+      - PRECISION=float16
+      - DEVICE=auto
+      - RANDOM_SEED=42
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
