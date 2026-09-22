@@ -1,0 +1,12 @@
+---
+- name: Configure HAProxy Bastion
+  hosts: haproxy
+  become: true # Run as root user (sudo)
+  roles:
+    - haproxy
+
+- name: Configure CPU Inference Server
+  hosts: inference
+  become: true
+  roles:
+    - inference_server
