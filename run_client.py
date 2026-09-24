@@ -1,21 +1,11 @@
-"""
-Standalone client runner to invoke the Ticket Summarization DaaS FastAPI endpoint
-and display clean, formatted structured output in the terminal.
-"""
+import sys
 import time
+import argparse
 import requests
 import json
 
 URL = "http://localhost:8000/api/v1/summarize"
 HEALTH_URL = "http://localhost:8000/api/v1/health"
-
-payload = {
-    "ticket_id": "TICK-1001",
-    "ticket_text": "User unable to login to mobile banking app following v4.2 update on iOS 17.4. Receives Error Code ERR-902 credential rejection during 2FA prompt.",
-    "sector": "Fintech",
-    "intent": "Technical Support",
-    "priority": "High"
-}
 
 def wait_for_server(max_retries=30, delay=2):
     """Waits for the FastAPI server to complete startup and model loading."""
@@ -33,15 +23,62 @@ def wait_for_server(max_retries=30, delay=2):
         time.sleep(delay)
     return False
 
+def get_user_input():
+    print("=" * 60)
+    print("      TICKET SUMMARIZATION DAAS - INTERACTIVE CLIENT      ")
+    print("=" * 60)
+    
+    ticket_id = input("\nEnter Ticket ID [default: TICK-USER-001]: ").strip()
+    if not ticket_id:
+        ticket_id = "TICK-USER-001"
+        
+    print("\nEnter Support Ticket Complaint Text:")
+    ticket_text = input("> ").strip()
+    
+    while not ticket_text:
+        print("⚠️ Ticket text cannot be empty! Please enter the ticket text:")
+        ticket_text = input("> ").strip()
+        
+    sector = input("\nEnter Sector (e.g. Fintech, Healthcare, E-commerce) [optional]: ").strip()
+    intent = input("Enter Intent (e.g. Technical Support, Billing) [optional]: ").strip()
+    priority = input("Enter Priority (e.g. High, Medium, Low) [optional]: ").strip()
+
+    return {
+        "ticket_id": ticket_id,
+        "ticket_text": ticket_text,
+        "sector": sector if sector else None,
+        "intent": intent if intent else None,
+        "priority": priority if priority else None
+    }
+
 def main():
-    print("=" * 60)
-    print("Sending ticket summarization request...")
-    print("=" * 60)
+    parser = argparse.ArgumentParser(description="Run Ticket Summarization Client with custom input")
+    parser.add_argument("--ticket_text", type=str, help="Customer support ticket text")
+    parser.add_argument("--ticket_id", type=str, default="TICK-USER-001", help="Ticket ID")
+    parser.add_argument("--sector", type=str, help="Sector")
+    parser.add_argument("--intent", type=str, help="Intent")
+    parser.add_argument("--priority", type=str, help="Priority")
+
+    args = parser.parse_args()
+
+    if args.ticket_text:
+        payload = {
+            "ticket_id": args.ticket_id,
+            "ticket_text": args.ticket_text,
+            "sector": args.sector,
+            "intent": args.intent,
+            "priority": args.priority
+        }
+    else:
+        payload = get_user_input()
 
     if not wait_for_server():
         print("\n❌ Error: Service took too long to respond at http://localhost:8000.")
         print("Please ensure uvicorn is running: python -m uvicorn app.main:app --reload --port 8000")
         return
+
+    print("\nSending ticket summarization request...")
+    print("-" * 60)
 
     try:
         response = requests.post(URL, json=payload, timeout=60)
@@ -76,4 +113,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
