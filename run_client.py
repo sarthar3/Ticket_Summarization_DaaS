@@ -2,10 +2,12 @@
 Standalone client runner to invoke the Ticket Summarization DaaS FastAPI endpoint
 and display clean, formatted structured output in the terminal.
 """
+import time
 import requests
 import json
 
 URL = "http://localhost:8000/api/v1/summarize"
+HEALTH_URL = "http://localhost:8000/api/v1/health"
 
 payload = {
     "ticket_id": "TICK-1001",
@@ -15,13 +17,34 @@ payload = {
     "priority": "High"
 }
 
+def wait_for_server(max_retries=30, delay=2):
+    """Waits for the FastAPI server to complete startup and model loading."""
+    print("Connecting to FastAPI server (http://localhost:8000)...")
+    for attempt in range(1, max_retries + 1):
+        try:
+            res = requests.get(HEALTH_URL, timeout=3)
+            if res.status_code == 200 and res.json().get("model_loaded"):
+                print("✅ Server is ready and model is loaded!\n")
+                return True
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            pass
+        
+        print(f"⏳ Server is starting up / loading model weights... Retry {attempt}/{max_retries} (waiting {delay}s)")
+        time.sleep(delay)
+    return False
+
 def main():
     print("=" * 60)
     print("Sending ticket summarization request...")
     print("=" * 60)
 
+    if not wait_for_server():
+        print("\n❌ Error: Service took too long to respond at http://localhost:8000.")
+        print("Please ensure uvicorn is running: python -m uvicorn app.main:app --reload --port 8000")
+        return
+
     try:
-        response = requests.post(URL, json=payload, timeout=30)
+        response = requests.post(URL, json=payload, timeout=60)
         response.raise_for_status()
         data = response.json()
 
@@ -48,12 +71,9 @@ def main():
         print(json.dumps(data, indent=2))
         print("=" * 60)
 
-    except requests.exceptions.ConnectionError:
-        print("\n❌ Error: Could not connect to FastAPI server at http://localhost:8000.")
-        print("Please start the server first by running:")
-        print("   python -m uvicorn app.main:app --reload --port 8000")
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\n❌ Error during summarization request: {e}")
 
 if __name__ == "__main__":
     main()
+
