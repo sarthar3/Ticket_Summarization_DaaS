@@ -25,6 +25,7 @@ def mock_pipeline():
             customer_intent="General Support / Technical Support (Medium Priority)",
             key_action_items="Investigate ticket details and follow up with customer."
         ),
+        priority="High",
         model="mock-qwen-1.5b",
         latency_ms=85.4,
         input_tokens=60,
@@ -56,6 +57,7 @@ def test_api_health_and_summarize(mock_pipeline):
     assert sum_json["summary"] == "User experiencing connection drops in Austin."
     assert "structured_summary" in sum_json
     assert sum_json["structured_summary"]["core_issue"] == "User experiencing connection drops in Austin."
+    assert sum_json["priority"] == "High"
     assert sum_json["model"] == "mock-qwen-1.5b"
     assert sum_json["latency_ms"] == 85.4
     assert sum_json["input_tokens"] == 60
@@ -67,9 +69,9 @@ def test_api_invalid_payload(mock_pipeline):
     app.dependency_overrides[get_pipeline] = lambda: mock_pipeline
     client = TestClient(app)
 
-    # Missing required ticket_id
+    # Missing required ticket_text
     invalid_payload = {
-        "ticket_text": "Missing ticket_id"
+        "ticket_id": "T001"
     }
     resp = client.post("/summarize", json=invalid_payload)
     assert resp.status_code == 422  # Unprocessable Entity

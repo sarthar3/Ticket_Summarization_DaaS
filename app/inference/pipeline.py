@@ -18,6 +18,7 @@ class PipelineResponse(BaseModel):
     ticket_id: str
     summary: str
     structured_summary: StructuredSummaryDetails
+    priority: str
     model: str
     latency_ms: float
     input_tokens: int
@@ -40,34 +41,76 @@ class SummarizationPipeline:
         self.model_wrapper = model_wrapper or StudentModelWrapper(settings=self.settings)
 
     def format_prompt(self, ticket_text: str) -> str:
+        if hasattr(self.model_wrapper, "tokenizer") and self.model_wrapper.tokenizer is not None:
+            tokenizer = self.model_wrapper.tokenizer
+            if hasattr(tokenizer, "apply_chat_template") and getattr(tokenizer, "chat_template", None) is not None:
+                messages = [
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are a concise support ticket summarizer. Provide ONLY a direct 1-2 sentence summary "
+                            "describing the customer's core issue and requested resolution. "
+                            "Do NOT output meta-commentary, explanations, or notes."
+                        )
+                    },
+                    {"role": "user", "content": f"Summarize this support ticket:\n{ticket_text}"}
+                ]
+                try:
+                    return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+                except Exception:
+                    pass
+
         template = self.settings.prompt.template
         return template.format(ticket_text=ticket_text)
 
     def post_process_summary(self, generated_text: str) -> str:
-        """Cleans and post-processes raw LLM text generation output."""
+        """Cleans and post-processes raw LLM text generation output, stripping meta-commentary."""
         summary = generated_text.strip()
+        
         # Remove repetitive prefixes if model outputs them
-        prefixes_to_remove = ["Summary:", "Summary :-", "Here is the summary:"]
+        prefixes_to_remove = [
+            "Summary:", "Summary :-", "Here is the summary:", "Summary of ticket:",
+            "Here is a concise summary:", "Summary of the ticket:"
+        ]
         for prefix in prefixes_to_remove:
             if summary.lower().startswith(prefix.lower()):
                 summary = summary[len(prefix):].strip()
-        return summary
+
+        # Stop processing if model starts writing meta commentary
+        lines = []
+        for line in summary.split("\n"):
+            l = line.strip()
+            if not l:
+                continue
+            if re.search(r"^(this summary|note:|explanation:|in this summary|the summary captures|additionally,)", l, re.IGNORECASE):
+                break
+            lines.append(l)
+
+        summary = " ".join(lines).strip()
+
+        # Sentence-level filter for meta explanations
+        sentences = re.split(r'(?<=[.!?])\s+', summary)
+        clean_sentences = []
+        for s in sentences:
+            if re.search(r"\b(this summary|captures the essence|making it easier|support team to understand|hope this helps)\b", s, re.IGNORECASE):
+                break
+            clean_sentences.append(s)
+
+        final_summary = " ".join(clean_sentences).strip()
+        return final_summary if final_summary else summary
 
     def build_structured_summary(self, ticket_data: TicketData, cleaned_summary: str) -> StructuredSummaryDetails:
         """Extracts and structures core issue, customer intent, and action items."""
-        # Core issue derived from summary or first sentence of ticket
         sentences = [s.strip() for s in cleaned_summary.split(".") if s.strip()]
-        core_issue = sentences[0] if sentences else ticket_data.ticket_text[:100]
+        core_issue = (sentences[0] + ".") if sentences else ticket_data.ticket_text[:100]
 
-        # Customer intent derived from ticket metadata / sector / priority
-        intent_label = ticket_data.intent or "Technical Support"
+        intent_label = ticket_data.intent or "General Support"
         priority_label = ticket_data.priority or "Medium"
-        sector_label = ticket_data.sector or "General Support"
+        sector_label = ticket_data.sector or "General"
         customer_intent = f"{sector_label} / {intent_label} ({priority_label} Priority)"
 
-        # Key action items derived from second sentence or request context
         if len(sentences) > 1:
-            action_items = ". ".join(sentences[1:])
+            action_items = ". ".join(sentences[1:]) + "."
         else:
             action_items = "Investigate ticket details and follow up with customer."
 
@@ -118,6 +161,7 @@ class SummarizationPipeline:
             ticket_id=ticket_data.ticket_id,
             summary=cleaned_summary,
             structured_summary=structured_details,
+            priority=ticket_data.priority,
             model=self.model_wrapper.model_name,
             latency_ms=latency_ms,
             input_tokens=input_tokens,

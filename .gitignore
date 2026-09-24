@@ -46,6 +46,7 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+data/history.json
 experiments/results/*
 !experiments/results/.gitkeep
 

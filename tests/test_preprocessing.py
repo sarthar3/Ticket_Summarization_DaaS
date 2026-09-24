@@ -24,9 +24,12 @@ def test_ticket_validator_success():
 
 def test_ticket_validator_missing_fields():
     preprocessor = TicketPreprocessor()
-    with pytest.raises(ValueError, match="ticket_id"):
-        preprocessor.validate_and_normalize({"ticket_text": "No ID here"})
+    
+    # Auto generates ticket_id if omitted
+    data = preprocessor.validate_and_normalize({"ticket_text": "No ID provided"})
+    assert data.ticket_id.startswith("TICK-")
 
+    # Raises ValueError if ticket_text is missing or empty
     with pytest.raises(ValueError, match="ticket_text"):
         preprocessor.validate_and_normalize({"ticket_id": "T002", "ticket_text": ""})
 

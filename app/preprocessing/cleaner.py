@@ -1,4 +1,6 @@
 import re
+import uuid
+from datetime import datetime
 from typing import Dict, Any, Optional
 from dataclasses import dataclass, field
 from pydantic import BaseModel, Field
@@ -10,7 +12,7 @@ class TicketData(BaseModel):
     sector: Optional[str] = "General Support"
     intent: Optional[str] = "Inquiry"
     category: Optional[str] = "General"
-    priority: Optional[str] = "Medium"
+    priority: str = "Medium"
 
 class TicketPreprocessor:
     """Preprocesses raw support tickets according to configurable limits and rules."""
@@ -30,11 +32,39 @@ class TicketPreprocessor:
         cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
         return cleaned
 
+    def classify_priority(self, ticket_text: str) -> str:
+        """Automatically judges ticket priority based on complaint urgency indicators."""
+        text_lower = ticket_text.lower()
+        
+        urgent_high_keywords = [
+            "urgent", "asap", "emergency", "critical", "unable to login", "cannot login",
+            "outage", "payroll", "double billing", "security breach", "denied", "error 500",
+            "stuck", "failed", "crash", "unauthorized", "down", "refund", "system error"
+        ]
+        low_keywords = [
+            "gdpr", "deletion", "feedback", "suggestion", "general inquiry",
+            "documentation", "question"
+        ]
+
+        for kw in urgent_high_keywords:
+            if kw in text_lower:
+                return "High"
+        for kw in low_keywords:
+            if kw in text_lower:
+                return "Low"
+        return "Medium"
+
+    def generate_ticket_id(self) -> str:
+        """Automatically generates a unique ticket ID."""
+        date_str = datetime.now().strftime("%Y%m%d")
+        short_code = uuid.uuid4().hex[:5].upper()
+        return f"TICK-{date_str}-{short_code}"
+
     def validate_and_normalize(self, raw_ticket: Dict[str, Any]) -> TicketData:
-        """Validates ticket dictionary structure and normalizes missing values."""
-        ticket_id = str(raw_ticket.get("ticket_id", "")).strip()
+        """Validates ticket dictionary structure, generates missing ticket_id, and auto-classifies priority."""
+        ticket_id = str(raw_ticket.get("ticket_id") or "").strip()
         if not ticket_id:
-            raise ValueError("Ticket missing required field 'ticket_id'.")
+            ticket_id = self.generate_ticket_id()
 
         ticket_text = raw_ticket.get("ticket_text")
         if ticket_text is None or str(ticket_text).strip() == "":
@@ -43,6 +73,10 @@ class TicketPreprocessor:
         cleaned_text = self.clean_text(str(ticket_text))
         summary = self.clean_text(str(raw_ticket["summary"])) if raw_ticket.get("summary") else None
 
+        # Auto-classify priority if not explicitly provided
+        provided_priority = str(raw_ticket.get("priority") or "").strip()
+        priority = provided_priority if provided_priority else self.classify_priority(cleaned_text)
+
         return TicketData(
             ticket_id=ticket_id,
             ticket_text=cleaned_text,
@@ -50,5 +84,5 @@ class TicketPreprocessor:
             sector=raw_ticket.get("sector") or "General Support",
             intent=raw_ticket.get("intent") or "Inquiry",
             category=raw_ticket.get("category") or "General",
-            priority=raw_ticket.get("priority") or "Medium"
+            priority=priority
         )
