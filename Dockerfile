@@ -32,7 +32,11 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 COPY app/ ./app/
 COPY configs/ ./configs/
-COPY data/sample/ ./data/sample/
+# Create cache and app directories with proper ownership for appuser
+RUN mkdir -p /home/appuser/.cache /app && \
+    chown -R appuser:appuser /home/appuser /app
+
+ENV HF_HOME=/home/appuser/.cache/huggingface
 
 USER appuser
 
