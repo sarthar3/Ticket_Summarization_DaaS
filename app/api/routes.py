@@ -77,6 +77,7 @@ def summarize_ticket(
         return SummarizeResponse(
             ticket_id=response.ticket_id,
             summary=response.summary,
+            structured_summary=response.structured_summary.model_dump() if response.structured_summary else None,
             model=response.model,
             latency_ms=response.latency_ms,
             input_tokens=response.input_tokens,

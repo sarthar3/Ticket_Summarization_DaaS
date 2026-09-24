@@ -9,9 +9,15 @@ class SummarizeRequest(BaseModel):
     category: Optional[str] = Field(None, description="Ticket classification category")
     priority: Optional[str] = Field(None, description="Ticket priority level")
 
+class StructuredSummaryDetails(BaseModel):
+    core_issue: str = Field(..., description="Main technical problem reported by customer", json_schema_extra={"example": "Unable to login to mobile banking app following v4.2 update on iOS 17.4."})
+    customer_intent: str = Field(..., description="Customer intent or priority context", json_schema_extra={"example": "Urgent technical support / Payroll access."})
+    key_action_items: str = Field(..., description="Recommended resolution or follow-up steps", json_schema_extra={"example": "Reset authentication credentials and grant temporary payroll access."})
+
 class SummarizeResponse(BaseModel):
     ticket_id: str
     summary: str
+    structured_summary: Optional[StructuredSummaryDetails] = None
     model: str
     latency_ms: float
     input_tokens: int

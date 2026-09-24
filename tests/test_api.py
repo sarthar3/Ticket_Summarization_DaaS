@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.api.routes import get_pipeline
-from app.inference.pipeline import SummarizationPipeline, PipelineResponse
+from app.inference.pipeline import SummarizationPipeline, PipelineResponse, StructuredSummaryDetails
 from app.inference.student_model import StudentModelWrapper
 
 @pytest.fixture
@@ -20,6 +20,11 @@ def mock_pipeline():
     pipeline.run.return_value = PipelineResponse(
         ticket_id="T001",
         summary="User experiencing connection drops in Austin.",
+        structured_summary=StructuredSummaryDetails(
+            core_issue="User experiencing connection drops in Austin.",
+            customer_intent="General Support / Technical Support (Medium Priority)",
+            key_action_items="Investigate ticket details and follow up with customer."
+        ),
         model="mock-qwen-1.5b",
         latency_ms=85.4,
         input_tokens=60,
@@ -49,6 +54,8 @@ def test_api_health_and_summarize(mock_pipeline):
     sum_json = sum_resp.json()
     assert sum_json["ticket_id"] == "T001"
     assert sum_json["summary"] == "User experiencing connection drops in Austin."
+    assert "structured_summary" in sum_json
+    assert sum_json["structured_summary"]["core_issue"] == "User experiencing connection drops in Austin."
     assert sum_json["model"] == "mock-qwen-1.5b"
     assert sum_json["latency_ms"] == 85.4
     assert sum_json["input_tokens"] == 60

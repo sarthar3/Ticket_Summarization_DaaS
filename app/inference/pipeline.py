@@ -1,3 +1,4 @@
+import re
 from typing import Dict, Any, Optional
 from pydantic import BaseModel, Field
 
@@ -8,9 +9,15 @@ from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+class StructuredSummaryDetails(BaseModel):
+    core_issue: str
+    customer_intent: str
+    key_action_items: str
+
 class PipelineResponse(BaseModel):
     ticket_id: str
     summary: str
+    structured_summary: StructuredSummaryDetails
     model: str
     latency_ms: float
     input_tokens: int
@@ -46,6 +53,30 @@ class SummarizationPipeline:
                 summary = summary[len(prefix):].strip()
         return summary
 
+    def build_structured_summary(self, ticket_data: TicketData, cleaned_summary: str) -> StructuredSummaryDetails:
+        """Extracts and structures core issue, customer intent, and action items."""
+        # Core issue derived from summary or first sentence of ticket
+        sentences = [s.strip() for s in cleaned_summary.split(".") if s.strip()]
+        core_issue = sentences[0] if sentences else ticket_data.ticket_text[:100]
+
+        # Customer intent derived from ticket metadata / sector / priority
+        intent_label = ticket_data.intent or "Technical Support"
+        priority_label = ticket_data.priority or "Medium"
+        sector_label = ticket_data.sector or "General Support"
+        customer_intent = f"{sector_label} / {intent_label} ({priority_label} Priority)"
+
+        # Key action items derived from second sentence or request context
+        if len(sentences) > 1:
+            action_items = ". ".join(sentences[1:])
+        else:
+            action_items = "Investigate ticket details and follow up with customer."
+
+        return StructuredSummaryDetails(
+            core_issue=core_issue,
+            customer_intent=customer_intent,
+            key_action_items=action_items
+        )
+
     def run(self, raw_ticket: Dict[str, Any]) -> PipelineResponse:
         """Runs the complete summarization pipeline:
         1. Validate request
@@ -53,7 +84,7 @@ class SummarizationPipeline:
         3. Format prompt
         4. Tokenize & Model inference
         5. Decode generated output
-        6. Post-process summary
+        6. Post-process & Structure summary output
         7. Return structured PipelineResponse
         """
         # Step 1 & 2: Validate & Normalize
@@ -65,8 +96,9 @@ class SummarizationPipeline:
         # Step 4 & 5: Model Inference & Decoding
         raw_output, input_tokens, output_tokens, latency_ms = self.model_wrapper.generate(prompt_text)
 
-        # Step 6: Post-processing
+        # Step 6: Post-processing & Structuring
         cleaned_summary = self.post_process_summary(raw_output)
+        structured_details = self.build_structured_summary(ticket_data, cleaned_summary)
 
         logger.info(
             f"Successfully processed ticket '{ticket_data.ticket_id}'",
@@ -85,6 +117,7 @@ class SummarizationPipeline:
         return PipelineResponse(
             ticket_id=ticket_data.ticket_id,
             summary=cleaned_summary,
+            structured_summary=structured_details,
             model=self.model_wrapper.model_name,
             latency_ms=latency_ms,
             input_tokens=input_tokens,
