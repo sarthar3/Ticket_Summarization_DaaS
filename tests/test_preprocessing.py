@@ -47,3 +47,28 @@ def test_token_statistics():
     assert stats.p50_length == 50.0
     assert stats.exceeding_limit_count == 2
     assert round(stats.exceeding_limit_percentage, 1) == 66.7
+
+
+def test_insufficient_balance_classification_and_routing():
+    preprocessor = TicketPreprocessor()
+    ticket_dict = {
+        "ticket_text": "My transaction of rs 500 is continuously getting failed as my balance in account is rs 100",
+        "sector": "Banking & Finance"
+    }
+    data = preprocessor.validate_and_normalize(ticket_dict)
+    assert data.priority == "P3 · Medium"
+    assert "exceeds" in data.priority_reason.lower() or "balance" in data.priority_reason.lower()
+    assert data.domain == "Banking & Financial Services"
+    assert data.issue_type == "Transaction Failure / Insufficient Funds"
+    assert "insufficient available balance" in data.customer_impact.lower() or "available account balance" in data.customer_impact.lower()
+    assert len(data.recommended_actions) >= 2
+
+    # Verify routing message does not contain '(None)'
+    is_teacher, routing_reason = preprocessor.detect_distribution(
+        ticket_text=data.ticket_text,
+        sector=data.sector,
+        priority_label=data.priority
+    )
+    assert "(None)" not in routing_reason
+    assert "Student Model" in routing_reason
+

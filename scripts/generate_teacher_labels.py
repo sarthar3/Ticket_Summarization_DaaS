@@ -13,7 +13,7 @@ from app.utils.logger import get_logger
 
 logger = get_logger("generate_teacher_labels")
 
-def process_file_with_teacher(teacher: TeacherLLM, input_file: Path, output_file: Path):
+def process_file_with_teacher(teacher: TeacherLLM, input_file: Path, output_file: Path, max_samples: Optional[int] = None):
     if not input_file.exists():
         logger.warning(f"Input split file not found: {input_file}")
         return
@@ -24,14 +24,18 @@ def process_file_with_teacher(teacher: TeacherLLM, input_file: Path, output_file
             if line.strip():
                 records.append(json.loads(line))
 
+    if max_samples and max_samples > 0:
+        records = records[:max_samples]
+
     logger.info(f"Generating Teacher LLM labels for {len(records)} records from {input_file}...")
 
     distill_records: List[Dict[str, Any]] = []
-    for rec in records:
+    for i, rec in enumerate(records, 1):
         t_id = rec.get("ticket_id", "UNKNOWN")
         t_text = rec.get("ticket_text", "")
 
         teacher_resp: TeacherResponse = teacher.generate_summary(t_id, t_text)
+        print(f"[{i}/{len(records)}] Ticket {t_id} processed by {teacher_resp.teacher_model} ({teacher_resp.latency_ms:.1f}ms)")
 
         # Augment record with teacher supervision label
         augmented = dict(rec)
@@ -51,7 +55,8 @@ def process_file_with_teacher(teacher: TeacherLLM, input_file: Path, output_file
 
 def main():
     parser = argparse.ArgumentParser(description="Generate Teacher LLM Distillation Supervision Labels")
-    parser.add_argument("--provider", type=str, default=None, help="Teacher provider override (openai, anthropic, gemini, mock)")
+    parser.add_argument("--provider", type=str, default=None, help="Teacher provider override (groq, gemini, openai, anthropic, mock)")
+    parser.add_argument("--max_samples", type=int, default=25, help="Max records per split to label (default: 25, use -1 for all)")
     args = parser.parse_args()
 
     print("=" * 65)
@@ -61,6 +66,7 @@ def main():
     teacher = get_teacher_llm(provider_override=args.provider)
     print(f"Teacher Provider   : {teacher.provider_name}")
     print(f"Teacher Model      : {teacher.model_name}")
+    print(f"Max Samples/Split  : {args.max_samples if args.max_samples > 0 else 'ALL'}")
 
     processed_dir = PROJECT_ROOT / "data" / "processed"
     train_in = processed_dir / "train.jsonl"
@@ -69,8 +75,8 @@ def main():
     train_out = processed_dir / "train_teacher_distill.jsonl"
     val_out = processed_dir / "val_teacher_distill.jsonl"
 
-    process_file_with_teacher(teacher, train_in, train_out)
-    process_file_with_teacher(teacher, val_in, val_out)
+    process_file_with_teacher(teacher, train_in, train_out, max_samples=args.max_samples)
+    process_file_with_teacher(teacher, val_in, val_out, max_samples=max(5, args.max_samples // 5) if args.max_samples > 0 else None)
 
     print("\n" + "=" * 65)
     print("          TEACHER DISTILLATION DATASETS GENERATED")

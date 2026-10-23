@@ -1,0 +1,42 @@
+[
+  {
+    "id": "OFF-101",
+    "name": "Vikram Sharma",
+    "designation": "Head of SRE & Cloud Infrastructure",
+    "email": "vikram.sre@company.com",
+    "department": "Cloud Infrastructure",
+    "is_primary": true
+  },
+  {
+    "id": "OFF-102",
+    "name": "Priya Sundaram",
+    "designation": "Lead Architect - Core Banking & Payment Gateways",
+    "email": "priya.banking@company.com",
+    "department": "Banking & Financial Services",
+    "is_primary": true
+  },
+  {
+    "id": "OFF-103",
+    "name": "Arvind Mehta",
+    "designation": "Director of Cybersecurity & SOC Incident Response",
+    "email": "arvind.security@company.com",
+    "department": "Cybersecurity & Fraud",
+    "is_primary": true
+  },
+  {
+    "id": "OFF-104",
+    "name": "Ananya Roy",
+    "designation": "Principal Engineer - Mobile Client & Auth Services",
+    "email": "ananya.mobile@company.com",
+    "department": "Authentication & Mobile Client",
+    "is_primary": true
+  },
+  {
+    "id": "OFF-105",
+    "name": "Rajesh Gopinath",
+    "designation": "VP of Operations & Logistics Fulfillment",
+    "email": "rajesh.logistics@company.com",
+    "department": "Logistics & Fulfillment",
+    "is_primary": false
+  }
+]

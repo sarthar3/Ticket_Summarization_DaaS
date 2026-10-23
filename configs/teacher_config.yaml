@@ -1,10 +1,10 @@
 teacher:
-  provider: "mock" # Options: openai, anthropic, gemini, huggingface, mock
-  model_name: "gpt-4o"
+  provider: "groq" # Options: groq, gemini, openai, anthropic, mock
+  model_name: "openai/gpt-oss-120b" # Available on Groq: openai/gpt-oss-120b, qwen/qwen3.8-27b
   temperature: 0.2
   top_p: 0.95
   max_tokens: 256
-  api_key_env_var: "OPENAI_API_KEY"
+  api_key_env_var: "GROQ_API_KEY"
 
 prompt:
   teacher_template: |

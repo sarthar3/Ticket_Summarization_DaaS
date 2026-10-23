@@ -36,13 +36,19 @@ def get_user_input():
         print("⚠️ Ticket text cannot be empty! Please enter the ticket text:")
         ticket_text = input("> ").strip()
         
-    ticket_id = input("\nEnter Ticket ID [optional - press Enter to auto-assign]: ").strip()
+    customer_name = input("\nEnter Customer Name [optional - e.g. Rajesh Kumar]: ").strip()
+    customer_email = input("Enter Customer Email [optional - e.g. rajesh.k@example.com]: ").strip()
+    customer_phone = input("Enter Customer Phone [optional - e.g. +91 98401 23456]: ").strip()
+    ticket_id = input("Enter Ticket ID [optional - press Enter to auto-assign in sequence]: ").strip()
     sector = input("Enter Sector (e.g. Fintech, Healthcare, E-commerce) [optional]: ").strip()
     intent = input("Enter Intent (e.g. Technical Support, Billing) [optional]: ").strip()
     priority = input("Enter Priority (e.g. High, Medium, Low) [optional - auto-classified if empty]: ").strip()
 
     payload = {
         "ticket_text": ticket_text,
+        "customer_name": customer_name if customer_name else None,
+        "customer_email": customer_email if customer_email else None,
+        "customer_phone": customer_phone if customer_phone else None,
         "sector": sector if sector else None,
         "intent": intent if intent else None,
         "priority": priority if priority else None
@@ -54,7 +60,11 @@ def get_user_input():
 
 def print_summary_response(data):
     print("\n" + " CONCISE SUMMARY RESULT ".center(65, "="))
-    print(f"Ticket ID      : {data.get('ticket_id')} (Auto-Assigned)" if "TICK-20" in str(data.get('ticket_id')) else f"Ticket ID      : {data.get('ticket_id')}")
+    print(f"Ticket ID      : {data.get('ticket_id')} (Auto-Assigned)")
+    if data.get('customer_name'):
+        print(f"Customer       : {data.get('customer_name')} ({data.get('customer_email', 'N/A')}) | Phone: {data.get('customer_phone', 'N/A')}")
+    if data.get('created_at'):
+        print(f"Submission Time: {data.get('created_at')}")
     print(f"Priority       : {data.get('priority')} (Model Classified)")
     print(f"Model          : {data.get('model')}")
     print(f"Latency        : {data.get('latency_ms')} ms")

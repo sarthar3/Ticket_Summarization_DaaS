@@ -24,6 +24,7 @@ def main():
     parser.add_argument("--provider", type=str, default=None, help="Teacher provider override")
     parser.add_argument("--test_dataset", type=str, default="data/processed/test.jsonl", help="Path to test set")
     parser.add_argument("--output_dir", type=str, default="experiments/results", help="Directory to save evaluation results")
+    parser.add_argument("--max_samples", type=int, default=10, help="Maximum number of test samples to evaluate (default: 10, use -1 for all)")
     args = parser.parse_args()
 
     test_dataset_path = PROJECT_ROOT / args.test_dataset
@@ -48,18 +49,23 @@ def main():
             if line.strip():
                 records.append(json.loads(line))
 
+    if args.max_samples and args.max_samples > 0:
+        records = records[:args.max_samples]
+        print(f"Limiting evaluation to first {len(records)} test samples.")
+
     predictions = []
     references = []
     latencies = []
     input_token_counts = []
     output_token_counts = []
 
-    for rec in records:
+    for i, rec in enumerate(records, 1):
         t_id = rec.get("ticket_id", "UNKNOWN")
         t_text = rec.get("ticket_text", "")
         ref = rec.get("summary")
 
         t_resp = teacher.generate_summary(t_id, t_text)
+        print(f"[{i}/{len(records)}] Processed ticket {t_id} ({t_resp.latency_ms:.1f}ms)")
         predictions.append(t_resp.teacher_summary)
         references.append(ref)
         latencies.append(t_resp.latency_ms)

@@ -110,11 +110,12 @@ class StudentModelWrapper:
             logger.error(f"Error loading model '{self.model_name}': {str(e)}")
             raise RuntimeError(f"Could not load Hugging Face model: {str(e)}") from e
 
-    def generate(self, prompt_text: str) -> Tuple[str, int, int, float]:
-        """Generates summary from prompt text.
+    def generate(self, prompt_text: str, return_breakdown: bool = False) -> Any:
+        """Generates summary from prompt text with granular latency profiling.
         
         Returns:
             Tuple of (generated_text, input_token_count, output_token_count, latency_ms)
+            or with breakdown if return_breakdown=True.
         """
         if not self.is_loaded:
             self.load_model()
@@ -122,44 +123,66 @@ class StudentModelWrapper:
         start_time = time.perf_counter()
         
         import torch
+
+        # Device selection & thread optimization
+        device = next(self.model.parameters()).device
+        if device.type == "cpu":
+            try:
+                num_threads = min(8, max(2, (os.cpu_count() or 4) - 1))
+                torch.set_num_threads(num_threads)
+            except Exception:
+                pass
         
         # Tokenize input
+        t0 = time.perf_counter()
         inputs = self.tokenizer(
             prompt_text,
             return_tensors="pt",
             truncation=True,
             max_length=self.settings.context.max_input_tokens
         )
-        
-        # Move tensors to model device
-        device = next(self.model.parameters()).device
         inputs = {k: v.to(device) for k, v in inputs.items()}
-        
         input_tokens_count = int(inputs["input_ids"].shape[1])
+        tokenization_ms = round((time.perf_counter() - t0) * 1000.0, 2)
 
         # Generation parameters
+        max_new = min(self.settings.generation.max_new_tokens, 96)
         gen_kwargs = {
-            "max_new_tokens": self.settings.generation.max_new_tokens,
+            "max_new_tokens": max_new,
             "min_new_tokens": self.settings.generation.min_new_tokens,
             "do_sample": self.settings.generation.do_sample,
             "repetition_penalty": self.settings.generation.repetition_penalty,
             "pad_token_id": self.tokenizer.pad_token_id,
             "eos_token_id": self.tokenizer.eos_token_id,
+            "use_cache": True
         }
 
         if self.settings.generation.do_sample:
             gen_kwargs["temperature"] = self.settings.generation.temperature
             gen_kwargs["top_p"] = self.settings.generation.top_p
 
+        # Pure model inference
+        t1 = time.perf_counter()
         with torch.no_grad():
             output_ids = self.model.generate(**inputs, **gen_kwargs)
-
-        latency_ms = (time.perf_counter() - start_time) * 1000.0
+        inference_ms = round((time.perf_counter() - t1) * 1000.0, 2)
 
         # Decode generated slice only
+        t2 = time.perf_counter()
         new_tokens_ids = output_ids[0][input_tokens_count:]
         output_tokens_count = len(new_tokens_ids)
-        
         generated_text = self.tokenizer.decode(new_tokens_ids, skip_special_tokens=True).strip()
+        decode_ms = round((time.perf_counter() - t2) * 1000.0, 2)
 
-        return generated_text, input_tokens_count, output_tokens_count, round(latency_ms, 2)
+        total_latency_ms = round((time.perf_counter() - start_time) * 1000.0, 2)
+        breakdown = {
+            "tokenization_ms": tokenization_ms,
+            "inference_ms": inference_ms,
+            "decode_ms": decode_ms,
+            "total_ms": total_latency_ms
+        }
+        self.last_latency_breakdown = breakdown
+
+        if return_breakdown:
+            return generated_text, input_tokens_count, output_tokens_count, total_latency_ms, breakdown
+        return generated_text, input_tokens_count, output_tokens_count, total_latency_ms

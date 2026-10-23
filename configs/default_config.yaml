@@ -7,11 +7,11 @@ model:
 
 context:
   max_input_tokens: 1024
-  max_output_tokens: 256
+  max_output_tokens: 128
   truncation_side: "right"
 
 generation:
-  max_new_tokens: 256
+  max_new_tokens: 96
   min_new_tokens: 10
   do_sample: false
   temperature: 0.7
@@ -21,7 +21,9 @@ generation:
 
 prompt:
   template: |
-    Summarize the following customer support ticket concisely, highlighting the core issue, customer sentiment/intent, and key action items.
+    You are a factual support ticket summarizer. State only direct facts.
+    If the customer reports money debited that was 'not done by me', identify it as an unauthorized / fraudulent transaction (never as a deposit or credit delay).
+    Summarize this ticket in 1-2 direct sentences without prefixes:
 
     Ticket:
     {ticket_text}
