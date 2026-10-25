@@ -1443,22 +1443,7 @@
         </div>
       </div>
 
-      <div class="status-group">
-        <div id="serviceStatusPill" class="status-pill online">
-          <span class="status-dot pulsing"></span>
-          <span id="serviceStatusText">DaaS Backend: Ready</span>
-        </div>
-        <div id="teacherBufferPill" class="status-pill" onclick="showBufferInfo()" style="cursor: pointer; background: rgba(16, 185, 129, 0.1); color: #047857; border: 1px solid rgba(16, 185, 129, 0.25);" title="Continual Learning Buffer: Unseen samples collected from Teacher LLM for student GKD distillation">
-          <span>📥 Teacher Distill Buffer: <strong id="teacherBufferCount">0</strong> Unseen</span>
-        </div>
-        <div id="outageStatusPill" class="status-pill online" style="cursor: pointer;" onclick="switchTab('company')">
-          <span>🏢 Company Status: Healthy</span>
-        </div>
-        <div class="nav-links">
-          <a href="/docs" target="_blank" class="nav-link-btn">Swagger API</a>
-          <a href="/metrics" target="_blank" class="nav-link-btn">Metrics</a>
-        </div>
-      </div>
+      <!-- Status badges and links removed per user request -->
     </div>
   </header>
 
@@ -2715,8 +2700,10 @@
       const bannerDesc = document.getElementById('companyAlertDesc');
 
       if (report.has_active_outage || report.company_status === 'CRITICAL_OUTAGE') {
-        statusPill.className = "status-pill outage-alert";
-        statusPill.innerHTML = `<span>🚨 Outage Alert: ${report.company_outages_detected} System Issues</span>`;
+        if (statusPill) {
+          statusPill.className = "status-pill outage-alert";
+          statusPill.innerHTML = `<span>🚨 Outage Alert: ${report.company_outages_detected} System Issues</span>`;
+        }
         document.getElementById('kpiSystemStatus').innerText = "Confirmed Outage";
         document.getElementById('kpiSystemStatus').style.color = "#DC2626";
 
@@ -2728,8 +2715,10 @@
         bannerDesc.innerText = report.executive_brief;
         bannerDesc.style.color = "";
       } else if (report.company_status === 'UNVERIFIED_OUTAGE_REPORT' || report.has_unverified_outage_report) {
-        statusPill.className = "status-pill unverified-alert";
-        statusPill.innerHTML = `<span>⚠️ Unverified Outage Report (${report.unverified_outage_count || 1} Investigating)</span>`;
+        if (statusPill) {
+          statusPill.className = "status-pill unverified-alert";
+          statusPill.innerHTML = `<span>⚠️ Unverified Outage Report (${report.unverified_outage_count || 1} Investigating)</span>`;
+        }
         document.getElementById('kpiSystemStatus').innerText = "Unverified Report";
         document.getElementById('kpiSystemStatus').style.color = "#D97706";
 
@@ -2741,8 +2730,10 @@
         bannerDesc.innerText = `A high-severity outage report has been received and escalated to SRE team. Awaiting corroborating customer reports or telemetry confirmation before declaring a company-wide outage.`;
         bannerDesc.style.color = "#78350F";
       } else {
-        statusPill.className = "status-pill online";
-        statusPill.innerHTML = `<span>🏢 Company Status: Healthy</span>`;
+        if (statusPill) {
+          statusPill.className = "status-pill online";
+          statusPill.innerHTML = `<span>🏢 Company Status: Healthy</span>`;
+        }
         document.getElementById('kpiSystemStatus').innerText = "Healthy";
         document.getElementById('kpiSystemStatus').style.color = "#16A34A";
 
@@ -3444,11 +3435,11 @@ How Our Model Learns from Unseen Data:
       .then(res => res.json())
       .then(data => {
         const text = document.getElementById('serviceStatusText');
-        text.innerText = `DaaS Model: ${data.model_name || 'Ready'}`;
+        if (text) text.innerText = `DaaS Model: ${data.model_name || 'Ready'}`;
       })
       .catch(() => {
         const text = document.getElementById('serviceStatusText');
-        text.innerText = 'DaaS Backend: Standalone Mode';
+        if (text) text.innerText = 'DaaS Backend: Standalone Mode';
       });
 
     // Boot actions (Do NOT pre-assign ticket ID before user submission!)
