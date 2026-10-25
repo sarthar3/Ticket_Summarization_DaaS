@@ -1,18 +1,21 @@
 teacher:
   provider: "groq" # Options: groq, gemini, openai, anthropic, mock
   model_name: "openai/gpt-oss-120b" # Available on Groq: openai/gpt-oss-120b, qwen/qwen3.8-27b
-  temperature: 0.2
+  temperature: 0.1
   top_p: 0.95
-  max_tokens: 256
+  max_tokens: 64
   api_key_env_var: "GROQ_API_KEY"
 
 prompt:
   teacher_template: |
-    You are an expert customer support operations manager. Analyze the following customer ticket and write an exceptionally clear, accurate, and concise 2-sentence summary highlighting:
-    1. Core technical issue or customer request
-    2. Current status and required resolution action
+    You are an expert customer support ticket summarizer. Generate a single, concise telegraphic summary sentence (10-18 words max).
+    CRITICAL FORMAT RULES:
+    - State who the customer/user is, the exact problem, and include any entity IDs, account numbers, or error codes verbatim.
+    - Do NOT include resolution suggestions, troubleshooting advice, lists, or markdown bullets.
+    - Do NOT output prefixes like 'Summary:', 'Issue:', or 'Incident Summary:'.
+    - Write as a clean, continuous single sentence.
 
     Ticket Text:
     {ticket_text}
 
-    Expert Summary:
+    Summary:
