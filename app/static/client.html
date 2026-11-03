@@ -517,19 +517,13 @@
   <header class="top-bar">
     <div class="top-bar-inner">
       <div class="brand">
-        <div class="brand-logo">A</div>
         <div class="brand-info">
-          <h1>ApexGlobal Support Portal <span class="api-badge">Client Portal Mock</span></h1>
-          <p>Customer Care & Help Desk (Connected to DaaS Intelligence Backend)</p>
+          <h1 id="clientPortalTitle">ApexGlobal Support Portal</h1>
         </div>
       </div>
       <div style="display: flex; gap: 8px; align-items: center;">
         <a href="/login" class="daas-switch-btn" style="background: #EBF7F7; color: #2C698D; border-color: #BAE8E8;">
           <span>🔑 Company Sign-In</span>
-        </a>
-        <a href="/" target="_blank" class="daas-switch-btn">
-          <span>🌿 DaaS Platform Studio</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
         </a>
       </div>
     </div>
@@ -537,16 +531,6 @@
 
   <!-- Container -->
   <main class="container">
-
-    <!-- Integration Explainer Banner -->
-    <div class="integration-note">
-      <div>
-        <strong>📌 Client Company Simulation:</strong> This webpage demonstrates how your corporate clients embed ticket submission forms on their own domain, connecting directly to your <code>POST /api/v1/summarize</code> backend API.
-      </div>
-      <div>
-        Endpoint: <code>http://localhost:8000/api/v1/summarize</code>
-      </div>
-    </div>
 
     <!-- Left Column: Form -->
     <section class="card">
@@ -722,7 +706,7 @@
       }
 
       submitBtn.disabled = true;
-      btnText.innerText = "Connecting to DaaS AI Engine...";
+      btnText.innerText = "Submitting ticket...";
 
       try {
         const payload = {
@@ -832,6 +816,19 @@
         console.log("Could not preload history", e);
       }
     }
+
+    
+    // Dynamic company branding from active session
+    try {
+      const authData = JSON.parse(localStorage.getItem('daas_auth_company') || 'null');
+      if (authData && authData.company_name) {
+        const titleEl = document.getElementById('clientPortalTitle');
+        if (titleEl) {
+          titleEl.innerText = authData.company_name + ' Support Portal';
+        }
+        document.title = authData.company_name + ' Support Portal — Raise a Customer Ticket';
+      }
+    } catch (e) {}
 
     fetchServerHistory();
   </script>
