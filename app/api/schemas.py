@@ -274,3 +274,30 @@ class CompanyAuthResponse(BaseModel):
     tier: str
     token: str
     message: str
+
+
+class CompanyRegisterRequest(BaseModel):
+    company_name: str
+    email: str
+    password: str
+    sector: Optional[str] = "Banking & Financial Services"
+
+
+class PasswordResetRequest(BaseModel):
+    email: str
+
+
+class UpdateSettingsRequest(BaseModel):
+    company_name: Optional[str] = None
+    sector: Optional[str] = None
+    support_email: Optional[str] = None
+    alert_email: Optional[str] = None
+    latency_sla_ms: Optional[int] = 50
+    student_confidence_threshold: Optional[float] = 0.85
+    auto_cluster_enabled: Optional[bool] = True
+    regenerate_api_key: Optional[bool] = False
+
+
+class LogoutResponse(BaseModel):
+    success: bool = True
+    message: str = "Signed out successfully"

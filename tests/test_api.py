@@ -113,3 +113,41 @@ def test_auth_and_pages():
     custom_data = custom_resp.json()
     assert custom_data['success'] is True
     assert custom_data['company_name'] == 'Acme Corp'
+
+    # Test POST /api/v1/auth/login with valid password
+    pw_resp = client.post('/api/v1/auth/login', json={
+        'email': 'admin@apexglobal.com',
+        'password': 'ApexGlobal2026!'
+    })
+    assert pw_resp.status_code == 200
+    assert pw_resp.json()['success'] is True
+
+    # Test POST /api/v1/auth/login with invalid password
+    bad_pw_resp = client.post('/api/v1/auth/login', json={
+        'email': 'admin@apexglobal.com',
+        'password': 'WrongPassword123'
+    })
+    assert bad_pw_resp.status_code == 401
+
+    # Test POST /api/v1/auth/register
+    reg_resp = client.post('/api/v1/auth/register', json={
+        'company_name': 'Vanguard Security',
+        'email': 'admin@vanguardsec.com',
+        'password': 'VanguardPass2026!',
+        'sector': 'Cybersecurity'
+    })
+    assert reg_resp.status_code == 200
+    assert reg_resp.json()['company_name'] == 'Vanguard Security'
+
+    # Test POST /api/v1/auth/settings
+    settings_resp = client.post('/api/v1/auth/settings', json={
+        'latency_sla_ms': 25,
+        'alert_email': 'sre-team@apexglobal.com'
+    })
+    assert settings_resp.status_code == 200
+    assert settings_resp.json()['settings']['latency_sla_ms'] == 25
+
+    # Test POST /api/v1/auth/logout
+    logout_resp = client.post('/api/v1/auth/logout')
+    assert logout_resp.status_code == 200
+    assert logout_resp.json()['success'] is True

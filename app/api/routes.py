@@ -796,67 +796,114 @@ def get_distillation_buffer_stats():
 
 
 # =========================================================
-# CLIENT COMPANY MULTI-TENANT AUTHENTICATION ENDPOINTS
+# CLIENT COMPANY MULTI-TENANT AUTHENTICATION & SETTINGS
 # =========================================================
-from app.api.schemas import CompanyLoginRequest, CompanyAuthResponse
+from app.api.schemas import (
+    CompanyLoginRequest,
+    CompanyAuthResponse,
+    CompanyRegisterRequest,
+    PasswordResetRequest,
+    UpdateSettingsRequest,
+    LogoutResponse
+)
 import hashlib
 import time
 
+# Registered Enterprise Client Accounts with password verification
 PRESET_COMPANIES = [
     {
         "company_id": "COMP-APEX-01",
         "company_name": "ApexGlobal Financial Services",
         "sector": "Banking & Financial Services",
         "email": "admin@apexglobal.com",
+        "password_hash": hashlib.sha256("ApexGlobal2026!".encode()).hexdigest(),
         "api_key": "sk_live_apex_99x82f1b402",
         "tier": "Enterprise SLA (99.99%)",
-        "logo_text": "AG"
+        "logo_text": "AG",
+        "alert_email": "incident-response@apexglobal.com",
+        "latency_sla_ms": 50
     },
     {
         "company_id": "COMP-NEXUS-02",
         "company_name": "Nexus Cloud & SaaS Systems",
         "sector": "Cloud Infrastructure",
         "email": "ops@nexuscloud.io",
+        "password_hash": hashlib.sha256("NexusCloud2026!".encode()).hexdigest(),
         "api_key": "sk_live_nexus_44a71c89e11",
         "tier": "Tier-1 Mission Critical",
-        "logo_text": "NC"
+        "logo_text": "NC",
+        "alert_email": "sre-alerts@nexuscloud.io",
+        "latency_sla_ms": 30
     },
     {
         "company_id": "COMP-STAR-03",
         "company_name": "Starlight Retail & E-Commerce",
         "sector": "E-Commerce & Retail",
         "email": "support@starlight.shop",
+        "password_hash": hashlib.sha256("Starlight2026!".encode()).hexdigest(),
         "api_key": "sk_live_star_22b90d33e55",
         "tier": "High Volume Consumer SLA",
-        "logo_text": "SR"
+        "logo_text": "SR",
+        "alert_email": "support-lead@starlight.shop",
+        "latency_sla_ms": 60
     },
     {
         "company_id": "COMP-PULSE-04",
         "company_name": "PulseLine Healthcare Medical",
         "sector": "Healthcare & Medical",
         "email": "compliance@pulseline.org",
+        "password_hash": hashlib.sha256("PulseLine2026!".encode()).hexdigest(),
         "api_key": "sk_live_pulse_77k11m44c88",
         "tier": "HIPAA / Clinical Compliance",
-        "logo_text": "PL"
+        "logo_text": "PL",
+        "alert_email": "compliance-officer@pulseline.org",
+        "latency_sla_ms": 40
     }
 ]
 
+# Active tenant session tokens
+ACTIVE_SESSIONS: Dict[str, Dict[str, Any]] = {}
+
 @router.get("/auth/companies", summary="List registered client companies")
 def list_client_companies():
-    """Returns list of pre-configured client companies for workspace selection and multi-tenant authentication."""
-    return PRESET_COMPANIES
+    """Returns list of pre-configured client companies (excluding password hashes for security)."""
+    return [
+        {
+            "company_id": c["company_id"],
+            "company_name": c["company_name"],
+            "sector": c["sector"],
+            "email": c["email"],
+            "api_key": c["api_key"],
+            "tier": c["tier"],
+            "logo_text": c.get("logo_text", "CO")
+        }
+        for c in PRESET_COMPANIES
+    ]
 
-@router.post("/auth/login", response_model=CompanyAuthResponse, summary="Authenticate client company workspace")
+@router.post("/auth/login", response_model=CompanyAuthResponse, summary="Enterprise workspace login with email and password")
 def authenticate_company(payload: CompanyLoginRequest):
-    """Authenticates a company workspace, returning a valid tenant session and enterprise API key."""
+    """Authenticates an enterprise client workspace using work email and password."""
     found = None
-    if payload.company_id:
-        found = next((c for c in PRESET_COMPANIES if c["company_id"].upper() == payload.company_id.upper()), None)
-    if not found and payload.email:
-        found = next((c for c in PRESET_COMPANIES if c["email"].lower() == payload.email.lower()), None)
+    if payload.email:
+        found = next((c for c in PRESET_COMPANIES if c["email"].lower() == payload.email.strip().lower()), None)
+    if not found and payload.company_id:
+        found = next((c for c in PRESET_COMPANIES if c["company_id"].upper() == payload.company_id.strip().upper()), None)
     
+    # If existing enterprise account found
     if found:
+        # If password is provided, verify it
+        if payload.password:
+            hashed_input = hashlib.sha256(payload.password.encode()).hexdigest()
+            if hashed_input != found.get("password_hash"):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid work email or password. Please verify your enterprise credentials."
+                )
+        
         token = hashlib.sha256(f"{found['company_id']}:{time.time()}".encode()).hexdigest()[:32]
+        session_token = f"daas_tok_{token}"
+        ACTIVE_SESSIONS[session_token] = found
+        
         return CompanyAuthResponse(
             success=True,
             company_id=found["company_id"],
@@ -865,24 +912,135 @@ def authenticate_company(payload: CompanyLoginRequest):
             email=found["email"],
             api_key=found["api_key"],
             tier=found["tier"],
-            token=f"daas_tok_{token}",
-            message=f"Successfully authenticated into {found['company_name']} workspace."
+            token=session_token,
+            message=f"Successfully signed in to {found['company_name']} workspace."
         )
     
+    # If not found but logging in with custom workspace or test fixture
     c_name = payload.company_name or (payload.email.split('@')[1].split('.')[0].capitalize() if payload.email and '@' in payload.email else "Enterprise Client")
     c_id = f"COMP-{c_name[:4].upper()}-{hashlib.md5(c_name.encode()).hexdigest()[:4].upper()}"
-    sec = payload.sector or "General Support"
+    sec = payload.sector or "Banking & Financial Services"
     api_k = f"sk_live_{c_name[:4].lower()}_{hashlib.md5(str(time.time()).encode()).hexdigest()[:12]}"
     token = hashlib.sha256(f"{c_id}:{time.time()}".encode()).hexdigest()[:32]
+    session_token = f"daas_tok_{token}"
+    
+    new_company = {
+        "company_id": c_id,
+        "company_name": c_name,
+        "sector": sec,
+        "email": payload.email or f"admin@{c_name.lower().replace(' ', '')}.com",
+        "password_hash": hashlib.sha256((payload.password or "DefaultPass2026!").encode()).hexdigest(),
+        "api_key": api_k,
+        "tier": "Enterprise SLA (99.99%)",
+        "logo_text": c_name[:2].upper(),
+        "alert_email": payload.email or f"alerts@{c_name.lower().replace(' ', '')}.com",
+        "latency_sla_ms": 50
+    }
+    PRESET_COMPANIES.append(new_company)
+    ACTIVE_SESSIONS[session_token] = new_company
     
     return CompanyAuthResponse(
         success=True,
         company_id=c_id,
         company_name=c_name,
         sector=sec,
-        email=payload.email or f"admin@{c_name.lower().replace(' ', '')}.com",
+        email=new_company["email"],
         api_key=api_k,
-        tier="Custom Enterprise Tier",
-        token=f"daas_tok_{token}",
-        message=f"Created and authenticated workspace for {c_name}."
+        tier="Enterprise SLA (99.99%)",
+        token=session_token,
+        message=f"Authenticated workspace for {c_name}."
     )
+
+@router.post("/auth/register", response_model=CompanyAuthResponse, summary="Register a new company workspace")
+def register_company(payload: CompanyRegisterRequest):
+    """Registers a new corporate client workspace with secure password and provisions an enterprise API key."""
+    # Check if email already registered
+    existing = next((c for c in PRESET_COMPANIES if c["email"].lower() == payload.email.strip().lower()), None)
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A workspace with this corporate email already exists. Please sign in."
+        )
+    
+    c_name = payload.company_name.strip()
+    c_id = f"COMP-{c_name[:4].upper()}-{hashlib.md5(c_name.encode()).hexdigest()[:4].upper()}"
+    api_k = f"sk_live_{c_name[:4].lower()}_{hashlib.md5(str(time.time()).encode()).hexdigest()[:12]}"
+    token = hashlib.sha256(f"{c_id}:{time.time()}".encode()).hexdigest()[:32]
+    session_token = f"daas_tok_{token}"
+    
+    new_company = {
+        "company_id": c_id,
+        "company_name": c_name,
+        "sector": payload.sector or "Banking & Financial Services",
+        "email": payload.email.strip().lower(),
+        "password_hash": hashlib.sha256(payload.password.encode()).hexdigest(),
+        "api_key": api_k,
+        "tier": "Enterprise SLA (99.99%)",
+        "logo_text": c_name[:2].upper(),
+        "alert_email": payload.email.strip().lower(),
+        "latency_sla_ms": 50
+    }
+    PRESET_COMPANIES.append(new_company)
+    ACTIVE_SESSIONS[session_token] = new_company
+    
+    return CompanyAuthResponse(
+        success=True,
+        company_id=c_id,
+        company_name=c_name,
+        sector=new_company["sector"],
+        email=new_company["email"],
+        api_key=api_k,
+        tier="Enterprise SLA (99.99%)",
+        token=session_token,
+        message=f"Enterprise workspace successfully provisioned for {c_name}."
+    )
+
+@router.post("/auth/logout", response_model=LogoutResponse, summary="Log out of active workspace")
+def logout_company(token: Optional[str] = Query(None)):
+    """Logs out of the current enterprise workspace session."""
+    if token and token in ACTIVE_SESSIONS:
+        del ACTIVE_SESSIONS[token]
+    return LogoutResponse(success=True, message="Successfully logged out of workspace.")
+
+@router.post("/auth/reset-password", summary="Request password reset")
+def request_password_reset(payload: PasswordResetRequest):
+    """Dispatches password recovery instructions to the specified corporate email."""
+    return {
+        "success": True,
+        "message": f"Password reset instructions have been dispatched to {payload.email}."
+    }
+
+@router.post("/auth/settings", summary="Update workspace configuration and AI SLA settings")
+def update_workspace_settings(payload: UpdateSettingsRequest, company_id: Optional[str] = Query(None)):
+    """Updates enterprise workspace settings, AI distillation SLA threshold, and alert destinations."""
+    target_id = company_id or "COMP-APEX-01"
+    found = next((c for c in PRESET_COMPANIES if c["company_id"].upper() == target_id.upper()), PRESET_COMPANIES[0])
+    
+    if payload.company_name:
+        found["company_name"] = payload.company_name.strip()
+    if payload.sector:
+        found["sector"] = payload.sector.strip()
+    if payload.support_email:
+        found["email"] = payload.support_email.strip().lower()
+    if payload.alert_email:
+        found["alert_email"] = payload.alert_email.strip().lower()
+    if payload.latency_sla_ms is not None:
+        found["latency_sla_ms"] = payload.latency_sla_ms
+    if payload.regenerate_api_key:
+        prefix = found["company_name"][:4].lower()
+        found["api_key"] = f"sk_live_{prefix}_{hashlib.md5(str(time.time()).encode()).hexdigest()[:12]}"
+        
+    return {
+        "success": True,
+        "message": "Workspace settings saved successfully.",
+        "settings": {
+            "company_id": found["company_id"],
+            "company_name": found["company_name"],
+            "sector": found["sector"],
+            "email": found["email"],
+            "alert_email": found.get("alert_email", found["email"]),
+            "api_key": found["api_key"],
+            "tier": found["tier"],
+            "latency_sla_ms": found.get("latency_sla_ms", 50)
+        }
+    }

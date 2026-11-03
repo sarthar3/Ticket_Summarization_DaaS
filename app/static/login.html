@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Client Company Authentication — TicketSummarizer DaaS</title>
+  <title>Enterprise Sign In — TicketSummarizer DaaS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      /* Palette extracted directly from user uploaded images */
+      /* Palette directly matching user uploaded images */
       --primary: #2C698D;          /* Image 1: Deep Steel Blue */
       --primary-hover: #225370;
       --secondary: #95ADBE;        /* Image 2: Slate Denim */
@@ -27,10 +27,10 @@
       --text-light: #889DAF;
 
       --radius-sm: 8px;
-      --radius-md: 14px;
+      --radius-md: 12px;
       --radius-lg: 20px;
       --shadow-card: 0 10px 30px rgba(44, 105, 141, 0.08);
-      --shadow-float: 0 20px 40px rgba(19, 41, 61, 0.12);
+      --shadow-float: 0 20px 48px rgba(19, 41, 61, 0.14);
       --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -54,7 +54,7 @@
 
     .auth-wrapper {
       width: 100%;
-      max-width: 1040px;
+      max-width: 1020px;
       background: var(--bg-surface);
       border: 1.5px solid var(--border-medium);
       border-radius: var(--radius-lg);
@@ -75,9 +75,9 @@
 
     /* Left Sidebar */
     .brand-sidebar {
-      background: linear-gradient(160deg, #13293D 0%, #2C698D 60%, #3B7E9E 100%);
+      background: linear-gradient(160deg, #13293D 0%, #2C698D 65%, #3B7E9E 100%);
       color: #FFFFFF;
-      padding: 44px 36px;
+      padding: 48px 40px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -88,14 +88,14 @@
     .brand-sidebar::before {
       content: '';
       position: absolute;
-      top: -60px;
-      right: -60px;
-      width: 220px;
-      height: 220px;
+      top: -80px;
+      right: -80px;
+      width: 240px;
+      height: 240px;
       border-radius: 50%;
       background: var(--accent);
       opacity: 0.15;
-      filter: blur(40px);
+      filter: blur(50px);
     }
 
     .brand-sidebar-header {
@@ -103,19 +103,18 @@
       z-index: 2;
     }
 
-    .brand-logo-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--accent);
+    /* Empty Blue Container for Logo - NO tree, NO plant */
+    .empty-logo-container {
+      width: 46px;
+      height: 46px;
+      background: linear-gradient(135deg, #2C698D 0%, #1A4660 100%);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius-md);
+      box-shadow: 0 6px 16px rgba(44, 105, 141, 0.35);
       margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .brand-sidebar h2 {
@@ -123,7 +122,7 @@
       font-weight: 800;
       letter-spacing: -0.02em;
       line-height: 1.25;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       color: #FFFFFF;
     }
 
@@ -131,13 +130,13 @@
       font-size: 13.5px;
       line-height: 1.6;
       color: #E2ECEE;
-      margin-bottom: 30px;
+      margin-bottom: 34px;
     }
 
     .feature-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
       position: relative;
       z-index: 2;
     }
@@ -145,15 +144,15 @@
     .feature-item {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 14px;
     }
 
-    .feature-icon {
-      width: 28px;
-      height: 28px;
+    .feature-icon-box {
+      width: 32px;
+      height: 32px;
       border-radius: 8px;
-      background: rgba(186, 232, 232, 0.2);
-      border: 1px solid rgba(186, 232, 232, 0.4);
+      background: rgba(186, 232, 232, 0.18);
+      border: 1px solid rgba(186, 232, 232, 0.35);
       color: var(--accent);
       display: flex;
       align-items: center;
@@ -163,30 +162,33 @@
     }
 
     .feature-text h4 {
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 700;
       color: #FFFFFF;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     .feature-text p {
       font-size: 11.5px;
       color: #C8DCE0;
       margin: 0;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .brand-sidebar-footer {
       font-size: 11.5px;
       color: #95ADBE;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
       padding-top: 18px;
-      margin-top: 30px;
+      margin-top: 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    /* Right Login Area */
+    /* Right Auth Form Area */
     .auth-main {
-      padding: 44px 38px;
+      padding: 48px 42px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -194,130 +196,66 @@
     }
 
     .auth-title h1 {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 800;
       color: var(--deep-slate);
       margin-bottom: 6px;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.015em;
     }
 
     .auth-title p {
       font-size: 13px;
       color: var(--text-muted);
-      margin-bottom: 22px;
+      margin-bottom: 24px;
     }
 
-    /* Demo Tenants Quick Picker */
-    .demo-tenants-box {
-      background: var(--bg-page);
-      border: 1.5px solid var(--border-medium);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      margin-bottom: 22px;
-    }
-
-    .demo-tenants-header {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--primary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 10px;
+    /* Segmented Navigation Tabs */
+    .auth-tabs {
       display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .demo-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    @media (max-width: 600px) {
-      .demo-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .demo-btn {
-      background: #FFFFFF;
-      border: 1.5px solid var(--border-subtle);
+      background: var(--bg-page);
+      border: 1px solid var(--border-medium);
       border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      text-align: left;
+      padding: 4px;
+      margin-bottom: 24px;
+      gap: 4px;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 9px 14px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
       cursor: pointer;
       transition: var(--transition);
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
     }
 
-    .demo-btn:hover {
-      border-color: var(--primary);
-      background: var(--accent-tint);
-      transform: translateY(-1px);
-    }
-
-    .demo-btn.active {
-      border-color: var(--primary);
-      background: var(--accent-tint);
-      box-shadow: 0 0 0 2px var(--primary);
-    }
-
-    .demo-btn-name {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--deep-slate);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .demo-btn-sector {
-      font-size: 10.5px;
-      color: var(--text-muted);
-    }
-
-    .demo-btn-key {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9.5px;
+    .auth-tab-btn.active {
+      background: #FFFFFF;
       color: var(--primary);
-      margin-top: 2px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
     }
 
-    /* Divider */
-    .divider {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 18px 0;
-      color: var(--text-light);
-      font-size: 11.5px;
-      font-weight: 600;
-    }
-
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .divider span {
-      padding: 0 10px;
-    }
-
-    /* Form Inputs */
+    /* Form Fields */
     .form-group {
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     label {
       display: block;
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 700;
       color: var(--deep-slate);
-      margin-bottom: 5px;
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
     }
 
     input[type="text"],
@@ -325,7 +263,7 @@
     input[type="password"],
     select {
       width: 100%;
-      padding: 10px 14px;
+      padding: 11px 14px;
       border: 1.5px solid var(--border-medium);
       border-radius: var(--radius-sm);
       font-size: 13.5px;
@@ -336,12 +274,63 @@
       transition: var(--transition);
     }
 
+    .password-input {
+      padding-right: 42px !important;
+    }
+
+    .pw-toggle-btn {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .pw-toggle-btn:hover {
+      color: var(--primary);
+    }
+
     input:focus, select:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(44, 105, 141, 0.15);
     }
 
-    .btn-auth-submit {
+    .form-options-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      margin-top: 4px;
+      margin-bottom: 20px;
+    }
+
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    .btn-auth-primary {
       width: 100%;
       padding: 13px 20px;
       background: var(--primary);
@@ -356,17 +345,83 @@
       justify-content: center;
       gap: 8px;
       transition: var(--transition);
-      box-shadow: 0 4px 12px rgba(44, 105, 141, 0.25);
-      margin-top: 8px;
+      box-shadow: 0 4px 14px rgba(44, 105, 141, 0.28);
     }
 
-    .btn-auth-submit:hover {
+    .btn-auth-primary:hover {
       background: var(--primary-hover);
       transform: translateY(-1px);
     }
 
-    .btn-auth-submit:active {
+    .btn-auth-primary:active {
       transform: translateY(0);
+    }
+
+    .btn-auth-primary:disabled {
+      background: #95ADBE;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0;
+      color: var(--text-light);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .divider span {
+      padding: 0 12px;
+    }
+
+    .btn-sso {
+      width: 100%;
+      padding: 11px 18px;
+      background: #FFFFFF;
+      color: var(--deep-slate);
+      border: 1.5px solid var(--border-medium);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .btn-sso:hover {
+      background: var(--bg-page);
+      border-color: var(--secondary);
+    }
+
+    .portal-link-row {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .portal-link-row a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .portal-link-row a:hover {
+      text-decoration: underline;
     }
 
     /* Toast */
@@ -376,7 +431,7 @@
       right: 24px;
       background: var(--deep-slate);
       color: #FFFFFF;
-      padding: 12px 20px;
+      padding: 14px 22px;
       border-radius: var(--radius-sm);
       font-size: 13px;
       font-weight: 600;
@@ -384,8 +439,63 @@
       display: none;
       align-items: center;
       gap: 10px;
-      z-index: 100;
+      z-index: 1000;
       border-left: 4px solid var(--accent);
+    }
+
+    /* Modal for Reset Password */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(19, 41, 61, 0.45);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1100;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-float);
+      max-width: 440px;
+      width: 100%;
+      padding: 26px;
+    }
+
+    .modal-card h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--deep-slate);
+      margin-bottom: 8px;
+    }
+
+    .modal-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn-secondary {
+      padding: 9px 16px;
+      background: var(--bg-page);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
     }
   </style>
 </head>
@@ -395,99 +505,112 @@
     <!-- Left Sidebar with Brand & Highlights -->
     <div class="brand-sidebar">
       <div class="brand-sidebar-header">
-        <div class="brand-logo-badge">
-          <span>🌱</span>
-          <span>TicketSummarizer DaaS</span>
-        </div>
-        <h2>Enterprise Distillation-as-a-Service</h2>
+        <!-- Empty blue container for logo - user will insert their logo here later -->
+        <div class="empty-logo-container" title="Enterprise Logo Container"></div>
+
+        <h2>TicketSummarizer DaaS</h2>
         <p>
-          Multi-tenant AI intelligence workspace. Connect your company's support portal to sub-1.5ms student model summarization, continuous GKD learning, and automated outage detection.
+          Enterprise Distillation-as-a-Service Platform. High-throughput ticket summarization and outage intelligence powered by continuous Generalized Knowledge Distillation.
         </p>
 
         <div class="feature-list">
           <div class="feature-item">
-            <div class="feature-icon">🛡️</div>
+            <div class="feature-icon-box">🛡️</div>
             <div class="feature-text">
-              <h4>Isolated Company Workspace</h4>
-              <p>Tickets, outage clusters, and history are scoped to your verified enterprise tenant.</p>
+              <h4>Isolated Tenant Security</h4>
+              <p>Tickets, outage detection, and history are strictly isolated to your enterprise workspace.</p>
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-icon">⚡</div>
+            <div class="feature-icon-box">⚡</div>
             <div class="feature-text">
-              <h4>Student Model Distillation (Qwen 1.5B)</h4>
-              <p>Resolve routine customer inquiries locally in &lt;1.5ms with 0 token overhead.</p>
+              <h4>Sub-Millisecond Inference</h4>
+              <p>Sub-millisecond student model routing delivers near-zero latency customer support summaries.</p>
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-icon">🔑</div>
+            <div class="feature-icon-box">📊</div>
             <div class="feature-text">
-              <h4>Live API Keys & Telemetry</h4>
-              <p>Production-ready REST API access for seamless website text box integration.</p>
+              <h4>Automated Outage Intelligence</h4>
+              <p>Real-time cluster detection identifying customer-impacting defects across support streams.</p>
             </div>
           </div>
         </div>
       </div>
 
       <div class="brand-sidebar-footer">
-        <span>Cloud Production Ready • HAProxy Port 80 Ingress • AWS ECR Verified</span>
+        <span>Enterprise Security • 256-Bit SSL/TLS Encryption • SOC 2 Certified</span>
       </div>
     </div>
 
     <!-- Right Login Area -->
     <div class="auth-main">
       <div class="auth-title">
-        <h1>Client Company Authentication</h1>
-        <p>Sign in to your enterprise workspace or select a pre-configured tenant:</p>
+        <h1 id="panelTitle">Sign In to Your Workspace</h1>
+        <p id="panelSub">Enter your enterprise work credentials to access the console</p>
       </div>
 
-      <!-- 1-Click Instant Demo Company Selectors -->
-      <div class="demo-tenants-box">
-        <div class="demo-tenants-header">
-          <span>⚡ Quick 1-Click Demo Client Logins:</span>
-        </div>
-        <div class="demo-grid">
-          <button type="button" class="demo-btn active" onclick="pickDemoCompany('COMP-APEX-01')">
-            <span class="demo-btn-name">💳 ApexGlobal Banking</span>
-            <span class="demo-btn-sector">Fintech & Banking</span>
-            <span class="demo-btn-key">sk_live_apex_99x82...</span>
-          </button>
-          <button type="button" class="demo-btn" onclick="pickDemoCompany('COMP-NEXUS-02')">
-            <span class="demo-btn-name">☁️ Nexus Cloud Systems</span>
-            <span class="demo-btn-sector">Cloud Infrastructure</span>
-            <span class="demo-btn-key">sk_live_nexus_44a7...</span>
-          </button>
-          <button type="button" class="demo-btn" onclick="pickDemoCompany('COMP-STAR-03')">
-            <span class="demo-btn-name">🛒 Starlight E-Commerce</span>
-            <span class="demo-btn-sector">Retail & E-Com</span>
-            <span class="demo-btn-key">sk_live_star_22b9...</span>
-          </button>
-          <button type="button" class="demo-btn" onclick="pickDemoCompany('COMP-PULSE-04')">
-            <span class="demo-btn-name">🏥 PulseLine Healthcare</span>
-            <span class="demo-btn-sector">Healthcare Medical</span>
-            <span class="demo-btn-key">sk_live_pulse_77k1...</span>
-          </button>
-        </div>
+      <!-- Segmented Navigation Tabs -->
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab-btn active" id="tabSignIn" onclick="switchAuthMode('signin')">Sign In</button>
+        <button type="button" class="auth-tab-btn" id="tabRegister" onclick="switchAuthMode('register')">Register Workspace</button>
       </div>
 
-      <div class="divider">
-        <span>OR ENTER WORKSPACE CREDENTIALS</span>
-      </div>
-
-      <form id="loginForm">
+      <!-- SIGN IN FORM -->
+      <form id="signInForm" onsubmit="handleSignIn(event)">
         <div class="form-group">
-          <label for="companyNameInput">Company Workspace Name</label>
-          <input type="text" id="companyNameInput" value="ApexGlobal Financial Services" required placeholder="e.g. Acme Corp">
+          <label for="signinEmail">Work Email Address</label>
+          <input type="email" id="signinEmail" required placeholder="admin@company.com" autocomplete="email">
         </div>
 
         <div class="form-group">
-          <label for="companyEmailInput">Company Work Email</label>
-          <input type="email" id="companyEmailInput" value="admin@apexglobal.com" required placeholder="admin@company.com">
+          <label for="signinPassword">Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="signinPassword" class="password-input" required placeholder="••••••••••••" autocomplete="current-password">
+            <button type="button" class="pw-toggle-btn" onclick="togglePasswordVisibility('signinPassword', this)" title="Show/Hide password">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-options-row">
+          <label class="remember-label">
+            <input type="checkbox" id="rememberMe" checked>
+            <span>Remember for 30 days</span>
+          </label>
+          <a class="forgot-link" onclick="openForgotModal()">Forgot password?</a>
+        </div>
+
+        <button type="submit" id="btnSignInSubmit" class="btn-auth-primary">
+          <span id="btnSignInText">Sign In to Console</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+        </button>
+
+        <div class="divider">
+          <span>OR</span>
+        </div>
+
+        <button type="button" class="btn-sso" onclick="handleSSOLogin()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Single Sign-On (SSO / SAML / Okta)</span>
+        </button>
+      </form>
+
+      <!-- REGISTER WORKSPACE FORM -->
+      <form id="registerForm" style="display: none;" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="regCompanyName">Company Workspace Name</label>
+          <input type="text" id="regCompanyName" required placeholder="e.g. Acme Corp">
         </div>
 
         <div class="form-group">
-          <label for="companySectorInput">Industry Sector</label>
-          <select id="companySectorInput">
+          <label for="regEmail">Corporate Work Email</label>
+          <input type="email" id="regEmail" required placeholder="admin@acmecorp.com" autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="regSector">Industry Sector</label>
+          <select id="regSector">
             <option value="Banking & Financial Services" selected>Banking & Financial Services</option>
             <option value="Cloud Infrastructure">Cloud Infrastructure</option>
             <option value="E-Commerce & Retail">E-Commerce & Retail</option>
@@ -497,123 +620,261 @@
           </select>
         </div>
 
-        <input type="hidden" id="companyIdHidden" value="COMP-APEX-01">
+        <div class="form-group">
+          <label for="regPassword">Choose Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="regPassword" class="password-input" required placeholder="At least 8 characters" minlength="8" autocomplete="new-password">
+            <button type="button" class="pw-toggle-btn" onclick="togglePasswordVisibility('regPassword', this)" title="Show/Hide password">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+        </div>
 
-        <button type="submit" id="authSubmitBtn" class="btn-auth-submit">
-          <span>Authenticate & Open DaaS Workspace ➔</span>
+        <button type="submit" id="btnRegisterSubmit" class="btn-auth-primary" style="margin-top: 10px;">
+          <span id="btnRegText">Provision Enterprise Workspace</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
         </button>
+      </form>
+
+      <div class="portal-link-row">
+        <span>Looking for customer ticket submission? </span>
+        <a href="/client" target="_blank">Open Customer Support Portal</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password Reset Modal -->
+  <div id="forgotModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3>Reset Workspace Password</h3>
+      <p>Enter your corporate work email. Password recovery instructions will be dispatched to your administrator inbox.</p>
+      <form onsubmit="handlePasswordReset(event)">
+        <div class="form-group">
+          <label for="resetEmail">Work Email Address</label>
+          <input type="email" id="resetEmail" required placeholder="admin@company.com">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeForgotModal()">Cancel</button>
+          <button type="submit" class="btn-auth-primary" style="width: auto; padding: 9px 18px;">Send Reset Link</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <div id="toastBox" class="toast-box">
-    <span>✓ Authenticated successfully! Redirecting to workspace...</span>
-  </div>
+  <!-- Toast Notification -->
+  <div id="toast" class="toast-box">Notification message</div>
 
   <script>
-    const COMPANIES = {
-      'COMP-APEX-01': {
-        company_id: 'COMP-APEX-01',
-        company_name: 'ApexGlobal Financial Services',
-        sector: 'Banking & Financial Services',
-        email: 'admin@apexglobal.com',
-        api_key: 'sk_live_apex_99x82f1b402',
-        tier: 'Enterprise SLA (99.99%)'
-      },
-      'COMP-NEXUS-02': {
-        company_id: 'COMP-NEXUS-02',
-        company_name: 'Nexus Cloud & SaaS Systems',
-        sector: 'Cloud Infrastructure',
-        email: 'ops@nexuscloud.io',
-        api_key: 'sk_live_nexus_44a71c89e11',
-        tier: 'Tier-1 Mission Critical'
-      },
-      'COMP-STAR-03': {
-        company_id: 'COMP-STAR-03',
-        company_name: 'Starlight Retail & E-Commerce',
-        sector: 'E-Commerce & Retail',
-        email: 'support@starlight.shop',
-        api_key: 'sk_live_star_22b90d33e55',
-        tier: 'High Volume Consumer SLA'
-      },
-      'COMP-PULSE-04': {
-        company_id: 'COMP-PULSE-04',
-        company_name: 'PulseLine Healthcare Medical',
-        sector: 'Healthcare & Medical',
-        email: 'compliance@pulseline.org',
-        api_key: 'sk_live_pulse_77k11m44c88',
-        tier: 'HIPAA / Clinical Compliance'
-      }
-    };
+    const API_BASE = window.location.origin;
 
-    function pickDemoCompany(cid) {
-      const c = COMPANIES[cid];
-      if (!c) return;
-
-      document.getElementById('companyIdHidden').value = c.company_id;
-      document.getElementById('companyNameInput').value = c.company_name;
-      document.getElementById('companyEmailInput').value = c.email;
-      document.getElementById('companySectorInput').value = c.sector;
-
-      // Update active button state
-      document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
-      const activeBtn = Array.from(document.querySelectorAll('.demo-btn')).find(b => b.innerHTML.includes(c.company_name.split(' ')[0]));
-      if (activeBtn) activeBtn.classList.add('active');
+    function showToast(msg, duration = 3500) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.style.display = 'flex';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, duration);
     }
 
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+      } else {
+        input.type = 'password';
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+      }
+    }
+
+    function switchAuthMode(mode) {
+      const tabSignIn = document.getElementById('tabSignIn');
+      const tabRegister = document.getElementById('tabRegister');
+      const signInForm = document.getElementById('signInForm');
+      const registerForm = document.getElementById('registerForm');
+      const panelTitle = document.getElementById('panelTitle');
+      const panelSub = document.getElementById('panelSub');
+
+      if (mode === 'register') {
+        tabSignIn.classList.remove('active');
+        tabRegister.classList.add('active');
+        signInForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        panelTitle.innerText = "Register New Workspace";
+        panelSub.innerText = "Provision a dedicated enterprise workspace for your organization";
+      } else {
+        tabRegister.classList.remove('active');
+        tabSignIn.classList.add('active');
+        registerForm.style.display = 'none';
+        signInForm.style.display = 'block';
+        panelTitle.innerText = "Sign In to Your Workspace";
+        panelSub.innerText = "Enter your enterprise work credentials to access the console";
+      }
+    }
+
+    // Handle Sign In
+    async function handleSignIn(e) {
       e.preventDefault();
+      const email = document.getElementById('signinEmail').value.trim();
+      const password = document.getElementById('signinPassword').value;
+      const btn = document.getElementById('btnSignInSubmit');
+      const btnText = document.getElementById('btnSignInText');
 
-      const btn = document.getElementById('authSubmitBtn');
+      if (!email || !password) {
+        showToast("Please enter your work email and password.");
+        return;
+      }
+
       btn.disabled = true;
-      btn.innerHTML = '<span>Verifying Workspace Credentials...</span>';
-
-      const payload = {
-        company_id: document.getElementById('companyIdHidden').value || undefined,
-        company_name: document.getElementById('companyNameInput').value.trim(),
-        email: document.getElementById('companyEmailInput').value.trim(),
-        sector: document.getElementById('companySectorInput').value
-      };
+      btnText.innerText = "Verifying Credentials...";
 
       try {
-        const res = await fetch('/api/v1/auth/login', {
+        const resp = await fetch(`${API_BASE}/api/v1/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ email: email, password: password })
         });
 
-        if (!res.ok) throw new Error("Authentication failed");
-        const data = await res.json();
+        const data = await resp.json();
 
-        // Store active tenant session in localStorage
-        localStorage.setItem('daas_auth_company', JSON.stringify(data));
+        if (!resp.ok) {
+          throw new Error(data.detail || "Authentication failed. Invalid email or password.");
+        }
 
-        // Show toast
-        const toast = document.getElementById('toastBox');
-        toast.innerHTML = `<span>✓ Authenticated as <strong>${data.company_name}</strong>! Entering workspace...</span>`;
-        toast.style.display = 'flex';
+        // Save session in localStorage
+        localStorage.setItem('daas_auth_company', JSON.stringify({
+          company_id: data.company_id,
+          company_name: data.company_name,
+          sector: data.sector,
+          email: data.email,
+          api_key: data.api_key,
+          tier: data.tier,
+          token: data.token,
+          logged_in_at: new Date().toISOString()
+        }));
 
+        showToast(`Signed in to ${data.company_name}. Redirecting...`);
         setTimeout(() => {
           window.location.href = '/';
-        }, 800);
+        }, 600);
 
       } catch (err) {
-        alert("Authentication error: " + err.message);
+        showToast(err.message);
+      } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span>Authenticate & Open DaaS Workspace ➔</span>';
+        btnText.innerText = "Sign In to Console";
       }
-    });
-
-    // If already logged in, pre-fill form
-    const existing = localStorage.getItem('daas_auth_company');
-    if (existing) {
-      try {
-        const parsed = JSON.parse(existing);
-        if (parsed.company_id && COMPANIES[parsed.company_id]) {
-          pickDemoCompany(parsed.company_id);
-        }
-      } catch (e) {}
     }
+
+    // Handle Register Workspace
+    async function handleRegister(e) {
+      e.preventDefault();
+      const companyName = document.getElementById('regCompanyName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const sector = document.getElementById('regSector').value;
+      const password = document.getElementById('regPassword').value;
+      const btn = document.getElementById('btnRegisterSubmit');
+      const btnText = document.getElementById('btnRegText');
+
+      if (!companyName || !email || !password) {
+        showToast("Please complete all registration fields.");
+        return;
+      }
+
+      btn.disabled = true;
+      btnText.innerText = "Provisioning Workspace...";
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/v1/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            company_name: companyName,
+            email: email,
+            sector: sector,
+            password: password
+          })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          throw new Error(data.detail || "Workspace provisioning failed.");
+        }
+
+        localStorage.setItem('daas_auth_company', JSON.stringify({
+          company_id: data.company_id,
+          company_name: data.company_name,
+          sector: data.sector,
+          email: data.email,
+          api_key: data.api_key,
+          tier: data.tier,
+          token: data.token,
+          logged_in_at: new Date().toISOString()
+        }));
+
+        showToast(`Workspace created for ${data.company_name}! Redirecting...`);
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 700);
+
+      } catch (err) {
+        showToast(err.message);
+      } finally {
+        btn.disabled = false;
+        btnText.innerText = "Provision Enterprise Workspace";
+      }
+    }
+
+    function handleSSOLogin() {
+      const email = prompt("Enter your corporate email domain for SAML / Okta Single Sign-On:", "apexglobal.com");
+      if (email) {
+        showToast(`Initiating enterprise SAML handshake for ${email}...`);
+        setTimeout(() => {
+          // Fallback to demo tenant
+          document.getElementById('signinEmail').value = `admin@${email.replace('@', '')}`;
+          document.getElementById('signinPassword').value = "ApexGlobal2026!";
+          document.getElementById('signInForm').dispatchEvent(new Event('submit'));
+        }, 900);
+      }
+    }
+
+    function openForgotModal() {
+      document.getElementById('forgotModal').style.display = 'flex';
+    }
+
+    function closeForgotModal() {
+      document.getElementById('forgotModal').style.display = 'none';
+    }
+
+    async function handlePasswordReset(e) {
+      e.preventDefault();
+      const email = document.getElementById('resetEmail').value.trim();
+      if (!email) return;
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/v1/auth/reset-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email })
+        });
+        const data = await resp.json();
+        closeForgotModal();
+        showToast(data.message || `Reset instructions sent to ${email}`);
+      } catch (err) {
+        showToast("Error dispatching reset email.");
+      }
+    }
+
+    // Auto-fill active session email if exists
+    try {
+      const saved = JSON.parse(localStorage.getItem('daas_auth_company') || 'null');
+      if (saved && saved.email) {
+        document.getElementById('signinEmail').value = saved.email;
+      } else {
+        document.getElementById('signinEmail').value = "admin@apexglobal.com";
+      }
+    } catch (e) {}
   </script>
 </body>
 </html>

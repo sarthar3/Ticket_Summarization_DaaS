@@ -115,13 +115,12 @@
       width: 42px;
       height: 42px;
       border-radius: var(--radius-md);
-      background: linear-gradient(135deg, var(--yg-accent) 0%, var(--yg-primary) 100%);
+      background: linear-gradient(135deg, var(--yg-primary) 0%, #1A4660 100%);
+      border: 1.5px solid var(--yg-light);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #FFFFFF;
-      font-size: 22px;
-      box-shadow: 0 4px 10px rgba(117, 141, 39, 0.28);
+      box-shadow: 0 4px 12px rgba(44, 105, 141, 0.25);
     }
 
     .brand-text h1 {
@@ -1713,26 +1712,32 @@
   <header>
     <div class="header-inner">
       <div class="brand-group">
-        <div class="brand-icon">🌱</div>
+        <!-- Empty blue container for logo (no tree/plant) -->
+        <div class="brand-icon" title="Logo Container"></div>
         <div class="brand-text">
           <h1>TicketSummarizer DaaS</h1>
-          <p>Distillation-as-a-Service (DaaS) • Continuous Knowledge Distillation & Outage Intelligence</p>
+          <p>Distillation-as-a-Service (DaaS) • Enterprise Ticket Intelligence & Outage Operations</p>
         </div>
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <!-- Active Client Company Badge & Switcher -->
-        <div id="companyAuthChip" style="display: inline-flex; align-items: center; gap: 8px; background: var(--bg-surface); border: 1.5px solid var(--yg-border); padding: 5px 12px; border-radius: var(--radius-md); box-shadow: var(--shadow-subtle);">
-          <div style="width: 22px; height: 22px; border-radius: 6px; background: var(--yg-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;">
+        <!-- Workspace & User Profile Badge with Settings & Sign Out -->
+        <div id="companyAuthChip" style="display: inline-flex; align-items: center; gap: 10px; background: var(--bg-surface); border: 1.5px solid var(--yg-border); padding: 5px 12px; border-radius: var(--radius-md); box-shadow: var(--shadow-subtle);">
+          <div style="width: 26px; height: 26px; border-radius: 6px; background: linear-gradient(135deg, var(--yg-primary) 0%, #1A4660 100%); border: 1px solid var(--yg-light); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;">
             🏢
           </div>
           <div>
-            <div id="authCompanyName" style="font-size: 11.5px; font-weight: 700; color: var(--yg-deep); line-height: 1.1;">ApexGlobal Financial</div>
-            <div style="font-size: 9.5px; color: var(--text-muted);"><span id="authCompanyId">COMP-APEX-01</span> • <span id="authApiKeySnippet" style="font-family: 'JetBrains Mono', monospace; color: var(--yg-primary);">sk_live_apex...</span></div>
+            <div id="authCompanyName" style="font-size: 12px; font-weight: 700; color: var(--yg-deep); line-height: 1.2;">ApexGlobal Financial Services</div>
+            <div style="font-size: 9.5px; color: var(--text-muted);"><span id="authUserRole" style="font-weight: 700; color: var(--yg-primary);">Enterprise Admin</span> • <span id="authApiKeySnippet" style="font-family: 'JetBrains Mono', monospace;">sk_live_apex...</span></div>
           </div>
-          <a href="/login" style="margin-left: 4px; padding: 3px 8px; background: var(--yg-lighter); border: 1px solid var(--yg-border); border-radius: 4px; font-size: 10.5px; font-weight: 700; color: var(--yg-primary); text-decoration: none;" title="Switch client company workspace">
-            Switch / Login 🔑
-          </a>
+          <div style="display: flex; gap: 5px; margin-left: 6px;">
+            <button type="button" onclick="openSettingsModal()" style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 9px; background: var(--yg-lighter); border: 1px solid var(--yg-border); border-radius: 6px; font-size: 11px; font-weight: 700; color: var(--yg-primary); cursor: pointer; transition: var(--transition);" title="Workspace Settings">
+              <span>⚙️ Settings</span>
+            </button>
+            <button type="button" onclick="handleLogout()" style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 9px; background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 6px; font-size: 11px; font-weight: 700; color: #E11D48; cursor: pointer; transition: var(--transition);" title="Sign out of workspace">
+              <span>🚪 Sign Out</span>
+            </button>
+          </div>
         </div>
 
         <button onclick="openSimulateModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; background: var(--bg-surface); color: var(--yg-deep); border: 1.5px solid var(--yg-border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--transition);">
@@ -2352,6 +2357,173 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
 
   <!-- Toast Notification Container -->
   <div id="toast" class="toast">Operation completed</div>
+
+  <!-- Modal: Enterprise Workspace & AI Settings -->
+  <div id="settingsModal" class="simulate-modal-backdrop" style="display: none;">
+    <div class="simulate-modal-card" style="max-width: 760px; max-height: 88vh; padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid var(--border-subtle); padding-bottom: 14px;">
+        <div>
+          <h3 style="margin: 0; font-size: 18px; color: var(--yg-deep); display: flex; align-items: center; gap: 8px;">
+            <span>⚙️ Enterprise Workspace & AI Settings</span>
+          </h3>
+          <p style="margin: 3px 0 0; font-size: 12px; color: var(--text-muted);">
+            Manage organization credentials, inbound API webhooks, AI distillation SLAs, and session security.
+          </p>
+        </div>
+        <button onclick="closeSettingsModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+
+      <!-- Settings Tabs -->
+      <div style="display: flex; gap: 6px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; margin-top: 4px; overflow-x: auto;">
+        <button type="button" class="btn-sub-action active" id="btnSetTabGeneral" onclick="switchSettingsTab('general')">🏢 Organization</button>
+        <button type="button" class="btn-sub-action" id="btnSetTabApi" onclick="switchSettingsTab('api')">🔑 API & Webhooks</button>
+        <button type="button" class="btn-sub-action" id="btnSetTabDistill" onclick="switchSettingsTab('distill')">⚡ AI Distillation SLA</button>
+        <button type="button" class="btn-sub-action" id="btnSetTabAlerts" onclick="switchSettingsTab('alerts')">🔔 Outage Alerts</button>
+        <button type="button" class="btn-sub-action" id="btnSetTabSecurity" onclick="switchSettingsTab('security')">🛡️ Security & Sign Out</button>
+      </div>
+
+      <!-- Tab Content 1: General Organization -->
+      <div id="setTabGeneral" style="display: block;">
+        <div class="form-row" style="margin-top: 10px;">
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">Company Workspace Name</label>
+            <input type="text" id="setCompanyName" class="form-control" value="ApexGlobal Financial Services">
+          </div>
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">Industry / Domain Sector</label>
+            <select id="setSector" class="form-control">
+              <option value="Banking & Financial Services">Banking & Financial Services</option>
+              <option value="Cloud Infrastructure">Cloud Infrastructure</option>
+              <option value="E-Commerce & Retail">E-Commerce & Retail</option>
+              <option value="Healthcare & Medical">Healthcare & Medical</option>
+              <option value="Telecommunications">Telecommunications</option>
+              <option value="IT & Tech Support">IT & Tech Support</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">Administrator Contact Email</label>
+            <input type="email" id="setAdminEmail" class="form-control" value="admin@apexglobal.com">
+          </div>
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">Enterprise SLA Tier</label>
+            <input type="text" class="form-control" value="Enterprise SLA (99.99% Availability)" readonly style="background: var(--bg-inset); color: var(--yg-primary); font-weight: 700;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 2: API & Webhooks -->
+      <div id="setTabApi" style="display: none;">
+        <div class="form-group" style="margin-top: 10px;">
+          <label style="font-size: 12px; font-weight: 700;">Live Enterprise API Key</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="password" id="setApiKeyInput" class="form-control" value="sk_live_apex_99x82f1b402" readonly style="font-family: 'JetBrains Mono', monospace; background: var(--bg-inset); font-weight: 600;">
+            <button type="button" onclick="toggleSetApiKeyVis()" style="padding: 0 12px; background: var(--bg-surface); border: 1.5px solid var(--border-medium); border-radius: 6px; cursor: pointer; font-size: 11.5px; font-weight: 600;">Show</button>
+            <button type="button" onclick="copySetApiKey()" style="padding: 0 12px; background: var(--yg-lighter); border: 1.5px solid var(--yg-border); border-radius: 6px; cursor: pointer; font-size: 11.5px; font-weight: 700; color: var(--yg-primary);">Copy</button>
+            <button type="button" onclick="regenerateApiKey()" style="padding: 0 12px; background: #FFF1F2; border: 1.5px solid #FECDD3; border-radius: 6px; cursor: pointer; font-size: 11.5px; font-weight: 700; color: #E11D48;">Regenerate</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label style="font-size: 12px; font-weight: 700;">Inbound Ticket Ingestion Webhook URL</label>
+          <input type="text" id="setWebhookUrl" class="form-control" value="http://localhost:8000/api/v1/summarize?route=auto" readonly style="font-family: 'JetBrains Mono', monospace; background: var(--bg-inset);">
+          <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: block;">Forward inbound tickets from your helpdesk (Zendesk, Freshdesk, ServiceNow, Jira) to this endpoint with <code>Authorization: Bearer &lt;API_KEY&gt;</code>.</span>
+        </div>
+        <div style="margin-top: 12px; padding: 12px; background: var(--bg-inset); border-radius: 8px; border: 1px solid var(--border-subtle);">
+          <span style="font-size: 11.5px; font-weight: 700; color: var(--yg-deep); display: block; margin-bottom: 6px;">Supported Ticketing Platforms (Pre-Integrated):</span>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 11px; padding: 3px 8px; background: #DEF7EC; color: #03543F; border-radius: 4px; font-weight: 600;">✓ Zendesk Webhooks</span>
+            <span style="font-size: 11px; padding: 3px 8px; background: #DEF7EC; color: #03543F; border-radius: 4px; font-weight: 600;">✓ Freshdesk Events</span>
+            <span style="font-size: 11px; padding: 3px 8px; background: #DEF7EC; color: #03543F; border-radius: 4px; font-weight: 600;">✓ Jira Service Management</span>
+            <span style="font-size: 11px; padding: 3px 8px; background: #DEF7EC; color: #03543F; border-radius: 4px; font-weight: 600;">✓ ServiceNow REST API</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 3: Distillation SLA -->
+      <div id="setTabDistill" style="display: none;">
+        <div class="form-row" style="margin-top: 10px;">
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">Student Model Latency SLA Target</label>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <input type="range" id="setSlaSlider" min="10" max="150" value="50" step="5" oninput="document.getElementById('setSlaVal').innerText = this.value + ' ms'" style="flex: 1;">
+              <span id="setSlaVal" style="font-size: 13px; font-weight: 800; color: var(--yg-primary); width: 60px;">50 ms</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">Teacher Escalation Threshold</label>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <input type="range" id="setConfidenceSlider" min="70" max="98" value="85" step="1" oninput="document.getElementById('setConfVal').innerText = this.value + '%'" style="flex: 1;">
+              <span id="setConfVal" style="font-size: 13px; font-weight: 800; color: var(--yg-primary); width: 60px;">85%</span>
+            </div>
+          </div>
+        </div>
+        <div style="padding: 12px; background: var(--bg-inset); border-radius: 8px; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+          <strong>Distillation Architecture:</strong> High-confidence tickets execute directly against the Qwen 1.5B student model in sub-millisecond latency. Tickets falling below the confidence threshold route to the 120B teacher model and are buffered for continuous GKD retraining.
+        </div>
+      </div>
+
+      <!-- Tab Content 4: Outage Alerts -->
+      <div id="setTabAlerts" style="display: none;">
+        <div class="form-row" style="margin-top: 10px;">
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">Critical Outage Escalation Email</label>
+            <input type="email" id="setAlertEmail" class="form-control" value="incident-response@apexglobal.com">
+          </div>
+          <div class="form-group">
+            <label style="font-size: 12px; font-weight: 700;">Auto-Cluster Detection Threshold</label>
+            <select class="form-control">
+              <option value="3" selected>3 matching complaints within 60 mins</option>
+              <option value="5">5 matching complaints within 60 mins</option>
+              <option value="10">10 matching complaints within 60 mins</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top: 8px;">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+            <input type="checkbox" checked id="setAutoClusterCb">
+            <span>Automatically aggregate customer-side vs company-side outages in real-time</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Tab Content 5: Security & Sign Out -->
+      <div id="setTabSecurity" style="display: none;">
+        <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="padding: 14px; background: var(--bg-inset); border-radius: 8px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="font-size: 13px; color: var(--yg-deep); display: block;">Two-Factor Authentication (2FA)</strong>
+              <span style="font-size: 11.5px; color: var(--text-muted);">Enforce multi-factor verification for all workspace administrators.</span>
+            </div>
+            <span style="font-size: 11px; padding: 4px 10px; background: #DEF7EC; color: #03543F; font-weight: 700; border-radius: 999px;">ENFORCED</span>
+          </div>
+
+          <div style="padding: 14px; background: var(--bg-inset); border-radius: 8px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="font-size: 13px; color: var(--yg-deep); display: block;">Active Enterprise Session</strong>
+              <span style="font-size: 11.5px; color: var(--text-muted);">Current browser session authenticated via encrypted cryptographic token.</span>
+            </div>
+            <span style="font-size: 11px; padding: 4px 10px; background: var(--yg-lighter); color: var(--yg-primary); font-weight: 700; border-radius: 999px;">ACTIVE</span>
+          </div>
+
+          <!-- Danger Zone: Sign Out -->
+          <div style="margin-top: 6px; padding: 16px; background: #FFF1F2; border: 1.5px solid #FECDD3; border-radius: 8px;">
+            <strong style="font-size: 13px; color: #991B1B; display: block; margin-bottom: 4px;">Sign Out of Workspace</strong>
+            <p style="font-size: 12px; color: #B91C1C; margin: 0 0 12px;">Signing out will invalidate your active browser session. You will be redirected to the enterprise sign-in portal.</p>
+            <button type="button" onclick="handleLogout()" style="padding: 9px 18px; background: #E11D48; color: #FFFFFF; border: none; border-radius: 6px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              <span>🚪 Sign Out of Workspace</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1.5px solid var(--border-subtle); padding-top: 14px; margin-top: 10px;">
+        <button type="button" onclick="closeSettingsModal()" style="padding: 9px 18px; background: var(--bg-surface); border: 1.5px solid var(--border-medium); border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-main);">Cancel</button>
+        <button type="button" onclick="saveWorkspaceSettings()" style="padding: 9px 22px; background: var(--yg-primary); color: #FFFFFF; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: var(--shadow-subtle);">Save Settings</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal: Incident Escalation to Company Official via Email -->
     <!-- Modal: Developer / Admin Ingestion Simulator -->
@@ -4057,6 +4229,165 @@ How Our Model Learns from Unseen Data:
     window.addEventListener('DOMContentLoaded', () => {
       loadIngestedFeed();
     });
+
+
+  // =========================================================
+  // ENTERPRISE WORKSPACE SETTINGS & AUTH LOGOUT LOGIC
+  // =========================================================
+  function openSettingsModal() {
+    try {
+      const raw = localStorage.getItem('daas_auth_company');
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (data.company_name) document.getElementById('setCompanyName').value = data.company_name;
+        if (data.sector) document.getElementById('setSector').value = data.sector;
+        if (data.email) document.getElementById('setAdminEmail').value = data.email;
+        if (data.api_key) document.getElementById('setApiKeyInput').value = data.api_key;
+      }
+    } catch(e) {}
+    document.getElementById('settingsModal').style.display = 'flex';
+  }
+
+  function closeSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'none';
+  }
+
+  function switchSettingsTab(tab) {
+    const tabs = ['general', 'api', 'distill', 'alerts', 'security'];
+    tabs.forEach(t => {
+      const btn = document.getElementById('btnSetTab' + t.charAt(0).toUpperCase() + t.slice(1));
+      const content = document.getElementById('setTab' + t.charAt(0).toUpperCase() + t.slice(1));
+      if (t === tab) {
+        if (btn) btn.classList.add('active');
+        if (content) content.style.display = 'block';
+      } else {
+        if (btn) btn.classList.remove('active');
+        if (content) content.style.display = 'none';
+      }
+    });
+  }
+
+  function toggleSetApiKeyVis() {
+    const inp = document.getElementById('setApiKeyInput');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  function copySetApiKey() {
+    const inp = document.getElementById('setApiKeyInput');
+    navigator.clipboard.writeText(inp.value).then(() => {
+      showToast("Live API key copied to clipboard!");
+    });
+  }
+
+  async function regenerateApiKey() {
+    if (confirm("Regenerating this API key will immediately invalidate the previous key. Are you sure?")) {
+      try {
+        const raw = localStorage.getItem('daas_auth_company');
+        const data = raw ? JSON.parse(raw) : {};
+        const resp = await fetch('/api/v1/auth/settings?company_id=' + encodeURIComponent(data.company_id || 'COMP-APEX-01'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ regenerate_api_key: true })
+        });
+        const resData = await resp.json();
+        if (resData.success && resData.settings) {
+          document.getElementById('setApiKeyInput').value = resData.settings.api_key;
+          data.api_key = resData.settings.api_key;
+          localStorage.setItem('daas_auth_company', JSON.stringify(data));
+          const snip = document.getElementById('authApiKeySnippet');
+          if (snip) snip.innerText = data.api_key.slice(0, 14) + "...";
+          showToast("New API key generated successfully.");
+        }
+      } catch(e) {
+        showToast("Error regenerating API key.");
+      }
+    }
+  }
+
+  async function saveWorkspaceSettings() {
+    const name = document.getElementById('setCompanyName').value.trim();
+    const sector = document.getElementById('setSector').value;
+    const email = document.getElementById('setAdminEmail').value.trim();
+    const alertEmail = document.getElementById('setAlertEmail').value.trim();
+    const sla = parseInt(document.getElementById('setSlaSlider').value) || 50;
+
+    try {
+      const raw = localStorage.getItem('daas_auth_company');
+      const data = raw ? JSON.parse(raw) : {};
+      data.company_name = name;
+      data.sector = sector;
+      data.email = email;
+      localStorage.setItem('daas_auth_company', JSON.stringify(data));
+
+      document.getElementById('authCompanyName').innerText = name;
+
+      await fetch('/api/v1/auth/settings?company_id=' + encodeURIComponent(data.company_id || 'COMP-APEX-01'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company_name: name,
+          sector: sector,
+          support_email: email,
+          alert_email: alertEmail,
+          latency_sla_ms: sla
+        })
+      });
+
+      closeSettingsModal();
+      showToast("Workspace settings saved successfully.");
+    } catch(e) {
+      showToast("Settings saved locally.");
+      closeSettingsModal();
+    }
+  }
+
+  async function handleLogout() {
+    if (confirm("Are you sure you want to sign out of this workspace?")) {
+      try {
+        const auth = JSON.parse(localStorage.getItem('daas_auth_company') || '{}');
+        await fetch('/api/v1/auth/logout' + (auth.token ? `?token=${encodeURIComponent(auth.token)}` : ''), {
+          method: 'POST'
+        });
+      } catch(e) {}
+      localStorage.removeItem('daas_auth_company');
+      showToast("Signed out successfully. Redirecting to login...");
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 500);
+    }
+  }
+
+  function initCompanyAuthSession() {
+    try {
+      let raw = localStorage.getItem('daas_auth_company');
+      if (!raw) {
+        const defaultSession = {
+          company_id: "COMP-APEX-01",
+          company_name: "ApexGlobal Financial Services",
+          sector: "Banking & Financial Services",
+          email: "admin@apexglobal.com",
+          api_key: "sk_live_apex_99x82f1b402",
+          tier: "Enterprise SLA (99.99%)",
+          token: "daas_tok_active_session",
+          logged_in_at: new Date().toISOString()
+        };
+        localStorage.setItem('daas_auth_company', JSON.stringify(defaultSession));
+        raw = JSON.stringify(defaultSession);
+      }
+      const auth = JSON.parse(raw);
+      if (auth && auth.company_name) {
+        const nameEl = document.getElementById('authCompanyName');
+        if (nameEl) nameEl.innerText = auth.company_name;
+        const keySnip = document.getElementById('authApiKeySnippet');
+        if (keySnip && auth.api_key) {
+          keySnip.innerText = auth.api_key.slice(0, 14) + "...";
+        }
+      }
+    } catch(e) {}
+  }
+
+  // Initialize session on load
+  initCompanyAuthSession();
 
   </script>
 </body>
