@@ -77,3 +77,39 @@ def test_api_invalid_payload(mock_pipeline):
     assert resp.status_code == 422  # Unprocessable Entity
 
     app.dependency_overrides.clear()
+
+
+def test_auth_and_pages():
+    client = TestClient(app)
+
+    # Test static pages
+    assert client.get('/').status_code == 200
+    assert client.get('/client').status_code == 200
+    assert client.get('/login').status_code == 200
+
+    # Test GET /api/v1/auth/companies
+    companies_resp = client.get('/api/v1/auth/companies')
+    assert companies_resp.status_code == 200
+    companies = companies_resp.json()
+    assert len(companies) >= 4
+    assert any(c['company_id'] == 'COMP-APEX-01' for c in companies)
+
+    # Test POST /api/v1/auth/login preset company
+    login_resp = client.post('/api/v1/auth/login', json={
+        'company_id': 'COMP-APEX-01'
+    })
+    assert login_resp.status_code == 200
+    login_data = login_resp.json()
+    assert login_data['success'] is True
+    assert login_data['company_name'] == 'ApexGlobal Financial Services'
+    assert 'daas_tok_' in login_data['token']
+
+    # Test POST /api/v1/auth/login custom company
+    custom_resp = client.post('/api/v1/auth/login', json={
+        'company_name': 'Acme Corp',
+        'email': 'support@acme.io'
+    })
+    assert custom_resp.status_code == 200
+    custom_data = custom_resp.json()
+    assert custom_data['success'] is True
+    assert custom_data['company_name'] == 'Acme Corp'

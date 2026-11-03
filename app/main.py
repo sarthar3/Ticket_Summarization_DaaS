@@ -58,6 +58,14 @@ def serve_client_ui():
         return FileResponse(client_file)
     return {"message": "Client testing portal is not found."}
 
+@app.get("/login", include_in_schema=False)
+def serve_login_ui():
+    """Serves the client company workspace authentication portal."""
+    login_file = STATIC_DIR / "login.html"
+    if login_file.exists():
+        return FileResponse(login_file)
+    return {"message": "Client login portal is not found."}
+
 app.include_router(api_router)
 app.include_router(api_router, prefix="/api/v1")
 

@@ -254,3 +254,23 @@ class TeacherBufferStatsResponse(BaseModel):
         if self.latest_samples is None:
             self.latest_samples = self.recent_samples
 
+
+
+class CompanyLoginRequest(BaseModel):
+    company_id: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
+    company_name: Optional[str] = None
+    sector: Optional[str] = None
+
+
+class CompanyAuthResponse(BaseModel):
+    success: bool
+    company_id: str
+    company_name: str
+    sector: str
+    email: str
+    api_key: str
+    tier: str
+    token: str
+    message: str

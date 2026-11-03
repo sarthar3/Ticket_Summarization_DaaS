@@ -13,48 +13,51 @@
 
   <style>
     /* =========================================================
-       CSS DESIGN SYSTEM: YELLOWISH-GREEN & LIGHT BEIGE PALETTE
+       CSS DESIGN SYSTEM: NORDIC OCEAN PALETTE (EXTRACTED FROM USER IMAGES)
+       • Image 1: #2C698D (Deep Steel Blue)
+       • Image 2: #95ADBE (Slate Denim)
+       • Image 3: #BAE8E8 (Ice Aqua / Mint Cyan)
        ========================================================= */
     :root {
-      /* Warm Light Beige Backgrounds */
-      --bg-canvas: #F7F5F0;
+      /* Crisp Canvas & Clean Surfaces */
+      --bg-canvas: #F5F9FA;
       --bg-surface: #FFFFFF;
-      --bg-card: #FDFBF7;
-      --bg-card-hover: #F8F5EE;
-      --bg-inset: #F2EEE5;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #F0F6F8;
+      --bg-inset: #EBF3F5;
 
-      /* Yellowish-Green Brand Tokens */
-      --yg-deep: #3A4716;        /* Deep Olive Charcoal */
-      --yg-primary: #758D27;     /* Yellowish Green / Moss Primary */
-      --yg-primary-hover: #63771E;
-      --yg-accent: #9BB835;      /* Fresh Yellowish Green */
-      --yg-light: #EEF4D6;       /* Light Warm Yellow-Green Tint */
-      --yg-lighter: #F6F9EA;     /* Very Light Yellow-Green Glow */
-      --yg-border: #D1DE9E;
+      /* Core Brand Tokens */
+      --yg-deep: #13293D;           /* Deep Navy Slate Header & Ink */
+      --yg-primary: #2C698D;        /* Image 1: Deep Steel Blue */
+      --yg-primary-hover: #225370;
+      --yg-accent: #95ADBE;         /* Image 2: Slate Denim */
+      --yg-light: #BAE8E8;          /* Image 3: Ice Aqua Accent */
+      --yg-lighter: #EBF7F7;        /* Soft Ice Cyan Tint */
+      --yg-border: #C8DCE0;         /* Soft Cool Border */
 
       /* Neutral Borders & Inks */
-      --border-subtle: #E8E3D7;
-      --border-medium: #DDD7C8;
-      --text-main: #232717;      /* Warm Deep Slate */
-      --text-muted: #656955;     /* Muted Olive Gray */
-      --text-light: #949984;     /* Light Muted */
+      --border-subtle: #E2ECEE;
+      --border-medium: #C8DCE0;
+      --text-main: #13293D;         /* Deep Slate Main Text */
+      --text-muted: #566D7E;        /* Muted Slate Grey */
+      --text-light: #889DAF;        /* Light Slate */
 
       /* Accents & Status */
-      --accent-gold: #C99700;
-      --accent-teacher: #4E6E1D;
-      --accent-student: #29688A;
-      --status-success-bg: #EAF4DC;
-      --status-success-text: #375E12;
-      --status-warn-bg: #FEF7DE;
-      --status-warn-text: #8E6A00;
-      --status-err-bg: #FDE8E8;
-      --status-err-text: #B91C1C;
+      --accent-gold: #D97706;
+      --accent-teacher: #1E3A8A;
+      --accent-student: #2C698D;
+      --status-success-bg: #DEF7EC;
+      --status-success-text: #03543F;
+      --status-warn-bg: #FEF3C7;
+      --status-warn-text: #92400E;
+      --status-err-bg: #FEE2E2;
+      --status-err-text: #991B1B;
       --status-err-border: #F87171;
 
       /* Elevation & Radii */
-      --shadow-subtle: 0 2px 6px rgba(45, 52, 28, 0.04);
-      --shadow-card: 0 4px 16px rgba(45, 52, 28, 0.06);
-      --shadow-float: 0 12px 32px rgba(45, 52, 28, 0.09);
+      --shadow-subtle: 0 2px 6px rgba(44, 105, 141, 0.05);
+      --shadow-card: 0 4px 16px rgba(44, 105, 141, 0.08);
+      --shadow-float: 0 12px 32px rgba(19, 41, 61, 0.12);
       --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 20px;
@@ -1718,15 +1721,26 @@
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <span style="font-size: 11.5px; background: var(--yg-light); color: var(--yg-deep); padding: 5px 12px; border-radius: var(--radius-full); font-weight: 700; border: 1px solid var(--yg-border); display: inline-flex; align-items: center; gap: 5px;">
-          ☁️ AWS Ready (Port 8000)
-        </span>
-        <button onclick="openSimulateModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--bg-surface); color: var(--yg-deep); border: 1px solid var(--yg-border); border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: var(--transition);">
-          <span>⚡ Ingest / Test Payload</span>
+        <!-- Active Client Company Badge & Switcher -->
+        <div id="companyAuthChip" style="display: inline-flex; align-items: center; gap: 8px; background: var(--bg-surface); border: 1.5px solid var(--yg-border); padding: 5px 12px; border-radius: var(--radius-md); box-shadow: var(--shadow-subtle);">
+          <div style="width: 22px; height: 22px; border-radius: 6px; background: var(--yg-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;">
+            🏢
+          </div>
+          <div>
+            <div id="authCompanyName" style="font-size: 11.5px; font-weight: 700; color: var(--yg-deep); line-height: 1.1;">ApexGlobal Financial</div>
+            <div style="font-size: 9.5px; color: var(--text-muted);"><span id="authCompanyId">COMP-APEX-01</span> • <span id="authApiKeySnippet" style="font-family: 'JetBrains Mono', monospace; color: var(--yg-primary);">sk_live_apex...</span></div>
+          </div>
+          <a href="/login" style="margin-left: 4px; padding: 3px 8px; background: var(--yg-lighter); border: 1px solid var(--yg-border); border-radius: 4px; font-size: 10.5px; font-weight: 700; color: var(--yg-primary); text-decoration: none;" title="Switch client company workspace">
+            Switch / Login 🔑
+          </a>
+        </div>
+
+        <button onclick="openSimulateModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; background: var(--bg-surface); color: var(--yg-deep); border: 1.5px solid var(--yg-border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--transition);">
+          <span>⚡ Test Payload</span>
         </button>
-        <a href="/client" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--yg-primary); color: #FFFFFF; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 600; text-decoration: none; transition: var(--transition); box-shadow: var(--shadow-subtle);">
+        <a href="/client" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--yg-primary); color: #FFFFFF; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; text-decoration: none; transition: var(--transition); box-shadow: var(--shadow-subtle);">
           <span>🌐 Customer Support Portal (/client)</span>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
         </a>
       </div>
     </div>
@@ -3984,6 +3998,32 @@ How Our Model Learns from Unseen Data:
         rawTicketText: t.ticket_text
       });
     }
+
+    
+    // Sync active authenticated company workspace
+    function syncAuthenticatedCompany() {
+      const saved = localStorage.getItem('daas_auth_company');
+      if (saved) {
+        try {
+          const comp = JSON.parse(saved);
+          if (comp.company_name) {
+            document.getElementById('authCompanyName').innerText = comp.company_name;
+            document.getElementById('authCompanyId').innerText = comp.company_id || 'COMP-TENANT';
+            const k = comp.api_key || 'sk_live_apex_99x';
+            document.getElementById('authApiKeySnippet').innerText = k.slice(0, 14) + '...';
+            
+            // Sync simulator defaults
+            if (document.getElementById('customerNameInput')) {
+              document.getElementById('customerNameInput').value = `${comp.company_name.split(' ')[0]} User`;
+            }
+          }
+        } catch (e) {}
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      syncAuthenticatedCompany();
+    });
 
     function filterIngestedFeed() {
       const q = (document.getElementById('feedSearchInput').value || '').toLowerCase();

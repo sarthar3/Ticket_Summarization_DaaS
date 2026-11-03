@@ -10,21 +10,23 @@
   
   <style>
     :root {
-      --primary: #1A56DB;
-      --primary-hover: #1E429F;
-      --primary-light: #EBF5FF;
-      --primary-border: #C3DDFD;
-      --bg-page: #F8FAFC;
+      /* Palette from user uploaded images */
+      --primary: #2C698D;          /* Image 1: Deep Steel Blue */
+      --primary-hover: #225370;
+      --primary-light: #EBF7F7;    /* Image 3 tint */
+      --primary-border: #BAE8E8;   /* Image 3: Ice Aqua */
+      --secondary: #95ADBE;        /* Image 2: Slate Denim */
+      --bg-page: #F5F9FA;
       --bg-card: #FFFFFF;
-      --border: #E2E8F0;
-      --text-main: #0F172A;
-      --text-muted: #64748B;
-      --text-light: #94A3B8;
+      --border: #C8DCE0;
+      --text-main: #13293D;
+      --text-muted: #566D7E;
+      --text-light: #889DAF;
       --success-bg: #DEF7EC;
       --success-text: #03543F;
       --success-border: #BCF0DA;
       --radius: 12px;
-      --shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+      --shadow: 0 4px 16px rgba(44, 105, 141, 0.08);
     }
 
     * {
@@ -72,7 +74,7 @@
     .brand-logo {
       width: 38px;
       height: 38px;
-      background: linear-gradient(135deg, #1A56DB 0%, #0E9F6E 100%);
+      background: linear-gradient(135deg, #2C698D 0%, #95ADBE 100%);
       border-radius: 10px;
       display: flex;
       align-items: center;
@@ -521,9 +523,12 @@
           <p>Customer Care & Help Desk (Connected to DaaS Intelligence Backend)</p>
         </div>
       </div>
-      <div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <a href="/login" class="daas-switch-btn" style="background: #EBF7F7; color: #2C698D; border-color: #BAE8E8;">
+          <span>🔑 Company Sign-In</span>
+        </a>
         <a href="/" target="_blank" class="daas-switch-btn">
-          <span>🌿 Open DaaS Platform Studio</span>
+          <span>🌿 DaaS Platform Studio</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
         </a>
       </div>
@@ -832,3 +837,4 @@
   </script>
 </body>
 </html>
+

@@ -793,3 +793,96 @@ def get_distillation_buffer_stats():
 
 
 
+
+
+# =========================================================
+# CLIENT COMPANY MULTI-TENANT AUTHENTICATION ENDPOINTS
+# =========================================================
+from app.api.schemas import CompanyLoginRequest, CompanyAuthResponse
+import hashlib
+import time
+
+PRESET_COMPANIES = [
+    {
+        "company_id": "COMP-APEX-01",
+        "company_name": "ApexGlobal Financial Services",
+        "sector": "Banking & Financial Services",
+        "email": "admin@apexglobal.com",
+        "api_key": "sk_live_apex_99x82f1b402",
+        "tier": "Enterprise SLA (99.99%)",
+        "logo_text": "AG"
+    },
+    {
+        "company_id": "COMP-NEXUS-02",
+        "company_name": "Nexus Cloud & SaaS Systems",
+        "sector": "Cloud Infrastructure",
+        "email": "ops@nexuscloud.io",
+        "api_key": "sk_live_nexus_44a71c89e11",
+        "tier": "Tier-1 Mission Critical",
+        "logo_text": "NC"
+    },
+    {
+        "company_id": "COMP-STAR-03",
+        "company_name": "Starlight Retail & E-Commerce",
+        "sector": "E-Commerce & Retail",
+        "email": "support@starlight.shop",
+        "api_key": "sk_live_star_22b90d33e55",
+        "tier": "High Volume Consumer SLA",
+        "logo_text": "SR"
+    },
+    {
+        "company_id": "COMP-PULSE-04",
+        "company_name": "PulseLine Healthcare Medical",
+        "sector": "Healthcare & Medical",
+        "email": "compliance@pulseline.org",
+        "api_key": "sk_live_pulse_77k11m44c88",
+        "tier": "HIPAA / Clinical Compliance",
+        "logo_text": "PL"
+    }
+]
+
+@router.get("/auth/companies", summary="List registered client companies")
+def list_client_companies():
+    """Returns list of pre-configured client companies for workspace selection and multi-tenant authentication."""
+    return PRESET_COMPANIES
+
+@router.post("/auth/login", response_model=CompanyAuthResponse, summary="Authenticate client company workspace")
+def authenticate_company(payload: CompanyLoginRequest):
+    """Authenticates a company workspace, returning a valid tenant session and enterprise API key."""
+    found = None
+    if payload.company_id:
+        found = next((c for c in PRESET_COMPANIES if c["company_id"].upper() == payload.company_id.upper()), None)
+    if not found and payload.email:
+        found = next((c for c in PRESET_COMPANIES if c["email"].lower() == payload.email.lower()), None)
+    
+    if found:
+        token = hashlib.sha256(f"{found['company_id']}:{time.time()}".encode()).hexdigest()[:32]
+        return CompanyAuthResponse(
+            success=True,
+            company_id=found["company_id"],
+            company_name=found["company_name"],
+            sector=found["sector"],
+            email=found["email"],
+            api_key=found["api_key"],
+            tier=found["tier"],
+            token=f"daas_tok_{token}",
+            message=f"Successfully authenticated into {found['company_name']} workspace."
+        )
+    
+    c_name = payload.company_name or (payload.email.split('@')[1].split('.')[0].capitalize() if payload.email and '@' in payload.email else "Enterprise Client")
+    c_id = f"COMP-{c_name[:4].upper()}-{hashlib.md5(c_name.encode()).hexdigest()[:4].upper()}"
+    sec = payload.sector or "General Support"
+    api_k = f"sk_live_{c_name[:4].lower()}_{hashlib.md5(str(time.time()).encode()).hexdigest()[:12]}"
+    token = hashlib.sha256(f"{c_id}:{time.time()}".encode()).hexdigest()[:32]
+    
+    return CompanyAuthResponse(
+        success=True,
+        company_id=c_id,
+        company_name=c_name,
+        sector=sec,
+        email=payload.email or f"admin@{c_name.lower().replace(' ', '')}.com",
+        api_key=api_k,
+        tier="Custom Enterprise Tier",
+        token=f"daas_tok_{token}",
+        message=f"Created and authenticated workspace for {c_name}."
+    )
