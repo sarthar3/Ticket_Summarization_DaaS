@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ApexGlobal Support Portal — Raise a Customer Ticket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #1A56DB;
+      --primary-hover: #1E429F;
+      --primary-light: #EBF5FF;
+      --primary-border: #C3DDFD;
+      --bg-page: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --border: #E2E8F0;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --text-light: #94A3B8;
+      --success-bg: #DEF7EC;
+      --success-text: #03543F;
+      --success-border: #BCF0DA;
+      --radius: 12px;
+      --shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding-bottom: 50px;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .top-bar-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #1A56DB 0%, #0E9F6E 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .brand-info h1 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .api-badge {
+      font-size: 11px;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+      border: 1px solid var(--primary-border);
+    }
+
+    .daas-switch-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: #F1F5F9;
+      color: #334155;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .daas-switch-btn:hover {
+      background: #E2E8F0;
+      color: #0F172A;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1100px;
+      margin: 32px auto 0;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Card */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .required {
+      color: #E02424;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-family: inherit;
+      color: var(--text-main);
+      background: #FFFFFF;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.12);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    /* Preset Quick Queries */
+    .preset-container {
+      margin-bottom: 18px;
+      background: #F8FAFC;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px dashed #CBD5E1;
+    }
+
+    .preset-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .preset-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .preset-btn {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      padding: 5px 9px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .preset-btn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-border);
+      color: var(--primary);
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 12px 20px;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(26, 86, 219, 0.25);
+    }
+
+    .btn-submit:disabled {
+      background: #94A3B8;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Confirmation Box */
+    .confirmation-card {
+      display: none;
+      margin-top: 20px;
+      background: #F0FDF4;
+      border: 1px solid var(--success-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .confirm-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .confirm-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--success-bg);
+      color: var(--success-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .confirm-title h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--success-text);
+    }
+
+    .confirm-title p {
+      font-size: 12px;
+      color: #046C4E;
+    }
+
+    .ticket-id-display {
+      background: #FFFFFF;
+      border: 1px solid #BCF0DA;
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .ticket-id-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 800;
+      color: #1A56DB;
+      letter-spacing: 0.5px;
+    }
+
+    .copy-id-btn {
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #334155;
+    }
+
+    .copy-id-btn:hover {
+      background: #E2E8F0;
+    }
+
+    .guidance-alert {
+      background: #FEF3C7;
+      border: 1px solid #FCD34D;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    .guidance-alert h4 {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #92400E;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .guidance-alert p {
+      font-size: 12px;
+      color: #78350F;
+      line-height: 1.45;
+    }
+
+    /* Right Column: Recent Raised Tickets */
+    .history-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .ticket-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+
+    .ticket-item {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 12px;
+      transition: all 0.15s;
+    }
+
+    .ticket-item:hover {
+      background: #F1F5F9;
+      border-color: #CBD5E1;
+    }
+
+    .ticket-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .ticket-item-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .ticket-item-time {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    .ticket-item-subject {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .ticket-item-snippet {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .status-badge.registered {
+      background: #DEF7EC;
+      color: #03543F;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px 10px;
+      color: var(--text-light);
+      font-size: 13px;
+    }
+
+    /* Banner for Integration */
+    .integration-note {
+      grid-column: 1 / -1;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 12.5px;
+      color: #1E40AF;
+    }
+
+    .integration-note code {
+      font-family: 'JetBrains Mono', monospace;
+      background: #DBEAFE;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <div class="brand">
+        <div class="brand-logo">A</div>
+        <div class="brand-info">
+          <h1>ApexGlobal Support Portal <span class="api-badge">Client Portal Mock</span></h1>
+          <p>Customer Care & Help Desk (Connected to DaaS Intelligence Backend)</p>
+        </div>
+      </div>
+      <div>
+        <a href="/" target="_blank" class="daas-switch-btn">
+          <span>🌿 Open DaaS Platform Studio</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Container -->
+  <main class="container">
+
+    <!-- Integration Explainer Banner -->
+    <div class="integration-note">
+      <div>
+        <strong>📌 Client Company Simulation:</strong> This webpage demonstrates how your corporate clients embed ticket submission forms on their own domain, connecting directly to your <code>POST /api/v1/summarize</code> backend API.
+      </div>
+      <div>
+        Endpoint: <code>http://localhost:8000/api/v1/summarize</code>
+      </div>
+    </div>
+
+    <!-- Left Column: Form -->
+    <section class="card">
+      <h2 class="card-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Submit a Support Request
+      </h2>
+      <p class="card-desc">Need assistance? Fill in your complaint details below and a sequential ticket number will be generated automatically.</p>
+
+      <!-- Preset Clickable Test Prompts -->
+      <div class="preset-container">
+        <div class="preset-label">
+          <span>⚡ One-Click Test Queries:</span>
+        </div>
+        <div class="preset-pills">
+          <button type="button" class="preset-btn" onclick="loadPreset('balance')">💳 Insufficient Balance (₹50 vs ₹1000)</button>
+          <button type="button" class="preset-btn" onclick="loadPreset('outage')">🚨 Cloud Outage HTTP 503 (500+ Users)</button>
+          <button type="button" class="preset-btn" onclick="loadPreset('auth')">🔐 Mobile App Invalid Session</button>
+          <button type="button" class="preset-btn" onclick="loadPreset('billing')">🧾 Duplicate Charge on Invoice</button>
+        </div>
+      </div>
+
+      <form id="ticketForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="custName">Customer Full Name <span class="required">*</span></label>
+            <input type="text" id="custName" value="Rajesh Kumar" required placeholder="e.g. John Doe">
+          </div>
+          <div class="form-group">
+            <label for="custPhone">Mobile Number <span class="required">*</span></label>
+            <input type="tel" id="custPhone" value="+91 98401 23456" required placeholder="e.g. +91 98401 23456">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="custEmail">Email Address <span class="required">*</span></label>
+            <input type="email" id="custEmail" value="rajesh.k@example.com" required placeholder="e.g. customer@example.com">
+          </div>
+          <div class="form-group">
+            <label for="ticketSector">Department / Sector</label>
+            <select id="ticketSector">
+              <option value="Banking & Financial Services" selected>Banking & Financial Services</option>
+              <option value="E-Commerce & Retail">E-Commerce & Retail</option>
+              <option value="Cloud Infrastructure">Cloud Infrastructure</option>
+              <option value="Telecommunications">Telecommunications</option>
+              <option value="Healthcare & Medical">Healthcare & Medical</option>
+              <option value="IT & Tech Support">IT & Tech Support</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="ticketQuery">Complaint / Query Details <span class="required">*</span></label>
+          <textarea id="ticketQuery" required placeholder="Describe your issue in detail...">I have a balance of 50rs and i tried for an transaction of 1000rs and it is not transferring</textarea>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          <span id="btnText">Raise Support Ticket</span>
+        </button>
+      </form>
+
+      <!-- Confirmation Output Box -->
+      <div id="confirmationCard" class="confirmation-card">
+        <div class="confirm-header">
+          <div class="confirm-icon">✓</div>
+          <div class="confirm-title">
+            <h3>Support Ticket Raised Successfully!</h3>
+            <p>Your request has been registered in the system queue.</p>
+          </div>
+        </div>
+
+        <div class="ticket-id-display">
+          <div>
+            <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Ticket Reference Number</span>
+            <div id="resTicketId" class="ticket-id-val">TICK-1011</div>
+          </div>
+          <button type="button" class="copy-id-btn" onclick="copyTicketId()">Copy ID</button>
+        </div>
+
+        <div style="font-size: 12.5px; color: #334155; margin-bottom: 8px;">
+          <strong>Issue Summary:</strong> <span id="resSummary">Processing summary...</span>
+        </div>
+
+        <div style="display: flex; gap: 10px; font-size: 11.5px; color: var(--text-muted); margin-bottom: 6px;">
+          <span>Priority: <strong id="resPriority" style="color: #1A56DB;">P3 · Medium</strong></span>
+          <span>•</span>
+          <span>Classification: <strong id="resOrigin">Client-Side</strong></span>
+        </div>
+
+        <!-- Dynamic Self-Help Guidance if Client-Side -->
+        <div id="guidanceBox" class="guidance-alert" style="display: none;">
+          <h4>💡 Instant Automated Guidance:</h4>
+          <p id="guidanceText">Guidance text goes here...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Recent Raised Tickets -->
+    <section class="history-card">
+      <h2 class="card-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Recent Raised Tickets
+      </h2>
+      <p class="card-desc">Chronological history of support requests submitted from this client portal.</p>
+
+      <div id="ticketList" class="ticket-list">
+        <div class="empty-state">No tickets raised in this session yet. Submit a query to see it appear here!</div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let recentTickets = [];
+
+    // Presets
+    const PRESETS = {
+      balance: {
+        sector: "Banking & Financial Services",
+        text: "I have a balance of 50rs and i tried for an transaction of 1000rs and it is not transferring"
+      },
+      outage: {
+        sector: "Cloud Infrastructure",
+        text: "Our organization's internet banking portal, mobile banking application, and payment gateway have all stopped working since 10:30 AM. More than 500 customers are unable to complete transactions. Several users report HTTP 503 Service Unavailable errors."
+      },
+      auth: {
+        sector: "Banking & Financial Services",
+        text: "Mobile banking app repeatedly crashes and triggers 'invalid session' error every time I try to authenticate after the 4.2 update. Cannot check balance or make salary transfers."
+      },
+      billing: {
+        sector: "Banking & Financial Services",
+        text: "Money deducted twice for invoice #4491 during checkout payment gateway glitch. Bank statement shows double charge of Rs 1,499 but portal shows unpaid."
+      }
+    };
+
+    function loadPreset(key) {
+      const p = PRESETS[key];
+      if (p) {
+        document.getElementById('ticketSector').value = p.sector;
+        document.getElementById('ticketQuery').value = p.text;
+      }
+    }
+
+    // Copy Ticket ID
+    function copyTicketId() {
+      const tid = document.getElementById('resTicketId').innerText;
+      navigator.clipboard.writeText(tid).then(() => {
+        alert("Copied " + tid + " to clipboard!");
+      });
+    }
+
+    // Handle Form Submit
+    document.getElementById('ticketForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+      const confirmCard = document.getElementById('confirmationCard');
+      const guidanceBox = document.getElementById('guidanceBox');
+
+      const name = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      const email = document.getElementById('custEmail').value.trim();
+      const sector = document.getElementById('ticketSector').value;
+      const text = document.getElementById('ticketQuery').value.trim();
+
+      if (!text) {
+        alert("Please enter complaint details.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      btnText.innerText = "Connecting to DaaS AI Engine...";
+
+      try {
+        const payload = {
+          ticket_text: text,
+          customer_name: name,
+          customer_phone: phone,
+          customer_email: email,
+          sector: sector
+        };
+
+        const res = await fetch(`${API_BASE}/api/v1/summarize?route=auto`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          throw new Error(`Server returned HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        // Update Confirmation Card
+        document.getElementById('resTicketId').innerText = data.ticket_id || "TICK-AUTO";
+        document.getElementById('resSummary').innerText = data.summary || "Summary generated successfully.";
+        document.getElementById('resPriority').innerText = data.priority || "P3 · Medium";
+        document.getElementById('resOrigin').innerText = data.issue_origin === "CLIENT_SIDE" ? "Client-Side (User Action)" : "Company-Side Defect";
+
+        // Guidance Check
+        if (data.client_guidance && data.client_guidance.message_to_user) {
+          guidanceBox.style.display = "block";
+          document.getElementById('guidanceText').innerText = data.client_guidance.message_to_user;
+        } else if (data.issue_origin === "CLIENT_SIDE") {
+          guidanceBox.style.display = "block";
+          document.getElementById('guidanceText').innerText = "Action required on client device/account. Please verify available balance or credentials and retry.";
+        } else {
+          guidanceBox.style.display = "none";
+        }
+
+        confirmCard.style.display = "block";
+        confirmCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Add to Recent Tickets List
+        recentTickets.unshift({
+          ticket_id: data.ticket_id || "TICK-NEW",
+          subject: text.slice(0, 48) + "...",
+          text: text,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          priority: data.priority || "Medium",
+          origin: data.issue_origin || "COMPANY_SIDE"
+        });
+
+        renderRecentTickets();
+
+      } catch (err) {
+        alert("Error connecting to DaaS engine: " + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        btnText.innerText = "Raise Support Ticket";
+      }
+    });
+
+    function renderRecentTickets() {
+      const listEl = document.getElementById('ticketList');
+      if (recentTickets.length === 0) {
+        listEl.innerHTML = `<div class="empty-state">No tickets raised in this session yet.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = recentTickets.map(t => `
+        <div class="ticket-item">
+          <div class="ticket-item-header">
+            <span class="ticket-item-id">${t.ticket_id}</span>
+            <span class="ticket-item-time">${t.time}</span>
+          </div>
+          <div class="ticket-item-subject">${t.subject}</div>
+          <div class="ticket-item-snippet">${t.text}</div>
+          <div>
+            <span class="status-badge registered">Registered</span>
+            <span style="font-size: 10px; color: #64748B; margin-left: 6px; font-weight: 600;">${t.priority}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Auto-load history on page load
+    async function fetchServerHistory() {
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/history`);
+        if (res.ok) {
+          const hist = await res.json();
+          if (Array.isArray(hist) && hist.length > 0) {
+            recentTickets = hist.slice(0, 8).map(item => ({
+              ticket_id: item.ticket_id,
+              subject: (item.intent || item.ticket_text.slice(0, 45)) + "...",
+              text: item.ticket_text,
+              time: item.created_at_formatted ? item.created_at_formatted.split(' ')[0] : "Recent",
+              priority: item.priority || "Medium",
+              origin: item.issue_origin || "COMPANY_SIDE"
+            }));
+            renderRecentTickets();
+          }
+        }
+      } catch (e) {
+        console.log("Could not preload history", e);
+      }
+    }
+
+    fetchServerHistory();
+  </script>
+</body>
+</html>
+

@@ -240,6 +240,280 @@
       padding: 0 20px;
     }
 
+    
+    /* =========================================================
+       B2B ENTERPRISE COMMAND CENTER STYLES
+       ========================================================= */
+    .studio-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .kpi-top-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 900px) {
+      .kpi-top-bar {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .kpi-top-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .kpi-top-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--yg-lighter);
+      border: 1px solid var(--yg-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .kpi-top-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .kpi-top-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .kpi-top-val {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--yg-deep);
+    }
+
+    .kpi-top-sub {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    /* Summary Two-Pane Layout */
+    .summary-two-pane {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 18px;
+      align-items: stretch;
+      min-height: 580px;
+    }
+
+    @media (max-width: 1024px) {
+      .summary-two-pane {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .feed-pane {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 680px;
+    }
+
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .btn-feed-action {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-main);
+      transition: var(--transition);
+    }
+
+    .btn-feed-action:hover {
+      background: var(--yg-lighter);
+      border-color: var(--yg-border);
+    }
+
+    .btn-feed-action.primary {
+      background: var(--yg-primary);
+      color: #fff;
+      border-color: var(--yg-primary);
+    }
+
+    .btn-feed-action.primary:hover {
+      background: var(--yg-primary-hover);
+    }
+
+    .feed-search input {
+      width: 100%;
+      padding: 7px 10px;
+      font-size: 12px;
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      outline: none;
+      background: #FFFFFF;
+      font-family: inherit;
+    }
+
+    .feed-search input:focus {
+      border-color: var(--yg-primary);
+    }
+
+    .feed-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      flex: 1;
+      padding-right: 4px;
+    }
+
+    .feed-item {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .feed-item:hover {
+      border-color: var(--yg-accent);
+      background: var(--yg-lighter);
+    }
+
+    .feed-item.active {
+      border-color: var(--yg-primary);
+      background: var(--yg-light);
+      box-shadow: 0 0 0 1px var(--yg-primary);
+    }
+
+    .feed-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .feed-item-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--yg-deep);
+    }
+
+    .feed-item-time {
+      font-size: 10.5px;
+      color: var(--text-light);
+    }
+
+    .feed-item-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .feed-item-snippet {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .feed-item-badges {
+      display: flex;
+      gap: 5px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .feed-badge {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .feed-badge.prio-critical { background: #FDE8E8; color: #9B1C1C; }
+    .feed-badge.prio-high { background: #FDF2E9; color: #C2410C; }
+    .feed-badge.prio-medium { background: #FEF9C3; color: #854D0E; }
+    .feed-badge.prio-low { background: #DEF7EC; color: #03543F; }
+    .feed-badge.origin-company { background: #FDE8E8; color: #9B1C1C; }
+    .feed-badge.origin-client { background: #DEF7EC; color: #03543F; }
+
+    .detail-pane {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* Modal Backdrop for Simulator */
+    .simulate-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(35, 39, 23, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .simulate-modal-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-medium);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 680px;
+      box-shadow: var(--shadow-float);
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
     .studio-grid {
       display: grid;
       grid-template-columns: 1.05fr 1.35fr;
@@ -1439,106 +1713,64 @@
         <div class="brand-icon">🌱</div>
         <div class="brand-text">
           <h1>TicketSummarizer DaaS</h1>
-          <p>Chronological Auto-Allocation & Company Outage Intelligence</p>
+          <p>Distillation-as-a-Service (DaaS) • Continuous Knowledge Distillation & Outage Intelligence</p>
         </div>
       </div>
 
-      <!-- Status badges and links removed per user request -->
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="font-size: 11.5px; background: var(--yg-light); color: var(--yg-deep); padding: 5px 12px; border-radius: var(--radius-full); font-weight: 700; border: 1px solid var(--yg-border); display: inline-flex; align-items: center; gap: 5px;">
+          ☁️ AWS Ready (Port 8000)
+        </span>
+        <button onclick="openSimulateModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--bg-surface); color: var(--yg-deep); border: 1px solid var(--yg-border); border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: var(--transition);">
+          <span>⚡ Ingest / Test Payload</span>
+        </button>
+        <a href="/client" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--yg-primary); color: #FFFFFF; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 600; text-decoration: none; transition: var(--transition); box-shadow: var(--shadow-subtle);">
+          <span>🌐 Customer Support Portal (/client)</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+      </div>
     </div>
   </header>
 
   <!-- Main Workspace -->
   <main class="container">
     <div class="studio-grid">
-      
-      <!-- Left Column: Input Ticket Studio with Customer Meta -->
-      <section class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>Customer Ticket Submission</span>
-          </div>
-          <button id="resetBtn" class="btn-clear">Reset Form</button>
-        </div>
 
-        <!-- Section 1: Customer Details & Auto Ticket ID -->
-        <div class="form-section-title">
-          <span>👤 Customer Identity & Ticket Allocation</span>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="ticketIdInput">
-              <span>Ticket ID</span>
-              <span class="auto-id-badge pending" id="autoIdBadge">PENDING</span>
-            </label>
-            <input type="text" id="ticketIdInput" class="form-control" value="Pending Submission (Auto-Assigned on Submit)" readonly style="background: var(--bg-inset); color: var(--text-muted); cursor: not-allowed; font-weight: 600;">
-          </div>
-          <div class="form-group">
-            <label for="customerNameInput">Customer Name</label>
-            <input type="text" id="customerNameInput" class="form-control" value="Rajesh Kumar" placeholder="e.g. Rajesh Kumar">
-          </div>
-          <div class="form-group">
-            <label for="customerEmailInput">Email Address</label>
-            <input type="email" id="customerEmailInput" class="form-control" value="rajesh.k@example.com" placeholder="e.g. customer@example.com">
+      <!-- Executive KPI Header Bar -->
+      <div class="kpi-top-bar">
+        <div class="kpi-top-card">
+          <div class="kpi-top-icon">📊</div>
+          <div class="kpi-top-info">
+            <span class="kpi-top-label">Live Ingestion Stream</span>
+            <div class="kpi-top-val" id="topKpiTotal">9 Ingested</div>
+            <span class="kpi-top-sub">Multi-Sector Support Tickets</span>
           </div>
         </div>
-
-        <div class="form-row" style="grid-template-columns: 1fr 1fr;">
-          <div class="form-group">
-            <label for="customerPhoneInput">Phone Number</label>
-            <input type="text" id="customerPhoneInput" class="form-control" value="+91 98401 23456" placeholder="e.g. +91 98765 43210">
-          </div>
-          <div class="form-group">
-            <label for="sectorInput">Sector / Domain</label>
-            <select id="sectorInput" class="form-control">
-              <option value="Banking & Financial Services" selected>Banking & Finance</option>
-              <option value="Cloud Infrastructure">Cloud Infrastructure</option>
-              <option value="Healthcare & Medical">Healthcare</option>
-              <option value="E-Commerce & Retail">E-Commerce</option>
-              <option value="Telecommunications">Telecom</option>
-              <option value="IT & Tech Support">IT Support</option>
-            </select>
+        <div class="kpi-top-card">
+          <div class="kpi-top-icon">⚡</div>
+          <div class="kpi-top-info">
+            <span class="kpi-top-label">Student Model (Qwen 1.5B)</span>
+            <div class="kpi-top-val" id="topKpiStudent">88.9%</div>
+            <span class="kpi-top-sub">&lt;1.5ms Inference • Zero Token Cost</span>
           </div>
         </div>
-
-        <div style="margin-bottom: 12px; font-size: 11.5px; color: var(--text-muted); background: var(--yg-lighter); padding: 7px 12px; border-radius: var(--radius-sm); border: 1px solid var(--yg-border); display: flex; align-items: center; gap: 6px;">
-          <span>ℹ️ <strong>Internal Priority:</strong> Automatically classified by DaaS AI upon submission based on customer urgency indicators.</span>
-        </div>
-
-        <!-- Section 2: Ticket Complaint / Query Text -->
-        <div class="form-section-title">
-          <span>📝 Customer Complaint / Query</span>
-        </div>
-
-        <div class="form-group">
-          <textarea id="ticketTextInput" class="form-control" placeholder="Describe the customer's complaint, error message, or inquiry in detail...">Customer reported being unable to login to mobile banking app following v4.2 update on iOS 17.4. Password reset token fails with 'invalid session'. User needs urgent payroll transfer access before cutoff window.</textarea>
-        </div>
-
-        <div class="char-counter-row">
-          <span id="wordCount">36 words</span>
-          <span id="timeIndicator">🕒 Sequential Auto-Allocation Active</span>
-          <span id="charCount">226 characters</span>
-        </div>
-
-        <!-- Main Submission Action Button -->
-        <button id="submitTicketBtn" class="btn btn-primary-submit" onclick="handleSubmitTicket()">
-          <span>🚀 Submit Ticket & Intelligent Auto-Route</span>
-        </button>
-        <div class="submit-subtext">
-          ⚡ Standard in-domain tickets route to Student (Qwen 1.5B) &nbsp;|&nbsp; 🌟 Novel/unseen tickets route to Teacher (Groq 120B)
-        </div>
-
-        <!-- Advanced Sub-Branches -->
-        <div class="sub-branch-container">
-          <div class="sub-branch-title">🛠️ Manual Execution & Benchmark Sub-Branches:</div>
-          <div class="sub-branch-grid">
-            <button id="runStudentBtn" class="btn-sub-branch" type="button" onclick="handleRunStudent()">⚡ Force Student Model</button>
-            <button id="runTeacherBtn" class="btn-sub-branch" type="button" onclick="handleRunTeacher()">🌟 Force Teacher (Groq 120B)</button>
-            <button id="runCompareBtn" class="btn-sub-branch" type="button" onclick="handleRunCompare()">⚖️ Side-by-Side Compare</button>
+        <div class="kpi-top-card">
+          <div class="kpi-top-icon">🧠</div>
+          <div class="kpi-top-info">
+            <span class="kpi-top-label">Teacher Supervision (Groq 120B)</span>
+            <div class="kpi-top-val" id="topKpiTeacher">11.1%</div>
+            <span class="kpi-top-sub">Safety Escalation for P1 Outages</span>
           </div>
         </div>
-      </section>
+        <div class="kpi-top-card">
+          <div class="kpi-top-icon">🛡️</div>
+          <div class="kpi-top-info">
+            <span class="kpi-top-label">Company Outage Clusters</span>
+            <div class="kpi-top-val" id="topKpiOutages" style="color: #DC2626;">0 Active</div>
+            <span class="kpi-top-sub">Cross-Customer Intelligence</span>
+          </div>
+        </div>
+      </div>
 
       <!-- Right Column: Results & Analysis Tabs -->
       <section class="card">
@@ -1568,25 +1800,53 @@
             <span>🎯 Model Validation</span>
             <span id="checklistTabBadge" class="tab-badge" style="background: var(--yg-primary); color: #fff;">0/7</span>
           </button>
+          <button id="tabAwsBtn" class="tab-btn" onclick="switchTab('aws')">
+            <span>☁️ AWS Deployment & API Hub</span>
+          </button>
         </div>
 
-        <!-- Panel 1: Single Ticket Executive Summary View -->
+        <!-- Panel 1: Live Ingested Stream & Executive Summary -->
         <div id="panelSummary" class="result-panel">
-          <div id="summaryPlaceholder" class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-            <h3>Ready for Ticket Summarization</h3>
-            <p>Click "Run Student Model" or "Run Teacher" to summarize this customer's ticket.</p>
-          </div>
+          <div class="summary-two-pane">
+            <!-- Left Pane: Ingested Feed -->
+            <div class="feed-pane">
+              <div class="feed-header">
+                <div>
+                  <h4 style="font-size: 13px; font-weight: 700; color: var(--yg-deep); margin: 0;">📥 Ingested Tickets Feed</h4>
+                  <p style="font-size: 11px; color: var(--text-muted); margin: 2px 0 0;">Received from client websites via API</p>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn-feed-action" onclick="loadIngestedFeed()" title="Refresh Feed">🔄</button>
+                  <button class="btn-feed-action primary" onclick="openSimulateModal()" title="Ingest Test Payload">➕ Test</button>
+                </div>
+              </div>
+              <div class="feed-search">
+                <input type="text" id="feedSearchInput" placeholder="Filter tickets by ID, name, or text..." oninput="filterIngestedFeed()">
+              </div>
+              <div id="feedListContainer" class="feed-list">
+                <!-- Populated dynamically from /history -->
+              </div>
+            </div>
 
-          <div id="summaryLoading" class="loading-pulse" style="display: none;">
-            <div class="shimmer-line" style="width: 40%;"></div>
-            <div class="shimmer-line" style="width: 100%;"></div>
-            <div class="shimmer-line" style="width: 90%;"></div>
-            <div class="shimmer-line" style="width: 65%;"></div>
-          </div>
+            <!-- Right Pane: Analysis & Summary Details -->
+            <div class="detail-pane">
+              <div id="summaryPlaceholder" class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <h3>Select a Ticket from Ingested Feed</h3>
+                <p>Click any incoming ticket on the left to inspect its AI summary, root cause, priority tier, and official escalation.</p>
+              </div>
 
-          <div id="summaryContent" style="display: none;">
-            <!-- Rendered Summary Box will appear here -->
+              <div id="summaryLoading" class="loading-pulse" style="display: none;">
+                <div class="shimmer-line" style="width: 40%;"></div>
+                <div class="shimmer-line" style="width: 100%;"></div>
+                <div class="shimmer-line" style="width: 90%;"></div>
+                <div class="shimmer-line" style="width: 65%;"></div>
+              </div>
+
+              <div id="summaryContent" style="display: none;">
+                <!-- Rendered Summary Box will appear here -->
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1971,6 +2231,107 @@
           </div>
         </div>
 
+        <!-- Panel 8: AWS Deployment & Client Company API Integration Hub -->
+        <div id="panelAws" class="result-panel" style="display: none; flex-direction: column; gap: 16px;">
+          <!-- Overview Card -->
+          <div style="background: var(--bg-card); border: 1.5px solid var(--yg-border); border-radius: var(--radius-md); padding: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
+              <div>
+                <h3 style="margin: 0; font-size: 16px; color: var(--yg-deep); display: flex; align-items: center; gap: 8px;">
+                  <span>☁️ AWS Cloud Production Deployment & Client API Hub</span>
+                </h3>
+                <p style="margin: 4px 0 0; font-size: 12.5px; color: var(--text-muted);">
+                  Architecture for deploying TicketSummarizer DaaS on AWS and integrating with client company support websites.
+                </p>
+              </div>
+              <a href="/client" target="_blank" class="btn" style="background: var(--yg-primary); color: #fff; font-size: 12px; padding: 7px 14px; text-decoration: none;">
+                🚀 Launch Client Demo Website
+              </a>
+            </div>
+          </div>
+
+          <!-- Distillation-as-a-Service Value Proposition -->
+          <div style="background: var(--yg-lighter); border: 1px solid var(--yg-border); border-radius: var(--radius-md); padding: 16px;">
+            <h4 style="margin: 0 0 8px; font-size: 13.5px; color: var(--yg-deep);">
+              ⚡ How Distillation-as-a-Service (DaaS) Works for Client Companies
+            </h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; font-size: 12px;">
+              <div style="background: #fff; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <strong style="color: var(--yg-deep); display: block; margin-bottom: 4px;">1. Ultra-Low Latency & Cost</strong>
+                Routine customer queries are summarized locally by the lightweight Student LLM (<code>Qwen2.5-1.5B</code>) in &lt;1ms to ~200ms with zero expensive API tokens.
+              </div>
+              <div style="background: #fff; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <strong style="color: var(--yg-deep); display: block; margin-bottom: 4px;">2. Teacher Safety Escalation</strong>
+                P1 widespread outages and novel domain complaints route automatically to Teacher LLM (<code>Groq 120B</code>) for high-precision SRE incident plans.
+              </div>
+              <div style="background: #fff; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <strong style="color: var(--yg-deep); display: block; margin-bottom: 4px;">3. Continuous Knowledge Distillation</strong>
+                Unseen pairs are captured in <code>teacher_unseen_buffer.jsonl</code> and distilled via GKD/LoRA so the Student model permanently learns the client's domain.
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Integration Snippets for Client Websites -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <h4 style="margin: 0; font-size: 13.5px; color: var(--text-main);">
+                🔌 Client Company API Integration Snippets
+              </h4>
+              <span style="font-size: 11px; background: var(--bg-inset); padding: 2px 8px; border-radius: 4px; font-family: monospace;">
+                POST /api/v1/summarize
+              </span>
+            </div>
+            
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+              Corporate clients connect their website support forms to your backend with a single HTTP POST call:
+            </p>
+
+            <!-- Code snippet tabs -->
+            <div style="background: #1E2310; border-radius: 8px; padding: 14px; color: #EAF4DC; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.5; overflow-x: auto;">
+<pre style="margin: 0;"><span style="color: #9BB835;"># Python Integration (Client Backend)</span>
+<span style="color: #FBBF24;">import</span> requests
+
+payload = {
+    <span style="color: #A3E635;">"ticket_text"</span>: <span style="color: #A3E635;">"Customer cannot login to banking app post update."</span>,
+    <span style="color: #A3E635;">"customer_name"</span>: <span style="color: #A3E635;">"Rajesh Kumar"</span>,
+    <span style="color: #A3E635;">"sector"</span>: <span style="color: #A3E635;">"Banking & Finance"</span>
+}
+response = requests.post(
+    <span style="color: #A3E635;">"https://api.yourdomain.com/api/v1/summarize"</span>,
+    json=payload,
+    headers={<span style="color: #A3E635;">"Authorization"</span>: <span style="color: #A3E635;">"Bearer YOUR_CLIENT_KEY"</span>}
+)
+data = response.json()
+print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} | Priority: {data['priority']}"</span>)</pre>
+            </div>
+          </div>
+
+          <!-- AWS Production Blueprint -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
+            <h4 style="margin: 0 0 10px; font-size: 13.5px; color: var(--text-main);">
+              🏗️ AWS Deployment Architecture Blueprint
+            </h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 11.5px;">
+              <div style="border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px;">
+                <strong style="color: var(--yg-deep);">1. Container (Amazon ECR)</strong>
+                <p style="margin-top: 4px; color: var(--text-muted);">Built via <code>Dockerfile</code> with multi-stage layers and pushed to AWS ECR repo <code>ticket-summarization-daas</code>.</p>
+              </div>
+              <div style="border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px;">
+                <strong style="color: var(--yg-deep);">2. Compute (Amazon ECS / EC2)</strong>
+                <p style="margin-top: 4px; color: var(--text-muted);">Deployed on ECS Fargate or EC2 instances with GPU/CPU support running <code>uvicorn app.main:app</code> on port 8000.</p>
+              </div>
+              <div style="border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px;">
+                <strong style="color: var(--yg-deep);">3. Load Balancer (AWS ALB)</strong>
+                <p style="margin-top: 4px; color: var(--text-muted);">Application Load Balancer handling HTTPS termination and routing traffic to Target Groups with <code>/health</code> checks.</p>
+              </div>
+              <div style="border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px;">
+                <strong style="color: var(--yg-deep);">4. Domain & Metrics</strong>
+                <p style="margin-top: 4px; color: var(--text-muted);">Route 53 DNS routing + CloudWatch operational metrics tracking P50/P95 latencies and error rates.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </section>
     </div>
   </main>
@@ -1979,6 +2340,80 @@
   <div id="toast" class="toast">Operation completed</div>
 
   <!-- Modal: Incident Escalation to Company Official via Email -->
+    <!-- Modal: Developer / Admin Ingestion Simulator -->
+  <div id="simulateModal" class="simulate-modal-backdrop" style="display: none;">
+    <div class="simulate-modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
+        <div>
+          <h3 style="margin: 0; font-size: 16px; color: var(--yg-deep); display: flex; align-items: center; gap: 8px;">
+            <span>⚡ Ingest / Test Support Ticket Payload</span>
+          </h3>
+          <p style="margin: 2px 0 0; font-size: 12px; color: var(--text-muted);">
+            Simulate a client website sending a support ticket payload to <code>POST /api/v1/summarize</code>.
+          </p>
+        </div>
+        <button onclick="closeSimulateModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="ticketIdInput">
+            <span>Ticket ID</span>
+            <span class="auto-id-badge pending" id="autoIdBadge">PENDING</span>
+          </label>
+          <input type="text" id="ticketIdInput" class="form-control" value="Pending Submission (Auto-Assigned on Submit)" readonly style="background: var(--bg-inset); color: var(--text-muted); cursor: not-allowed; font-weight: 600;">
+        </div>
+        <div class="form-group">
+          <label for="customerNameInput">Customer Name</label>
+          <input type="text" id="customerNameInput" class="form-control" value="Rajesh Kumar">
+        </div>
+        <div class="form-group">
+          <label for="customerEmailInput">Email Address</label>
+          <input type="email" id="customerEmailInput" class="form-control" value="rajesh.k@example.com">
+        </div>
+      </div>
+
+      <div class="form-row" style="grid-template-columns: 1fr 1fr;">
+        <div class="form-group">
+          <label for="customerPhoneInput">Phone Number</label>
+          <input type="text" id="customerPhoneInput" class="form-control" value="+91 98401 23456">
+        </div>
+        <div class="form-group">
+          <label for="sectorInput">Sector / Domain</label>
+          <select id="sectorInput" class="form-control">
+            <option value="Banking & Financial Services" selected>Banking & Finance</option>
+            <option value="Cloud Infrastructure">Cloud Infrastructure</option>
+            <option value="Healthcare & Medical">Healthcare</option>
+            <option value="E-Commerce & Retail">E-Commerce</option>
+            <option value="Telecommunications">Telecom</option>
+            <option value="IT & Tech Support">IT Support</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="ticketTextInput">Customer Complaint / Query Details</label>
+        <textarea id="ticketTextInput" class="form-control" rows="4">Customer reported being unable to login to mobile banking app following v4.2 update on iOS 17.4. Password reset token fails with 'invalid session'. User needs urgent payroll transfer access before cutoff window.</textarea>
+      </div>
+
+      <div class="char-counter-row" style="margin: 0;">
+        <span id="wordCount">36 words</span>
+        <span id="timeIndicator">🕒 Sequential Auto-Allocation</span>
+        <span id="charCount">226 characters</span>
+      </div>
+
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; margin-top: 8px;">
+        <button id="resetBtn" class="btn-clear" type="button">Reset</button>
+        <button id="runStudentBtn" class="btn-sub-branch" type="button" onclick="handleRunStudent(); closeSimulateModal();">⚡ Student Model</button>
+        <button id="runTeacherBtn" class="btn-sub-branch" type="button" onclick="handleRunTeacher(); closeSimulateModal();">🌟 Teacher (Groq 120B)</button>
+        <button id="runCompareBtn" class="btn-sub-branch" type="button" onclick="handleRunCompare(); closeSimulateModal();">⚖️ Compare</button>
+        <button id="submitTicketBtn" class="btn btn-primary-submit" onclick="handleSubmitTicket(); closeSimulateModal();" style="padding: 9px 18px; font-size: 13px;">
+          <span>🚀 Ingest & Auto-Route</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="escalateEmailModal" style="display: none; position: fixed; inset: 0; background: rgba(35, 39, 23, 0.65); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; padding: 20px;">
     <div style="background: var(--bg-surface); border: 1.5px solid var(--border-medium); border-radius: var(--radius-lg); width: 100%; max-width: 640px; box-shadow: var(--shadow-float); overflow: hidden; display: flex; flex-direction: column; max-height: 92vh;">
       <!-- Modal Header -->
@@ -2101,7 +2536,7 @@
     }
 
     function switchTab(tab) {
-      const tabs = ['summary', 'company', 'officials', 'queue', 'compare', 'audit', 'checklist'];
+      const tabs = ['summary', 'company', 'officials', 'queue', 'compare', 'audit', 'checklist', 'aws'];
       tabs.forEach(t => {
         const btn = document.getElementById(`tab${capitalize(t)}Btn`);
         const panel = document.getElementById(`panel${capitalize(t)}`);
@@ -3447,6 +3882,142 @@ How Our Model Learns from Unseen Data:
     loadOfficials();
     loadTeacherBufferStats();
     updateCounts();
+  
+    // =========================================================
+    // INGESTED FEED & SIMULATE MODAL CONTROLS
+    // =========================================================
+    let allIngestedFeed = [];
+    let activeSelectedTicketId = null;
+
+    function openSimulateModal() {
+      document.getElementById('simulateModal').style.display = 'flex';
+    }
+
+    function closeSimulateModal() {
+      document.getElementById('simulateModal').style.display = 'none';
+    }
+
+    async function loadIngestedFeed() {
+      try {
+        const res = await fetch('/api/v1/history');
+        if (res.ok) {
+          const data = await res.json();
+          allIngestedFeed = Array.isArray(data) ? data : [];
+          renderIngestedFeed(allIngestedFeed);
+          updateTopKpis(allIngestedFeed);
+
+          // Auto-select first ticket if none selected
+          if (!activeSelectedTicketId && allIngestedFeed.length > 0) {
+            selectIngestedTicket(allIngestedFeed[0].ticket_id);
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load feed:", e);
+      }
+    }
+
+    function renderIngestedFeed(items) {
+      const container = document.getElementById('feedListContainer');
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 24px 8px;">No tickets ingested yet.<br>Submit from <a href="/client" target="_blank">Client Portal</a> to see them stream here.</div>';
+        return;
+      }
+
+      container.innerHTML = items.map(t => {
+        const isActive = t.ticket_id === activeSelectedTicketId ? ' active' : '';
+        const prio = (t.priority || 'Medium').toLowerCase();
+        let prioClass = 'prio-medium';
+        if (prio.includes('critical') || prio.includes('p1')) prioClass = 'prio-critical';
+        else if (prio.includes('high') || prio.includes('p2')) prioClass = 'prio-high';
+        else if (prio.includes('low') || prio.includes('p4')) prioClass = 'prio-low';
+
+        const origin = t.issue_origin === 'CLIENT_SIDE' ? 'Client Action' : 'Company Defect';
+        const originClass = t.issue_origin === 'CLIENT_SIDE' ? 'origin-client' : 'origin-company';
+
+        return `
+          <div class="feed-item${isActive}" onclick="selectIngestedTicket('${t.ticket_id}')">
+            <div class="feed-item-top">
+              <span class="feed-item-id">${t.ticket_id}</span>
+              <span class="feed-item-time">${t.created_at_formatted ? t.created_at_formatted.split(' ')[0] : ''}</span>
+            </div>
+            <div class="feed-item-name">${t.customer_name || 'Anonymous User'} • <span style="color: var(--text-light); font-weight: 500;">${t.sector || t.domain || 'Support'}</span></div>
+            <div class="feed-item-snippet">${t.ticket_text || ''}</div>
+            <div class="feed-item-badges">
+              <span class="feed-badge ${prioClass}">${t.priority || 'Medium'}</span>
+              <span class="feed-badge ${originClass}">${origin}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectIngestedTicket(ticketId) {
+      activeSelectedTicketId = ticketId;
+      const t = allIngestedFeed.find(x => x.ticket_id === ticketId);
+      if (!t) return;
+
+      renderIngestedFeed(allIngestedFeed);
+
+      renderSummaryCard({
+        ticketId: t.ticket_id,
+        customerName: t.customer_name,
+        customerEmail: t.customer_email,
+        customerPhone: t.customer_phone,
+        createdAt: t.created_at_formatted,
+        priority: t.priority,
+        priorityReason: t.priority_reason,
+        routeUsed: t.route_used,
+        routeReason: t.route_reason,
+        isUnseen: t.is_unseen,
+        title: (t.route_used === 'teacher') ? "Teacher Gold Summary (Safety Escalation)" : "Student Model Summary (Qwen 1.5B)",
+        badgeClass: (t.route_used === 'teacher') ? "teacher" : "student",
+        badgeText: (t.route_used === 'teacher') ? "Teacher: Groq 120B" : "Student: Qwen2.5-1.5B",
+        summary: t.summary,
+        latency: t.latency_ms,
+        latencyBreakdown: t.latency_breakdown,
+        inputTokens: (t.ticket_text || '').split(' ').length,
+        outputTokens: (t.summary || '').split(' ').length,
+        structuredSummary: t.structured_summary,
+        issueOrigin: t.issue_origin,
+        clientGuidance: t.client_guidance,
+        escalationDetails: t.escalation_details,
+        rawTicketText: t.ticket_text
+      });
+    }
+
+    function filterIngestedFeed() {
+      const q = (document.getElementById('feedSearchInput').value || '').toLowerCase();
+      const filtered = allIngestedFeed.filter(t => 
+        (t.ticket_id || '').toLowerCase().includes(q) ||
+        (t.customer_name || '').toLowerCase().includes(q) ||
+        (t.ticket_text || '').toLowerCase().includes(q) ||
+        (t.sector || '').toLowerCase().includes(q)
+      );
+      renderIngestedFeed(filtered);
+    }
+
+    function updateTopKpis(items) {
+      if (!items || items.length === 0) return;
+      document.getElementById('topKpiTotal').innerText = `${items.length} Ingested`;
+      
+      const teacherCount = items.filter(t => t.route_used === 'teacher').length;
+      const studentCount = items.length - teacherCount;
+      const studentPct = Math.round((studentCount / items.length) * 100);
+      const teacherPct = 100 - studentPct;
+
+      document.getElementById('topKpiStudent').innerText = `${studentPct}%`;
+      document.getElementById('topKpiTeacher').innerText = `${teacherPct}%`;
+
+      // Active outages
+      const outages = items.filter(t => (t.priority || '').includes('Critical') || (t.priority || '').includes('P1')).length;
+      document.getElementById('topKpiOutages').innerText = `${outages} Alert${outages === 1 ? '' : 's'}`;
+    }
+
+    // Auto-load feed on startup
+    window.addEventListener('DOMContentLoaded', () => {
+      loadIngestedFeed();
+    });
+
   </script>
 </body>
 </html>

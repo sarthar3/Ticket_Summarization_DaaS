@@ -140,7 +140,7 @@ class TicketPreprocessor:
             return "P2 · High", "High business impact or financial dispute requiring priority review"
 
         # P3 · Medium triggers
-        if any(w in text_lower for w in ["insufficient balance", "insufficient funds", "balance in account is", "getting failed as my balance", "balance is rs", "balance is inr"]):
+        if any(w in text_lower for w in ["insufficient balance", "insufficient funds", "have a balance of", "balance of", "balance in account is", "getting failed as my balance", "balance is rs", "balance is inr"]):
             return "P3 · Medium", "Customer transaction decline: requested amount exceeds current available account balance"
 
         # P4 · Low triggers
@@ -329,7 +329,7 @@ class TicketPreprocessor:
 
         # Indicators where action must be taken by the client
         client_triggers = [
-            "insufficient balance", "insufficient funds", "balance in account is", "balance is rs",
+            "insufficient balance", "insufficient funds", "have a balance of", "balance of", "balance in account is", "balance is rs",
             "low balance", "not enough balance", "balance is inr", "balance is $",
             "how do i", "how to", "forgot password", "reset password", "change password",
             "forgot pin", "atm pin", "kyc", "document submission", "branch hours", "ifsc code",
@@ -346,7 +346,7 @@ class TicketPreprocessor:
 
         if any(w in text_lower for w in client_triggers) and not company_override:
             issue_origin = "CLIENT_SIDE"
-            if any(w in text_lower for w in ["insufficient balance", "insufficient funds", "balance in account is", "low balance", "not enough balance", "balance is rs", "balance is inr"]):
+            if any(w in text_lower for w in ["insufficient balance", "insufficient funds", "have a balance of", "balance of", "balance in account is", "low balance", "not enough balance", "balance is rs", "balance is inr"]):
                 summary = "Customer balance is below transaction amount. Client action required to deposit funds or switch payment instrument."
                 steps = [
                     "1. Check your live account balance in your Mobile Banking app or NetBanking portal.",

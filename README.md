@@ -1,4 +1,4 @@
-# Production Ticket Summarization DaaS (Data-as-a-Service)
+# Production Ticket Summarization DaaS (Distillation-as-a-Service)
 
 A production-oriented, end-to-end ML system for summarizing customer and support tickets using a Student LLM baseline (`Qwen/Qwen2.5-1.5B-Instruct` / `Llama-3.2-1B`), Supervised Fine-Tuning (SFT), Teacher LLM Supervision, and Generalized Knowledge Distillation (GKD).
 
