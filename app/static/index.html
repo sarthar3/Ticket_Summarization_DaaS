@@ -1812,13 +1812,7 @@
           <button id="tabCompareBtn" class="tab-btn" onclick="switchTab('compare')">
             <span>Side-by-Side</span>
           </button>
-          <button id="tabAuditBtn" class="tab-btn" onclick="switchTab('audit')">
-            <span>Failure Audit</span>
-          </button>
-          <button id="tabChecklistBtn" class="tab-btn" onclick="switchTab('checklist')">
-            <span>🎯 Model Validation</span>
-            <span id="checklistTabBadge" class="tab-badge" style="background: var(--yg-primary); color: #fff;">0/7</span>
-          </button>
+
           <button id="tabAwsBtn" class="tab-btn" onclick="switchTab('aws')">
             <span>☁️ AWS Deployment & API Hub</span>
           </button>
@@ -1993,191 +1987,6 @@
                 </div>
               </div>
               <p id="compTeacherText" class="summary-text">...</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel 5: Failure Mode Audit View -->
-        <div id="panelAudit" class="result-panel" style="display: none;">
-          <div class="card-header" style="margin-bottom: 12px; padding-bottom: 8px;">
-            <div class="card-title" style="font-size: 14px;">
-              <span>Automated 5-Defect Audit (Phase 4 Quality Engine)</span>
-            </div>
-          </div>
-
-          <div class="defect-list">
-            <div id="defectHallucination" class="defect-item pass">
-              <div class="defect-info">
-                <h4>Hallucination / Fact Distortion</h4>
-                <p>Ensures entities and version numbers appear in original ticket text.</p>
-              </div>
-              <span class="status-pill online">Passed</span>
-            </div>
-
-            <div id="defectOmission" class="defect-item pass">
-              <div class="defect-info">
-                <h4>Core Issue Omission</h4>
-                <p>Verifies key issue and customer urgency are not omitted.</p>
-              </div>
-              <span class="status-pill online">Passed</span>
-            </div>
-
-            <div id="defectRepetition" class="defect-item pass">
-              <div class="defect-info">
-                <h4>Repetition / Loop Detection</h4>
-                <p>Audits n-gram frequency to catch degenerative repetitive loops.</p>
-              </div>
-              <span class="status-pill online">Passed</span>
-            </div>
-
-            <div id="defectTruncation" class="defect-item pass">
-              <div class="defect-info">
-                <h4>Sentence Truncation</h4>
-                <p>Checks sentence completeness and ending punctuation validity.</p>
-              </div>
-              <span class="status-pill online">Passed</span>
-            </div>
-
-            <div id="defectLength" class="defect-item pass">
-              <div class="defect-info">
-                <h4>Length & Conciseness Compliance</h4>
-                <p>Ensures executive summary stays under target token threshold (256 tokens).</p>
-              </div>
-              <span class="status-pill online">Passed</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel 6: Interactive Model Validation Checklist (Phase 4 Reliability Benchmark) -->
-        <div id="panelChecklist" class="result-panel" style="display: none;">
-          <div class="card-header" style="margin-bottom: 12px; padding-bottom: 8px;">
-            <div class="card-title" style="font-size: 14.5px;">
-              <span>🎯 Model Validation Progress</span>
-            </div>
-            <button id="btnRunAllChecks" class="btn-action-sm primary" onclick="runAllValidationChecks()">
-              <span>🚀 Run Complete Validation Suite</span>
-            </button>
-          </div>
-
-          <!-- Progress Bar & Summary -->
-          <div class="checklist-progress-wrap">
-            <div class="progress-header">
-              <span style="font-size: 13px; font-weight: 700; color: var(--yg-deep);">Validation Progress</span>
-              <span id="checklistScoreText" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--yg-deep);">0 / 7 Verified (0%)</span>
-            </div>
-            <div class="progress-track">
-              <div id="checklistProgressBar" class="progress-bar-fill"></div>
-            </div>
-            <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 8px;">
-              Comprehensive evaluation of severity policies, domain disambiguation, routing safety, multi-run latency percentiles, and outage deduplication.
-            </p>
-          </div>
-
-          <!-- 7 Checklist Items -->
-          <div class="checklist-items">
-            <!-- Item 1: Critical Outage Priority P1 -->
-            <div id="checkItem1" class="checklist-card">
-              <div class="checklist-card-top">
-                <div class="checklist-title-group">
-                  <span id="checkIcon1" class="checklist-status-icon">⚪</span>
-                  <h4>1. Critical outage classified as P1</h4>
-                </div>
-                <button class="btn-action-sm" onclick="runCheckItem(1)">Run Test</button>
-              </div>
-              <div class="checklist-desc">
-                500+ users affected across 3 banking services (HTTP 503) must classify as <strong>P1 · Critical</strong> with SRE escalation.
-              </div>
-              <div id="checkResult1" class="checklist-result-box" style="display: none;"></div>
-            </div>
-
-            <!-- Item 2: Normal Banking Query Classified Low -->
-            <div id="checkItem2" class="checklist-card">
-              <div class="checklist-card-top">
-                <div class="checklist-title-group">
-                  <span id="checkIcon2" class="checklist-status-icon">⚪</span>
-                  <h4>2. Normal banking query classified Low</h4>
-                </div>
-                <button class="btn-action-sm" onclick="runCheckItem(2)">Run Test</button>
-              </div>
-              <div class="checklist-desc">
-                Routine fixed deposit interest inquiry with zero service disruption must classify as <strong>P4 / Low</strong> within standard SLA.
-              </div>
-              <div id="checkResult2" class="checklist-result-box" style="display: none;"></div>
-            </div>
-
-            <!-- Item 3: Domain and Issue Type Accuracy (No Billing Hallucination) -->
-            <div id="checkItem3" class="checklist-card">
-              <div class="checklist-card-top">
-                <div class="checklist-title-group">
-                  <span id="checkIcon3" class="checklist-status-icon">⚪</span>
-                  <h4>3. Domain and issue type identified correctly</h4>
-                </div>
-                <button class="btn-action-sm" onclick="runCheckItem(3)">Run Test</button>
-              </div>
-              <div class="checklist-desc">
-                Must output <strong>Cloud Infrastructure</strong> / <strong>Multi-Service Outage / HTTP 503</strong> and eliminate false 'Billing Dispute' hallucinations.
-              </div>
-              <div id="checkResult3" class="checklist-result-box" style="display: none;"></div>
-            </div>
-
-            <!-- Item 4: Student vs Teacher Comparison Completed -->
-            <div id="checkItem4" class="checklist-card">
-              <div class="checklist-card-top">
-                <div class="checklist-title-group">
-                  <span id="checkIcon4" class="checklist-status-icon">⚪</span>
-                  <h4>4. Student vs Teacher comparison completed</h4>
-                </div>
-                <button class="btn-action-sm" onclick="runCheckItem(4)">Run Test</button>
-              </div>
-              <div class="checklist-desc">
-                Executes simultaneous side-by-side benchmark of Student Qwen 1.5B and Teacher Groq 120B on the banking outage incident.
-              </div>
-              <div id="checkResult4" class="checklist-result-box" style="display: none;"></div>
-            </div>
-
-            <!-- Item 5: Routing Decision Includes Explicit Reason -->
-            <div id="checkItem5" class="checklist-card">
-              <div class="checklist-card-top">
-                <div class="checklist-title-group">
-                  <span id="checkIcon5" class="checklist-status-icon">⚪</span>
-                  <h4>5. Routing decision includes a reason</h4>
-                </div>
-                <button class="btn-action-sm" onclick="runCheckItem(5)">Run Test</button>
-              </div>
-              <div class="checklist-desc">
-                Ensures routing safety policy evaluates severity, confidence, and novelty — automatically escalating P1 outages to Teacher review.
-              </div>
-              <div id="checkResult5" class="checklist-result-box" style="display: none;"></div>
-            </div>
-
-            <!-- Item 6: Latency Measured Across Multiple Runs (Median & P95) -->
-            <div id="checkItem6" class="checklist-card">
-              <div class="checklist-card-top">
-                <div class="checklist-title-group">
-                  <span id="checkIcon6" class="checklist-status-icon">⚪</span>
-                  <h4>6. Latency measured across multiple runs</h4>
-                </div>
-                <button class="btn-action-sm" onclick="runCheckItem(6)">Run Test</button>
-              </div>
-              <div class="checklist-desc">
-                Runs multi-iteration benchmarking to record statistical <strong>Median</strong> and <strong>P95</strong> latency instead of a single cold-start sample.
-              </div>
-              <div id="checkResult6" class="checklist-result-box" style="display: none;"></div>
-            </div>
-
-            <!-- Item 7: Similar Tickets Correlated into Incidents -->
-            <div id="checkItem7" class="checklist-card">
-              <div class="checklist-card-top">
-                <div class="checklist-title-group">
-                  <span id="checkIcon7" class="checklist-status-icon">⚪</span>
-                  <h4>7. Similar tickets correlated into incidents</h4>
-                </div>
-                <button class="btn-action-sm" onclick="runCheckItem(7)">Run Test</button>
-              </div>
-              <div class="checklist-desc">
-                Verifies multi-ticket clusterer groups correlated complaints into a single platform incident and prevents duplicate outage counts.
-              </div>
-              <div id="checkResult7" class="checklist-result-box" style="display: none;"></div>
             </div>
           </div>
         </div>
@@ -2722,7 +2531,7 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
     }
 
     function switchTab(tab) {
-      const tabs = ['summary', 'company', 'officials', 'queue', 'compare', 'audit', 'checklist', 'aws'];
+      const tabs = ['summary', 'company', 'officials', 'queue', 'compare', 'aws'];
       tabs.forEach(t => {
         const btn = document.getElementById(`tab${capitalize(t)}Btn`);
         const panel = document.getElementById(`panel${capitalize(t)}`);
