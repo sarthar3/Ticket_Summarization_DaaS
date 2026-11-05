@@ -9,7 +9,7 @@
   <!-- Modern Sans-serif Typography from Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
     /* =========================================================
@@ -1694,117 +1694,866 @@
       transform: translateY(0);
       opacity: 1;
     }
+  
+    /* =========================================================
+       MODERN ENTERPRISE SIDEBAR & CANVAS DESIGN
+       ========================================================= */
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      background-color: #F4F8FA !important;
+      color: #13293D !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 100vh !important;
+      overflow-x: hidden;
+    }
+
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* Left Sidebar */
+    .app-sidebar {
+      width: 240px;
+      min-width: 240px;
+      background: #183B52;
+      color: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 16px 20px;
+      box-shadow: 2px 0 12px rgba(19, 41, 61, 0.08);
+      z-index: 200;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      padding: 0 6px;
+    }
+
+    .empty-logo-box {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      background: linear-gradient(135deg, #2C698D 0%, #15384D 100%);
+      border: 1.5px solid #BAE8E8;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .sidebar-brand-name {
+      font-size: 14.5px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #FFFFFF;
+      line-height: 1.2;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      color: #B2C7D4;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .sidebar-item svg {
+      color: #88A6BA;
+      transition: all 0.15s;
+    }
+
+    .sidebar-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+    }
+
+    .sidebar-item:hover svg {
+      color: #BAE8E8;
+    }
+
+    .sidebar-item.active {
+      background: #2C698D;
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    }
+
+    .sidebar-item.active svg {
+      color: #FFFFFF;
+    }
+
+    /* Sidebar Bottom Support Card */
+    .sidebar-footer-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .footer-card-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .footer-card-link {
+      font-size: 11.5px;
+      color: #BAE8E8;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer-card-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Main Viewport */
+    .app-main-viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: #F4F8FA;
+    }
+
+    .top-nav-bar {
+      background: #FFFFFF;
+      border-bottom: 1px solid #E2ECEE;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 4px rgba(27, 62, 84, 0.03);
+    }
+
+    .portal-main-heading {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #13293D;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .portal-main-subheading {
+      font-size: 12.5px;
+      color: #566D7E;
+      margin: 3px 0 0;
+      font-weight: 500;
+    }
+
+    .header-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .company-select-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFFFFF;
+      border: 1.5px solid #C8DCE0;
+      border-radius: 8px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .company-select-pill:hover {
+      border-color: #2C698D;
+      background: #F8FCFD;
+    }
+
+    .pill-building-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      background: #183B52;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .company-pill-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #13293D;
+      max-width: 140px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .icon-btn-round {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 1.5px solid #C8DCE0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #566D7E;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s;
+    }
+
+    .icon-btn-round:hover {
+      color: #13293D;
+      border-color: #2C698D;
+    }
+
+    .bell-dot {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #2C698D;
+    }
+
+    .user-avatar-pill {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .avatar-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #183B52;
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #BAE8E8;
+      box-shadow: 0 2px 6px rgba(24, 59, 82, 0.2);
+    }
+
+    .user-dropdown-card {
+      position: absolute;
+      top: 44px;
+      right: 0;
+      background: #FFFFFF;
+      border: 1.5px solid #C8DCE0;
+      border-radius: 10px;
+      box-shadow: 0 10px 28px rgba(19, 41, 61, 0.12);
+      width: 220px;
+      padding: 10px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .dropdown-header {
+      padding: 8px 10px 10px;
+      border-bottom: 1px solid #E2ECEE;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .dropdown-header strong {
+      font-size: 12.5px;
+      color: #13293D;
+    }
+
+    .dropdown-header span {
+      font-size: 11px;
+      color: #566D7E;
+    }
+
+    .user-dropdown-card button {
+      padding: 8px 10px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #13293D;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+    }
+
+    .user-dropdown-card button:hover {
+      background: #F0F6F8;
+      color: #2C698D;
+    }
+
+    .dropdown-logout {
+      color: #E11D48 !important;
+      border-top: 1px solid #F1F5F9 !important;
+      margin-top: 4px;
+    }
+
+    .btn-top-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .btn-top-action.secondary {
+      background: #FFFFFF;
+      border: 1.5px solid #C8DCE0;
+      color: #13293D;
+    }
+
+    .btn-top-action.secondary:hover {
+      border-color: #2C698D;
+      background: #F8FCFD;
+    }
+
+    .btn-top-action.primary {
+      background: #2C698D;
+      border: 1.5px solid #2C698D;
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(44, 105, 141, 0.22);
+    }
+
+    .btn-top-action.primary:hover {
+      background: #225370;
+    }
+
+    /* Content Canvas */
+    .dashboard-canvas {
+      padding: 24px 32px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* KPI Cards Styling */
+    .kpi-top-bar {
+      display: grid !important;
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 16px !important;
+      width: 100% !important;
+      margin-bottom: 0 !important;
+    }
+
+    @media (max-width: 1100px) {
+      .kpi-top-bar {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+
+    .kpi-top-card {
+      background: #FFFFFF !important;
+      border: 1px solid #DCE6EA !important;
+      border-radius: 14px !important;
+      padding: 18px 20px !important;
+      box-shadow: 0 2px 10px rgba(27, 62, 84, 0.04) !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 16px !important;
+      transition: all 0.2s !important;
+    }
+
+    .kpi-top-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(27, 62, 84, 0.08) !important;
+      border-color: #C8DCE0 !important;
+    }
+
+    .kpi-top-icon {
+      width: 44px !important;
+      height: 44px !important;
+      border-radius: 12px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+    }
+
+    .kpi-icon-stream {
+      background: #ECFDF5;
+      color: #059669;
+      border: 1px solid #A7F3D0;
+    }
+
+    .kpi-icon-student {
+      background: #FFFBEB;
+      color: #D97706;
+      border: 1px solid #FDE68A;
+    }
+
+    .kpi-icon-teacher {
+      background: #FDF2F8;
+      color: #DB2777;
+      border: 1px solid #FBCFE8;
+    }
+
+    .kpi-icon-outages {
+      background: #EFF6FF;
+      color: #2563EB;
+      border: 1px solid #BFDBFE;
+    }
+
+    .kpi-label-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kpi-live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10B981;
+      display: inline-block;
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .kpi-top-label {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      color: #64748B !important;
+      letter-spacing: 0.5px !important;
+      text-transform: uppercase !important;
+    }
+
+    .kpi-top-val {
+      font-size: 22px !important;
+      font-weight: 800 !important;
+      color: #13293D !important;
+      line-height: 1.15 !important;
+      margin: 3px 0 2px !important;
+    }
+
+    .kpi-top-sub {
+      font-size: 11px !important;
+      color: #889DAF !important;
+      font-weight: 500 !important;
+    }
+
+    /* Operations Card & Tabs Matching Image */
+    .main-operations-card {
+      background: #FFFFFF;
+      border: 1px solid #DCE6EA;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(27, 62, 84, 0.05);
+      width: 100%;
+    }
+
+    .tabs-nav {
+      display: flex !important;
+      gap: 8px !important;
+      border-bottom: 2px solid #E8EEF1 !important;
+      padding-bottom: 0 !important;
+      margin-bottom: 22px !important;
+      overflow-x: auto !important;
+    }
+
+    .tab-btn {
+      padding: 10px 18px !important;
+      background: transparent !important;
+      border: none !important;
+      border-bottom: 2px solid transparent !important;
+      margin-bottom: -2px !important;
+      border-radius: 0 !important;
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      color: #64748B !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      transition: all 0.15s !important;
+      white-space: nowrap !important;
+    }
+
+    .tab-btn:hover {
+      color: #13293D !important;
+    }
+
+    .tab-btn.active {
+      color: #2C698D !important;
+      font-weight: 700 !important;
+      border-bottom: 2.5px solid #2C698D !important;
+      background: transparent !important;
+    }
+
+    .tab-badge {
+      font-size: 10.5px !important;
+      padding: 2px 7px !important;
+      border-radius: 999px !important;
+      font-weight: 700 !important;
+    }
+
+    .tab-badge.outage {
+      background: #FEE2E2 !important;
+      color: #991B1B !important;
+      border: 1px solid #FCA5A5 !important;
+    }
+
+    .tab-badge.neutral {
+      background: #EBF7F7 !important;
+      color: #2C698D !important;
+      border: 1px solid #BAE8E8 !important;
+    }
+
+  
+    /* =========================================================
+       PIXEL-PERFECT TWO-PANE STYLING MATCHING UPLOADED DESIGN
+       ========================================================= */
+    .summary-two-pane {
+      display: grid !important;
+      grid-template-columns: 340px 1fr !important;
+      gap: 20px !important;
+      align-items: stretch !important;
+      min-height: 540px !important;
+    }
+
+    .feed-pane {
+      background: #FFFFFF !important;
+      border: 1px solid #DCE6EA !important;
+      border-radius: 12px !important;
+      padding: 18px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    }
+
+    .detail-pane {
+      background: #FFFFFF !important;
+      border: 1px solid #DCE6EA !important;
+      border-radius: 12px !important;
+      padding: 24px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow-y: auto !important;
+      min-height: 540px !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    }
+
+    .detail-pane .empty-state {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: auto !important;
+      text-align: center !important;
+      padding: 60px 24px !important;
+      color: #64748B !important;
+    }
+
+    .detail-pane .empty-state svg {
+      width: 52px !important;
+      height: 52px !important;
+      color: #94A3B8 !important;
+      margin-bottom: 16px !important;
+      stroke-width: 1.5 !important;
+    }
+
+    .detail-pane .empty-state h3 {
+      font-size: 16px !important;
+      font-weight: 800 !important;
+      color: #13293D !important;
+      margin-bottom: 8px !important;
+      letter-spacing: -0.01em !important;
+    }
+
+    .detail-pane .empty-state p {
+      font-size: 13px !important;
+      color: #64748B !important;
+      max-width: 380px !important;
+      line-height: 1.5 !important;
+      margin: 0 auto !important;
+    }
+
+    .btn-feed-action.primary {
+      background: #183B52 !important;
+      border-color: #183B52 !important;
+      color: #FFFFFF !important;
+      font-weight: 700 !important;
+      border-radius: 6px !important;
+      padding: 6px 12px !important;
+    }
+
+    .btn-feed-action.primary:hover {
+      background: #2C698D !important;
+      border-color: #2C698D !important;
+    }
+
   </style>
 </head>
 <body>
 
-  <!-- Top Header Navigation -->
-  <header>
-    <div class="header-inner">
-      <div class="brand-group">
-        <!-- Empty blue container for logo (no tree/plant) -->
-        <div class="brand-icon" title="Logo Container"></div>
-        <div class="brand-text">
-          <h1>TicketSummarizer DaaS</h1>
-          <p>Distillation-as-a-Service (DaaS) • Enterprise Ticket Intelligence & Outage Operations</p>
-        </div>
+  <div class="app-shell">
+    <!-- Left Vertical Sidebar (Matching Image) -->
+    <aside class="app-sidebar">
+      <!-- Top Brand Area -->
+      <div class="sidebar-brand">
+        <div class="empty-logo-box" title="Brand Logo Container"></div>
+        <span class="sidebar-brand-name">TicketSummarizer DaaS</span>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <!-- Workspace & User Profile Badge with Settings & Sign Out -->
-        <div id="companyAuthChip" style="display: inline-flex; align-items: center; gap: 10px; background: var(--bg-surface); border: 1.5px solid var(--yg-border); padding: 5px 12px; border-radius: var(--radius-md); box-shadow: var(--shadow-subtle);">
-          <div style="width: 26px; height: 26px; border-radius: 6px; background: linear-gradient(135deg, var(--yg-primary) 0%, #1A4660 100%); border: 1px solid var(--yg-light); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;">
-            🏢
-          </div>
-          <div>
-            <div id="authCompanyName" style="font-size: 12px; font-weight: 700; color: var(--yg-deep); line-height: 1.2;">ApexGlobal Financial Services</div>
-            <div style="font-size: 9.5px; color: var(--text-muted);"><span id="authUserRole" style="font-weight: 700; color: var(--yg-primary);">Enterprise Admin</span> • <span id="authApiKeySnippet" style="font-family: 'JetBrains Mono', monospace;">sk_live_apex...</span></div>
-          </div>
-          <div style="display: flex; gap: 5px; margin-left: 6px;">
-            <button type="button" onclick="openSettingsModal()" style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 9px; background: var(--yg-lighter); border: 1px solid var(--yg-border); border-radius: 6px; font-size: 11px; font-weight: 700; color: var(--yg-primary); cursor: pointer; transition: var(--transition);" title="Workspace Settings">
-              <span>⚙️ Settings</span>
-            </button>
-            <button type="button" onclick="handleLogout()" style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 9px; background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 6px; font-size: 11px; font-weight: 700; color: #E11D48; cursor: pointer; transition: var(--transition);" title="Sign out of workspace">
-              <span>🚪 Sign Out</span>
-            </button>
-          </div>
-        </div>
-
-        <button onclick="openSimulateModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; background: var(--bg-surface); color: var(--yg-deep); border: 1.5px solid var(--yg-border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--transition);">
-          <span>⚡ Test Payload</span>
+      <!-- Navigation Links -->
+      <nav class="sidebar-nav">
+        <button type="button" id="sideNavDashboard" class="sidebar-item active" onclick="navigateSidebar('dashboard')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <span>Dashboard</span>
         </button>
-        <a href="/client" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--yg-primary); color: #FFFFFF; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; text-decoration: none; transition: var(--transition); box-shadow: var(--shadow-subtle);">
-          <span>🌐 Customer Support Portal (/client)</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-        </a>
+
+        <button type="button" id="sideNavTickets" class="sidebar-item" onclick="navigateSidebar('tickets')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg>
+          <span>Support Tickets</span>
+        </button>
+
+        <button type="button" id="sideNavAnalytics" class="sidebar-item" onclick="navigateSidebar('analytics')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+          <span>Analytics</span>
+        </button>
+
+        <button type="button" class="sidebar-item" onclick="openSettingsModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Settings</span>
+        </button>
+
+        <button type="button" id="sideNavHelp" class="sidebar-item" onclick="navigateSidebar('help')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+          <span>Help & Support</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Bottom Support Card -->
+      <div class="sidebar-footer-card">
+        <div class="footer-card-inner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+          <span>Need Help?</span>
+        </div>
+        <a href="/client" target="_blank" class="footer-card-link">Contact Support ↗</a>
       </div>
-    </div>
-  </header>
+    </aside>
 
-  <!-- Main Workspace -->
-  <main class="container">
-    <div class="studio-grid">
+    <!-- Main Viewport Area -->
+    <div class="app-main-viewport">
+      <!-- Top Navigation Bar -->
+      <header class="top-nav-bar">
+        <div class="title-meta-group">
+          <h1 class="portal-main-heading">TicketSummarizer DaaS</h1>
+          <p class="portal-main-subheading">Distillation-as-a-Service (DaaS) • Enterprise Ticket Intelligence & Outage Operations</p>
+        </div>
 
-      <!-- Executive KPI Header Bar -->
-      <div class="kpi-top-bar">
-        <div class="kpi-top-card">
-          <div class="kpi-top-icon">📊</div>
-          <div class="kpi-top-info">
-            <span class="kpi-top-label">Live Ingestion Stream</span>
-            <div class="kpi-top-val" id="topKpiTotal">9 Ingested</div>
-            <span class="kpi-top-sub">Multi-Sector Support Tickets</span>
+        <div class="header-right-actions">
+          <!-- Active Workspace Chip with Enterprise Tenant Switcher -->
+          <div style="position: relative;">
+            <div class="company-select-pill" onclick="toggleTenantDropdown(event)" title="Switch Enterprise Workspace Tenant">
+              <div class="pill-building-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M8 10h.01"></path><path d="M16 10h.01"></path><path d="M8 14h.01"></path><path d="M16 14h.01"></path></svg>
+              </div>
+              <span id="authCompanyName" class="company-pill-name">ApexGlobal Financial</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+            <div id="tenantDropdownMenu" class="user-dropdown-card" style="display: none; width: 260px; right: 0;">
+              <div class="dropdown-header">
+                <strong>Switch Workspace Tenant</strong>
+                <span>Enterprise Multi-Tenant Partitioning</span>
+              </div>
+              <button onclick="switchTenantWorkspace('apex')" style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <strong style="display: block; font-size: 12px; color: #13293D;">ApexGlobal Banking</strong>
+                  <span style="font-size: 10.5px; color: #64748B;">Fintech & Wealth (COMP-APEX-01)</span>
+                </div>
+                <span class="badge-mini">Active</span>
+              </button>
+              <button onclick="switchTenantWorkspace('nexus')">
+                <strong style="display: block; font-size: 12px; color: #13293D;">Nexus Cloud Systems</strong>
+                <span style="font-size: 10.5px; color: #64748B;">Cloud Infrastructure & Compute</span>
+              </button>
+              <button onclick="switchTenantWorkspace('starlight')">
+                <strong style="display: block; font-size: 12px; color: #13293D;">Starlight E-Commerce</strong>
+                <span style="font-size: 10.5px; color: #64748B;">Global Retail Marketplace</span>
+              </button>
+              <button onclick="switchTenantWorkspace('pulseline')">
+                <strong style="display: block; font-size: 12px; color: #13293D;">PulseLine Healthcare</strong>
+                <span style="font-size: 10.5px; color: #64748B;">HIPAA Compliant HealthTech</span>
+              </button>
+            </div>
           </div>
-        </div>
-        <div class="kpi-top-card">
-          <div class="kpi-top-icon">⚡</div>
-          <div class="kpi-top-info">
-            <span class="kpi-top-label">Student Model (Qwen 1.5B)</span>
-            <div class="kpi-top-val" id="topKpiStudent">88.9%</div>
-            <span class="kpi-top-sub">&lt;1.5ms Inference • Zero Token Cost</span>
-          </div>
-        </div>
-        <div class="kpi-top-card">
-          <div class="kpi-top-icon">🧠</div>
-          <div class="kpi-top-info">
-            <span class="kpi-top-label">Teacher Supervision (Groq 120B)</span>
-            <div class="kpi-top-val" id="topKpiTeacher">11.1%</div>
-            <span class="kpi-top-sub">Safety Escalation for P1 Outages</span>
-          </div>
-        </div>
-        <div class="kpi-top-card">
-          <div class="kpi-top-icon">🛡️</div>
-          <div class="kpi-top-info">
-            <span class="kpi-top-label">Company Outage Clusters</span>
-            <div class="kpi-top-val" id="topKpiOutages" style="color: #DC2626;">0 Active</div>
-            <span class="kpi-top-sub">Cross-Customer Intelligence</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- Right Column: Results & Analysis Tabs -->
-      <section class="card">
-        <!-- Tab Navigation -->
+          <!-- Notification Bell -->
+          <button type="button" class="icon-btn-round" onclick="showToast('Notification: AI Distillation Engine operating normally at 1.2ms latency.')" title="System Notifications">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+            <span class="bell-dot"></span>
+          </button>
+
+          <!-- User Profile Avatar Pill -->
+          <div class="user-avatar-pill" onclick="toggleUserDropdown()" title="User Profile">
+            <div class="avatar-circle">RK</div>
+            <div id="userDropdownMenu" class="user-dropdown-card" style="display: none;">
+              <div class="dropdown-header">
+                <strong id="dropdownUserCompany">ApexGlobal Financial</strong>
+                <span id="authUserRole">Enterprise Admin</span>
+              </div>
+              <button onclick="openSettingsModal()" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>Workspace Settings</span>
+              </button>
+              <button onclick="window.open('/client', '_blank')" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" x2="22" y1="12" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <span>Customer Portal (/client)</span>
+              </button>
+              <button onclick="handleLogout()" class="dropdown-logout" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Test Payload Button -->
+          <button type="button" class="btn-top-action secondary" onclick="openSimulateModal()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+            <span>Test Payload</span>
+          </button>
+
+          <!-- Customer Support Portal Link -->
+          <a href="/client" target="_blank" class="btn-top-action primary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="2" x2="22" y1="12" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>Customer Support Portal</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- Dashboard Canvas -->
+      <main class="dashboard-canvas">
+        <!-- 4 KPI Metrics Cards Matching Attached Image -->
+        <div class="kpi-top-bar">
+          <!-- Card 1: Ingestion Stream -->
+          <div class="kpi-top-card">
+            <div class="kpi-top-icon kpi-icon-stream">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" x2="18" y1="20" y2="10"></line><line x1="12" x2="12" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="14"></line></svg>
+            </div>
+            <div class="kpi-top-info">
+              <div class="kpi-label-row">
+                <span class="kpi-top-label">LIVE INGESTION STREAM</span>
+                <span class="kpi-live-dot"></span>
+              </div>
+              <div class="kpi-top-val" id="topKpiTotal">9 Ingested</div>
+              <span class="kpi-top-sub">Multi-Sector Support Tickets</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Student Model -->
+          <div class="kpi-top-card">
+            <div class="kpi-top-icon kpi-icon-student">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            </div>
+            <div class="kpi-top-info">
+              <span class="kpi-top-label">STUDENT MODEL (QWEN 1.5B)</span>
+              <div class="kpi-top-val" id="topKpiStudent">88.9%</div>
+              <span class="kpi-top-sub">&lt;1.5ms Inference • Zero Token Cost</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Teacher Supervision -->
+          <div class="kpi-top-card">
+            <div class="kpi-top-icon kpi-icon-teacher">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a9 9 0 0 0-9 9c0 3.6 2.1 6.7 5.1 8.2v1.8h7.8v-1.8c3-1.5 5.1-4.6 5.1-8.2a9 9 0 0 0-9-9z"></path><path d="M9 10h6"></path><path d="M12 7v6"></path></svg>
+            </div>
+            <div class="kpi-top-info">
+              <span class="kpi-top-label">TEACHER SUPERVISION (GROQ 120B)</span>
+              <div class="kpi-top-val" id="topKpiTeacher">11.1%</div>
+              <span class="kpi-top-sub">Safety Escalation for P1 Outages</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Company Outage Clusters -->
+          <div class="kpi-top-card">
+            <div class="kpi-top-icon kpi-icon-outages">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div class="kpi-top-info">
+              <span class="kpi-top-label">COMPANY OUTAGE CLUSTERS</span>
+              <div class="kpi-top-val" id="topKpiOutages" style="color: #DC2626;">0 Active</div>
+              <span class="kpi-top-sub">Intelligence & Due Diligence</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Operations Console Card (Matching Image) -->
+        <section class="main-operations-card">
+        <!-- Tab Navigation (Clean Enterprise Typography Without Emojis) -->
         <div class="tabs-nav">
           <button id="tabSummaryBtn" class="tab-btn active" onclick="switchTab('summary')">
             <span>Executive Summary</span>
           </button>
           <button id="tabCompanyBtn" class="tab-btn" onclick="switchTab('company')">
-            <span>🏢 Company Outage & Common Issues</span>
-            <span id="outageTabBadge" class="tab-badge" style="display: none;">0</span>
+            <span>Company Outage & Common Issues</span>
+            <span id="outageTabBadge" class="tab-badge outage" style="display: none;">0 Outages</span>
           </button>
           <button id="tabOfficialsBtn" class="tab-btn" onclick="switchTab('officials')">
-            <span>👥 Officials Directory</span>
-            <span id="officialsTabBadge" class="tab-badge" style="background: var(--yg-lighter); color: var(--yg-deep); border: 1px solid var(--yg-border);">5</span>
+            <span>Officials Directory</span>
+            <span id="officialsTabBadge" class="tab-badge neutral">5</span>
           </button>
           <button id="tabQueueBtn" class="tab-btn" onclick="switchTab('queue')">
-            <span>⏱️ Ticket Queue</span>
+            <span>Ticket Queue</span>
           </button>
           <button id="tabCompareBtn" class="tab-btn" onclick="switchTab('compare')">
             <span>Side-by-Side</span>
           </button>
-
           <button id="tabAwsBtn" class="tab-btn" onclick="switchTab('aws')">
-            <span>☁️ AWS Deployment & API Hub</span>
+            <span>AWS Deployment & API Hub</span>
           </button>
         </div>
 
@@ -1815,12 +2564,19 @@
             <div class="feed-pane">
               <div class="feed-header">
                 <div>
-                  <h4 style="font-size: 13px; font-weight: 700; color: var(--yg-deep); margin: 0;">📥 Ingested Tickets Feed</h4>
-                  <p style="font-size: 11px; color: var(--text-muted); margin: 2px 0 0;">Received from client websites via API</p>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <h4 style="font-size: 13.5px; font-weight: 700; color: #13293D; margin: 0;">Ingested Tickets Feed</h4>
+                    <span class="kpi-live-dot"></span>
+                  </div>
+                  <p style="font-size: 11px; color: #64748B; margin: 2px 0 0;">Received from client websites via API</p>
                 </div>
                 <div style="display: flex; gap: 6px;">
-                  <button class="btn-feed-action" onclick="loadIngestedFeed()" title="Refresh Feed">🔄</button>
-                  <button class="btn-feed-action primary" onclick="openSimulateModal()" title="Ingest Test Payload">➕ Test</button>
+                  <button class="btn-feed-action" onclick="loadIngestedFeed()" title="Refresh Feed">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg>
+                  </button>
+                  <button class="btn-feed-action primary" onclick="openSimulateModal()" title="Ingest Test Payload">
+                    <span>+ Test</span>
+                  </button>
                 </div>
               </div>
               <div class="feed-search">
@@ -1857,7 +2613,7 @@
         <div id="panelCompany" class="result-panel" style="display: none;">
           <!-- Outage Banner -->
           <div id="companyAlertBanner" class="company-alert-banner">
-            <div class="alert-banner-icon">🚨</div>
+            <div class="alert-banner-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" x2="12" y1="9" y2="13"></line><line x1="12" x2="12.01" y1="17" y2="17"></line></svg></div>
             <div class="alert-banner-content">
               <h4 id="companyAlertTitle">Analyzing System-Wide Customer Issues...</h4>
               <p id="companyAlertDesc">Inspecting cluster patterns across customer tickets to isolate company-side service degradations.</p>
@@ -1868,13 +2624,13 @@
           <div class="company-toolbar">
             <div class="actions-left">
               <button class="btn-action-sm primary" onclick="handleSeedDemo()">
-                <span>🧪 Seed 8 Multi-Customer Demo (Chronological)</span>
+                <span>Seed 8 Demo Ingestions (Chronological)</span>
               </button>
               <button class="btn-action-sm" onclick="loadCompanyIssues()">
-                <span>🔄 Re-Analyze Common Issues</span>
+                <span>Re-Analyze Common Issues</span>
               </button>
             </div>
-            <button class="btn-clear" onclick="handleClearHistory()">🗑️ Clear History</button>
+            <button class="btn-clear" onclick="handleClearHistory()">Clear History</button>
           </div>
 
           <!-- KPI Metric Cards -->
@@ -1911,9 +2667,9 @@
         <div id="panelQueue" class="result-panel" style="display: none;">
           <div class="card-header" style="margin-bottom: 8px; padding-bottom: 8px;">
             <div class="card-title" style="font-size: 14px;">
-              <span>🕒 Customer Tickets in Chronological Submission Order</span>
+              <span>Chronological Ticket Stream</span>
             </div>
-            <button class="btn-action-sm" onclick="loadCompanyIssues()">🔄 Refresh Queue</button>
+            <button class="btn-action-sm" onclick="loadCompanyIssues()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 4px;"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg>Refresh Queue</button>
           </div>
 
           <div class="table-responsive">
@@ -1949,12 +2705,12 @@
             <!-- Customer & Ticket Context Header for Comparison -->
             <div id="compareCustomerHeader" class="customer-info-tag" style="grid-column: 1 / -1; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
               <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                <span>🎫 <strong>Ticket:</strong> <span id="compTicketId" class="table-ticket-id">TICK-1010</span></span>
-                <span>👤 <strong id="compCustomerName">Rajesh Kumar</strong></span>
+                <span class="ticket-id-tag"><strong>ID:</strong> <span id="compTicketId" class="table-ticket-id">TICK-1010</span></span>
+                <span><strong id="compCustomerName">Rajesh Kumar</strong></span>
                 <span>✉️ <span id="compCustomerEmail">rajesh.k@example.com</span></span>
-                <span>📞 <span id="compCustomerPhone">+91 98401 23456</span></span>
+                <span id="compCustomerPhone">+91 98401 23456</span>
               </div>
-              <span class="badge-outage critical" id="compPriorityBadge">Critical 🔴 (Auto-Detected)</span>
+              <span class="badge-outage critical" id="compPriorityBadge"><span class="kpi-live-dot" style="background:#DC2626; margin-right:4px;"></span> Critical (Auto-Detected)</span>
             </div>
 
             <!-- Column 1: Student -->
@@ -1988,7 +2744,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
               <div>
                 <h3 style="margin: 0; font-size: 16px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-                  <span>👥 Company Officials Directory & Escalation Roster</span>
+                  <span>Company Officials Directory & Escalation Roster</span>
                 </h3>
                 <p style="margin: 4px 0 0; font-size: 12.5px; color: var(--text-muted);">
                   Maintain verified company officials (Name, Title, Department, and Email) to enable 1-click incident escalation when company-side defects occur.
@@ -2063,7 +2819,7 @@
                 </p>
               </div>
               <a href="/client" target="_blank" class="btn" style="background: var(--yg-primary); color: #fff; font-size: 12px; padding: 7px 14px; text-decoration: none;">
-                🚀 Launch Client Demo Website
+                Launch Client Support Portal
               </a>
             </div>
           </div>
@@ -2093,7 +2849,7 @@
           <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <h4 style="margin: 0; font-size: 13.5px; color: var(--text-main);">
-                🔌 Client Company API Integration Snippets
+                Client Company API Integration Snippets
               </h4>
               <span style="font-size: 11px; background: var(--bg-inset); padding: 2px 8px; border-radius: 4px; font-family: monospace;">
                 POST /api/v1/summarize
@@ -2127,7 +2883,7 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
           <!-- AWS Production Blueprint -->
           <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
             <h4 style="margin: 0 0 10px; font-size: 13.5px; color: var(--text-main);">
-              🏗️ AWS Deployment Architecture Blueprint
+              AWS Production Deployment Architecture
             </h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 11.5px;">
               <div style="border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px;">
@@ -2151,8 +2907,9 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
         </div>
 
       </section>
+      </main>
     </div>
-  </main>
+  </div>
 
   <!-- Toast Notification Container -->
   <div id="toast" class="toast">Operation completed</div>
@@ -2174,11 +2931,11 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
 
       <!-- Settings Tabs -->
       <div style="display: flex; gap: 6px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; margin-top: 4px; overflow-x: auto;">
-        <button type="button" class="btn-sub-action active" id="btnSetTabGeneral" onclick="switchSettingsTab('general')">🏢 Organization</button>
-        <button type="button" class="btn-sub-action" id="btnSetTabApi" onclick="switchSettingsTab('api')">🔑 API & Webhooks</button>
+        <button type="button" class="btn-sub-action active" id="btnSetTabGeneral" onclick="switchSettingsTab('general')">Organization</button>
+        <button type="button" class="btn-sub-action" id="btnSetTabApi" onclick="switchSettingsTab('api')">API & Webhooks</button>
         <button type="button" class="btn-sub-action" id="btnSetTabDistill" onclick="switchSettingsTab('distill')">⚡ AI Distillation SLA</button>
-        <button type="button" class="btn-sub-action" id="btnSetTabAlerts" onclick="switchSettingsTab('alerts')">🔔 Outage Alerts</button>
-        <button type="button" class="btn-sub-action" id="btnSetTabSecurity" onclick="switchSettingsTab('security')">🛡️ Security & Sign Out</button>
+        <button type="button" class="btn-sub-action" id="btnSetTabAlerts" onclick="switchSettingsTab('alerts')">Outage Alerts</button>
+        <button type="button" class="btn-sub-action" id="btnSetTabSecurity" onclick="switchSettingsTab('security')">Security & Sign Out</button>
       </div>
 
       <!-- Tab Content 1: General Organization -->
@@ -2310,7 +3067,7 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
             <strong style="font-size: 13px; color: #991B1B; display: block; margin-bottom: 4px;">Sign Out of Workspace</strong>
             <p style="font-size: 12px; color: #B91C1C; margin: 0 0 12px;">Signing out will invalidate your active browser session. You will be redirected to the enterprise sign-in portal.</p>
             <button type="button" onclick="handleLogout()" style="padding: 9px 18px; background: #E11D48; color: #FFFFFF; border: none; border-radius: 6px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-              <span>🚪 Sign Out of Workspace</span>
+              <span>Sign Out of Workspace</span>
             </button>
           </div>
         </div>
@@ -2383,17 +3140,17 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
 
       <div class="char-counter-row" style="margin: 0;">
         <span id="wordCount">36 words</span>
-        <span id="timeIndicator">🕒 Sequential Auto-Allocation</span>
+        <span id="timeIndicator">Sequential Auto-Allocation</span>
         <span id="charCount">226 characters</span>
       </div>
 
       <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; margin-top: 8px;">
         <button id="resetBtn" class="btn-clear" type="button">Reset</button>
         <button id="runStudentBtn" class="btn-sub-branch" type="button" onclick="handleRunStudent(); closeSimulateModal();">⚡ Student Model</button>
-        <button id="runTeacherBtn" class="btn-sub-branch" type="button" onclick="handleRunTeacher(); closeSimulateModal();">🌟 Teacher (Groq 120B)</button>
+        <button id="runTeacherBtn" class="btn-sub-branch" type="button" onclick="handleRunTeacher(); closeSimulateModal();">Teacher (Groq 120B)</button>
         <button id="runCompareBtn" class="btn-sub-branch" type="button" onclick="handleRunCompare(); closeSimulateModal();">⚖️ Compare</button>
         <button id="submitTicketBtn" class="btn btn-primary-submit" onclick="handleSubmitTicket(); closeSimulateModal();" style="padding: 9px 18px; font-size: 13px;">
-          <span>🚀 Ingest & Auto-Route</span>
+          <span>Ingest & Auto-Route</span>
         </button>
       </div>
     </div>
@@ -2405,7 +3162,7 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
       <div style="background: var(--yg-lighter); border-bottom: 1px solid var(--yg-border); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
         <div>
           <h3 style="margin: 0; font-size: 16px; color: var(--yg-deep); display: flex; align-items: center; gap: 8px;">
-            <span>📧 Transfer Ticket / Query to Company Authority</span>
+            <span>Transfer Ticket to Company Authority</span>
           </h3>
           <p style="margin: 2px 0 0; font-size: 12px; color: var(--text-muted);">
             Dispatch official incident notice to verified company official with technical root-cause diagnostics.
@@ -2437,10 +3194,10 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
           <div class="form-group" style="margin-bottom: 0;">
             <label style="font-size: 11px; font-weight: 600; margin-bottom: 3px; display: block;">Escalation Urgency</label>
             <select id="modalEmailUrgency" class="form-control" style="height: 38px; font-size: 12px;">
-              <option value="CRITICAL / P1">🚨 Critical / P1 (Outage)</option>
-              <option value="HIGH / P2">🟠 High / P2</option>
-              <option value="MEDIUM / P3">🟡 Medium / P3</option>
-              <option value="LOW / P4">🟢 Low / P4</option>
+              <option value="CRITICAL / P1">Critical / P1 (Outage)</option>
+              <option value="HIGH / P2">High / P2</option>
+              <option value="MEDIUM / P3">Medium / P3</option>
+              <option value="LOW / P4">Low / P4</option>
             </select>
           </div>
         </div>
@@ -2457,7 +3214,7 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
       <div style="background: var(--bg-card); border-top: 1px solid var(--border-subtle); padding: 14px 20px; display: flex; justify-content: flex-end; gap: 10px; align-items: center;">
         <button type="button" onclick="closeEscalateModal()" class="btn-clear" style="font-size: 12px;">Cancel</button>
         <button type="button" id="modalDispatchBtn" onclick="dispatchEscalateEmail()" class="btn-sub-branch" style="background: #DC2626; color: #fff; font-size: 12px; padding: 8px 18px; font-weight: 600;">
-          🚀 Dispatch Escalation Email
+          Dispatch Escalation Email
         </button>
       </div>
     </div>
@@ -2888,13 +3645,13 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
                 ${data.priority ? data.priority.toUpperCase() : 'MEDIUM (AUTO-CLASSIFIED)'}
               </span>
               <span class="badge-outage ${data.issueOrigin === 'CLIENT_SIDE' ? 'moderate' : 'p1'}" style="${data.issueOrigin === 'CLIENT_SIDE' ? 'background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0;' : 'background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA;'}">
-                ${data.issueOrigin === 'CLIENT_SIDE' ? '👤 CLIENT-SIDE ISSUE' : '🏢 COMPANY-SIDE DEFECT'}
+                ${data.issueOrigin === 'CLIENT_SIDE' ? 'CLIENT-SIDE ISSUE' : 'COMPANY-SIDE DEFECT'}
               </span>
               <span class="badge-issue-type">${issueType}</span>
               <span class="badge-domain">${domain}</span>
               ${data.routeUsed ? `
                 <span class="route-pill ${data.routeUsed}">
-                  ${data.routeUsed === 'teacher' ? '🌟 Groq 120B Route' : '⚡ 1.5B Student Route'}
+                  ${data.routeUsed === 'teacher' ? 'Groq 120B Teacher Route' : 'Qwen 1.5B Student Route'}
                 </span>
               ` : ''}
             </div>
@@ -2906,22 +3663,22 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
 
           <!-- Prominent Customer & Ticket Context on Company / Output side -->
           <div class="customer-info-tag">
-            <span>🎫 <strong>Ticket: ${data.ticketId}</strong></span>
-            <span>👤 <strong>${data.customerName || 'Valued Customer'}</strong></span>
+            <span><strong>Ticket: ${data.ticketId}</strong></span>
+            <span><strong>${data.customerName || 'Valued Customer'}</strong></span>
             <span>✉️ ${data.customerEmail || 'N/A'}</span>
-            <span>📞 ${data.customerPhone || 'N/A'}</span>
-            ${data.createdAt ? `<span>🕒 ${data.createdAt}</span>` : ''}
+            <span>${data.customerPhone || 'N/A'}</span>
+            ${data.createdAt ? `<span>${data.createdAt}</span>` : ''}
           </div>
 
           ${data.routeReason ? `
             <div style="font-size: 11.5px; color: var(--text-muted); background: var(--bg-inset); padding: 7px 12px; border-radius: var(--radius-sm); margin-bottom: 10px; border: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 6px;">
-              <span>🧭 <strong>Routing Intelligence:</strong> ${data.routeReason}</span>
+              <span><strong>Routing Intelligence:</strong> ${data.routeReason}</span>
             </div>
           ` : ''}
 
           ${data.priorityReason ? `
             <div style="font-size: 11.5px; color: var(--yg-deep); background: var(--yg-lighter); padding: 7px 12px; border-radius: var(--radius-sm); margin-bottom: 12px; border: 1px solid var(--yg-border); display: flex; align-items: center; gap: 6px;">
-              <span>🎯 <strong>Priority Rationale:</strong> ${data.priorityReason}</span>
+              <span><strong>Priority Rationale:</strong> ${data.priorityReason}</span>
             </div>
           ` : ''}
 
@@ -2954,10 +3711,10 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
             <div style="margin-top: 14px; background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: var(--radius-sm); padding: 12px 14px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
                 <div style="font-size: 12.5px; font-weight: 700; color: #065F46; display: flex; align-items: center; gap: 6px;">
-                  <span>📱 <strong>Client-Side Action Required</strong> (Customer Guidance Steps Available)</span>
+                  <span><strong>Client-Side Action Required</strong> (Customer Guidance Steps Available)</span>
                 </div>
                 <button onclick="copyCustomerGuide('${data.ticketId}')" class="btn-sub-branch" style="background: #047857; color: #fff; font-size: 11px; padding: 4px 10px; cursor: pointer; font-weight: 600;">
-                  💬 Copy Customer Guidance Steps
+                  Copy Customer Guidance Steps
                 </button>
               </div>
               <p style="font-size: 12px; color: #047857; margin-bottom: 6px; font-weight: 600;">
@@ -2975,10 +3732,10 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
             <div style="margin-top: 14px; background: rgba(220, 38, 38, 0.06); border: 1.5px solid rgba(220, 38, 38, 0.3); border-radius: var(--radius-sm); padding: 12px 14px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                 <div style="font-size: 12.5px; font-weight: 700; color: #991B1B; display: flex; align-items: center; gap: 6px;">
-                  <span>🚨 <strong>Company-Side Defect Identified</strong> (Escalation to Proper Authority Required)</span>
+                  <span><strong>Company-Side Defect Identified</strong> (Escalation to Proper Authority Required)</span>
                 </div>
                 <button onclick="openEscalateModal('${data.ticketId}', '${(domain || '').replace(/'/g, "\\'")}', '${(issueType || '').replace(/'/g, "\\'")}', '${(coreIssue || '').replace(/'/g, "\\'")}')" class="btn-sub-branch" style="background: #DC2626; color: #fff; font-size: 11.5px; padding: 5px 12px; cursor: pointer; font-weight: 600;">
-                  📧 Transfer / Escalate to Authority via Email
+                  Transfer / Escalate to Authority via Email
                 </button>
               </div>
               <div style="font-size: 12px; color: #7F1D1D; margin-bottom: 4px;">
@@ -3122,7 +3879,7 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
       if (report.has_active_outage || report.company_status === 'CRITICAL_OUTAGE') {
         if (statusPill) {
           statusPill.className = "status-pill outage-alert";
-          statusPill.innerHTML = `<span>🚨 Outage Alert: ${report.company_outages_detected} System Issues</span>`;
+          statusPill.innerHTML = `<span>Outage Alert: ${report.company_outages_detected} System Issues</span>`;
         }
         document.getElementById('kpiSystemStatus').innerText = "Confirmed Outage";
         document.getElementById('kpiSystemStatus').style.color = "#DC2626";
@@ -3130,7 +3887,7 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
         banner.className = "company-alert-banner";
         banner.style.background = "";
         banner.style.borderColor = "";
-        bannerTitle.innerText = `🚨 ${report.company_outages_detected} Company-Side Outage(s) Detected Across Customers`;
+        bannerTitle.innerText = `${report.company_outages_detected} Company-Side Outage(s) Detected Across Customers`;
         bannerTitle.style.color = "";
         bannerDesc.innerText = report.executive_brief;
         bannerDesc.style.color = "";
@@ -3152,7 +3909,7 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
       } else {
         if (statusPill) {
           statusPill.className = "status-pill online";
-          statusPill.innerHTML = `<span>🏢 Company Status: Healthy</span>`;
+          statusPill.innerHTML = `<span>System Status: Healthy</span>`;
         }
         document.getElementById('kpiSystemStatus').innerText = "Healthy";
         document.getElementById('kpiSystemStatus').style.color = "#16A34A";
@@ -3182,14 +3939,14 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
           const isHigh = c.severity === 'HIGH_IMPACT';
           const cardClass = isCritical ? 'critical' : isHigh ? 'high' : '';
           const badgeClass = isCritical ? 'critical' : isHigh ? 'high' : 'moderate';
-          const badgeText = isCritical ? `🔴 CRITICAL OUTAGE (${c.affected_count} Customers Affected)` :
-                            isHigh ? `🟠 HIGH IMPACT (${c.affected_count} Customers Affected)` :
-                            `🟢 Single User (${c.affected_count} Customer)`;
+          const badgeText = isCritical ? `CRITICAL OUTAGE (${c.affected_count} Customers Affected)` :
+                            isHigh ? `HIGH IMPACT (${c.affected_count} Customers Affected)` :
+                            `Single User (${c.affected_count} Customer)`;
 
           const isClientSide = c.issue_origin === 'CLIENT_SIDE';
           const originBadge = isClientSide 
-            ? `<span class="badge-outage moderate" style="background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0;">👤 CLIENT-SIDE ISSUE</span>`
-            : `<span class="badge-outage critical" style="background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA;">🏢 COMPANY-SIDE DEFECT</span>`;
+            ? `<span class="badge-outage moderate" style="background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0;">CLIENT-SIDE ISSUE</span>`
+            : `<span class="badge-outage critical" style="background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA;">COMPANY-SIDE DEFECT</span>`;
 
           const rowsHtml = c.affected_tickets.map(t => `
             <tr>
@@ -3209,7 +3966,7 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
               <div class="cluster-card-header">
                 <div class="cluster-title-wrap">
                   <h4>
-                    <span>${isCritical ? '⚠️' : '📌'}</span>
+                    <span class='status-dot-subtle'></span>
                     <span>${c.issue_title}</span>
                   </h4>
                   <span class="cluster-category-tag">Category: ${c.category} · ${c.affected_pct}% of total tickets</span>
@@ -3222,17 +3979,17 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
 
               <!-- High-level Synthesized Common Summary for Company -->
               <div class="cluster-summary-box ${isCritical ? 'critical-tint' : ''}">
-                <strong>🏢 Company Impact Summary:</strong><br>
+                <strong>Company Impact Summary:</strong><br>
                 ${formatMarkdown(c.common_issue_summary)}
               </div>
 
               <div class="cluster-meta-details">
                 <div class="detail-block">
-                  <h5>🔍 Technical Root-Cause Diagnosis</h5>
+                  <h5>Technical Root-Cause Diagnosis</h5>
                   <p>${formatMarkdown(c.company_root_cause_diagnosis)}</p>
                 </div>
                 <div class="detail-block">
-                  <h5>🛠️ Recommended Operational Action</h5>
+                  <h5>Recommended Operational Action</h5>
                   <p style="white-space: pre-line;">${formatMarkdown(c.recommended_action)}</p>
                 </div>
               </div>
@@ -3241,16 +3998,16 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
               <div style="margin: 12px 0; background: var(--bg-surface); border: 1.5px solid ${isClientSide ? 'rgba(16, 185, 129, 0.35)' : 'rgba(220, 38, 38, 0.3)'}; border-radius: var(--radius-sm); padding: 12px 14px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                   <div style="font-size: 12.5px; font-weight: 700; color: ${isClientSide ? '#065F46' : '#991B1B'}; display: flex; align-items: center; gap: 6px;">
-                    <span>${isClientSide ? '👤 <strong>Client-Side Action Required</strong> (Customer self-service guidance)' : '🏢 <strong>Company-Side Defect Identified</strong> (Escalation to authority required)'}</span>
+                    <span>${isClientSide ? '<strong>Client-Side Action Required</strong> (Customer self-service guidance)' : '<strong>Company-Side Defect Identified</strong> (Escalation to authority required)'}</span>
                   </div>
                   <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                     ${!isClientSide ? `
                       <button onclick="openClusterEscalateModal('${c.cluster_id}')" class="btn-sub-branch" style="background: #DC2626; color: #fff; font-size: 11px; padding: 4px 10px; cursor: pointer; font-weight: 600;">
-                        📧 Escalate to Authority (${(c.escalation_official && c.escalation_official.name) || 'Authority'})
+                        Escalate to Authority (${(c.escalation_official && c.escalation_official.name) || 'Authority'})
                       </button>
                     ` : `
                       <button onclick="copyClusterClientGuidance('${c.cluster_id}')" class="btn-sub-branch" style="background: #047857; color: #fff; font-size: 11px; padding: 4px 10px; cursor: pointer; font-weight: 600;">
-                        💬 Copy Guidance for All ${c.affected_count} Users
+                        Copy Guidance for All ${c.affected_count} Users
                       </button>
                     `}
                   </div>
@@ -3276,7 +4033,7 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
               </div>
 
               <div class="roster-header">
-                <span>👥 Affected Customers Roster (${c.affected_count})</span>
+                <span>Affected Customers Roster (${c.affected_count})</span>
               </div>
 
               <div class="table-responsive">
@@ -3362,10 +4119,10 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 8px; margin-top: 4px;">
               <button type="button" onclick="openOfficialDirectEmail('${o.id}')" style="background: var(--yg-lighter); border: 1px solid var(--yg-border); border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; color: var(--yg-deep); font-weight: 600;">
-                📧 Compose Escalation
+                Compose Escalation
               </button>
               <button type="button" onclick="handleDeleteOfficial('${o.id}')" style="background: none; border: none; color: #DC2626; font-size: 11px; cursor: pointer; font-weight: 600;">
-                🗑️ Remove
+                Remove
               </button>
             </div>
           </div>
@@ -3605,7 +4362,7 @@ Please acknowledge receipt and initiate recovery procedures.`;
         setTimeout(() => {
           closeEscalateModal();
           btn.disabled = false;
-          btn.innerText = "🚀 Dispatch Escalation Email";
+          btn.innerText = "Dispatch Escalation Email";
         }, 1200);
       } catch (err) {
         const alertBox = document.getElementById('modalAlertBox');
@@ -3617,7 +4374,7 @@ Please acknowledge receipt and initiate recovery procedures.`;
           alertBox.innerText = `Error: ${err.message}`;
         }
         btn.disabled = false;
-        btn.innerText = "🚀 Dispatch Escalation Email";
+        btn.innerText = "Dispatch Escalation Email";
       }
     }
 
@@ -3681,7 +4438,7 @@ Please acknowledge receipt and initiate recovery procedures.`;
     function showBufferInfo() {
       const stats = window.lastBufferStats || { total_unseen_samples: 0, buffer_path: 'data/teacher_unseen_buffer.jsonl' };
       alert(
-`🎓 Continual Learning Buffer Architecture:
+`Continual Learning Buffer Architecture:
 
 • Unseen Queries Logged: ${stats.total_unseen_samples} samples
 • Buffer Storage: ${stats.buffer_path}
@@ -3846,7 +4603,7 @@ How Our Model Learns from Unseen Data:
       }
 
       btn.disabled = false;
-      btn.innerText = "🚀 Run Complete Validation Suite";
+      btn.innerText = "Run Complete Validation Suite";
       showToast("Validation suite complete!");
     }
 
@@ -3904,7 +4661,12 @@ How Our Model Learns from Unseen Data:
     function renderIngestedFeed(items) {
       const container = document.getElementById('feedListContainer');
       if (!items || items.length === 0) {
-        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 24px 8px;">No tickets ingested yet.<br>Submit from <a href="/client" target="_blank">Client Portal</a> to see them stream here.</div>';
+        container.innerHTML = `
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 56px 16px; text-align: center;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" style="margin-bottom: 14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <div style="font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 4px;">No tickets ingested yet.</div>
+            <div style="font-size: 11.5px; color: #64748B;">Submit from <a href="/client" target="_blank" style="color: #2C698D; font-weight: 600; text-decoration: underline;">Client Portal</a> to see them stream here.</div>
+          </div>`;
         return;
       }
 
@@ -4156,6 +4918,90 @@ How Our Model Learns from Unseen Data:
     }
   }
 
+  
+  // =========================================================
+  // ENTERPRISE TENANT SWITCHER & EXTRA TELEMETRY
+  // =========================================================
+  function toggleTenantDropdown(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('tenantDropdownMenu');
+    if (menu) {
+      menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+    }
+  }
+
+  function switchTenantWorkspace(tenantKey) {
+    const tenants = {
+      'apex': {
+        company_id: "COMP-APEX-01",
+        company_name: "ApexGlobal Financial Services",
+        short_name: "ApexGlobal Financial",
+        sector: "Banking & Financial Services",
+        email: "admin@apexglobal.com",
+        api_key: "sk_live_apex_99x82f1b402",
+        tier: "Enterprise SLA (99.99%)"
+      },
+      'nexus': {
+        company_id: "COMP-NEXUS-02",
+        company_name: "Nexus Cloud Systems",
+        short_name: "Nexus Cloud Systems",
+        sector: "Cloud Infrastructure",
+        email: "admin@nexuscloud.io",
+        api_key: "sk_live_nexus_44a7e9102",
+        tier: "Scale SLA (99.9%)"
+      },
+      'starlight': {
+        company_id: "COMP-STAR-03",
+        company_name: "Starlight E-Commerce",
+        short_name: "Starlight Retail",
+        sector: "Retail & Consumer",
+        email: "admin@starlight.store",
+        api_key: "sk_live_star_22b9193f",
+        tier: "Standard SLA (99.5%)"
+      },
+      'pulseline': {
+        company_id: "COMP-PULSE-04",
+        company_name: "PulseLine Healthcare",
+        short_name: "PulseLine Healthcare",
+        sector: "Healthcare & Diagnostics",
+        email: "admin@pulseline.org",
+        api_key: "sk_live_pulse_77k1903",
+        tier: "HIPAA Enterprise (99.99%)"
+      }
+    };
+
+    const target = tenants[tenantKey] || tenants['apex'];
+    const session = {
+      ...target,
+      token: "daas_tok_" + tenantKey + "_session",
+      logged_in_at: new Date().toISOString()
+    };
+    localStorage.setItem('daas_auth_company', JSON.stringify(session));
+
+    const nameEl = document.getElementById('authCompanyName');
+    if (nameEl) nameEl.innerText = target.short_name;
+
+    const dropdownCompany = document.getElementById('dropdownUserCompany');
+    if (dropdownCompany) dropdownCompany.innerText = target.company_name;
+
+    const menu = document.getElementById('tenantDropdownMenu');
+    if (menu) menu.style.display = 'none';
+
+    showToast("Active Workspace switched to " + target.company_name);
+    
+    // Refresh feed and analysis
+    if (typeof loadIngestedFeed === 'function') loadIngestedFeed();
+    if (typeof loadCompanyIssues === 'function') loadCompanyIssues();
+  }
+
+  // Close menus on outside click
+  document.addEventListener('click', function(e) {
+    const tenantMenu = document.getElementById('tenantDropdownMenu');
+    if (tenantMenu && !e.target.closest('.company-select-pill')) {
+      tenantMenu.style.display = 'none';
+    }
+  });
+
   function initCompanyAuthSession() {
     try {
       let raw = localStorage.getItem('daas_auth_company');
@@ -4186,6 +5032,54 @@ How Our Model Learns from Unseen Data:
   }
 
   // Initialize session on load
+  
+  // =========================================================
+  // SIDEBAR & TOP-NAV INTEGRATION FUNCTIONS
+  // =========================================================
+  function navigateSidebar(view) {
+    const sideItems = {
+      'dashboard': 'sideNavDashboard',
+      'tickets': 'sideNavTickets',
+      'analytics': 'sideNavAnalytics',
+      'help': 'sideNavHelp'
+    };
+
+    Object.values(sideItems).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    });
+
+    if (view === 'dashboard') {
+      document.getElementById('sideNavDashboard')?.classList.add('active');
+      switchTab('summary');
+    } else if (view === 'tickets') {
+      document.getElementById('sideNavTickets')?.classList.add('active');
+      switchTab('queue');
+    } else if (view === 'analytics') {
+      document.getElementById('sideNavAnalytics')?.classList.add('active');
+      switchTab('company');
+    } else if (view === 'help') {
+      document.getElementById('sideNavHelp')?.classList.add('active');
+      switchTab('aws');
+    }
+  }
+
+  function toggleUserDropdown() {
+    const menu = document.getElementById('userDropdownMenu');
+    if (menu) {
+      menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+    }
+  }
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function(e) {
+    const avatarPill = document.querySelector('.user-avatar-pill');
+    const menu = document.getElementById('userDropdownMenu');
+    if (menu && avatarPill && !avatarPill.contains(e.target)) {
+      menu.style.display = 'none';
+    }
+  });
+
   initCompanyAuthSession();
 
   </script>
