@@ -804,7 +804,9 @@ from app.api.schemas import (
     CompanyRegisterRequest,
     PasswordResetRequest,
     UpdateSettingsRequest,
-    LogoutResponse
+    LogoutResponse,
+    DeleteAccountRequest,
+    DeleteAccountResponse
 )
 import hashlib
 import time
@@ -1044,3 +1046,39 @@ def update_workspace_settings(payload: UpdateSettingsRequest, company_id: Option
             "latency_sla_ms": found.get("latency_sla_ms", 50)
         }
     }
+
+@router.delete("/auth/account", response_model=DeleteAccountResponse, summary="Permanently delete company workspace account")
+def delete_company_account(payload: DeleteAccountRequest, token: Optional[str] = Query(None)):
+    """Permanently deletes an enterprise company workspace account."""
+    if payload.confirmation.strip().upper() != "DELETE":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Confirmation text must be 'DELETE' to confirm account deletion."
+        )
+    global PRESET_COMPANIES
+    to_remove = None
+    for c in PRESET_COMPANIES:
+        if (payload.company_id and c.get("company_id") == payload.company_id) or \
+           (payload.email and c.get("email", "").lower() == payload.email.strip().lower()):
+            to_remove = c
+            break
+    
+    if to_remove:
+        PRESET_COMPANIES = [c for c in PRESET_COMPANIES if c.get("company_id") != to_remove.get("company_id")]
+    
+    # Invalidate session token
+    if token and token in ACTIVE_SESSIONS:
+        del ACTIVE_SESSIONS[token]
+    
+    # Invalidate all active sessions for this company
+    if to_remove:
+        cid = to_remove.get("company_id")
+        tokens_to_del = [t for t, sess in ACTIVE_SESSIONS.items() if sess.get("company_id") == cid]
+        for t in tokens_to_del:
+            if t in ACTIVE_SESSIONS:
+                del ACTIVE_SESSIONS[t]
+
+    return DeleteAccountResponse(
+        success=True,
+        message="Company workspace and account permanently deleted."
+    )

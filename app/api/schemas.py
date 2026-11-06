@@ -301,3 +301,12 @@ class UpdateSettingsRequest(BaseModel):
 class LogoutResponse(BaseModel):
     success: bool = True
     message: str = "Signed out successfully"
+
+class DeleteAccountRequest(BaseModel):
+    company_id: Optional[str] = None
+    email: Optional[str] = None
+    confirmation: str = Field(..., description="Confirmation string, must be 'DELETE'")
+
+class DeleteAccountResponse(BaseModel):
+    success: bool = True
+    message: str = "Company workspace and account permanently deleted."

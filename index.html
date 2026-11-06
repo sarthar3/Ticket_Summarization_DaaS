@@ -2461,11 +2461,7 @@
             </div>
           </div>
 
-          <!-- Test Payload Button -->
-          <button type="button" class="btn-top-action secondary" onclick="openSimulateModal()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
-            <span>Test Payload</span>
-          </button>
+
 
           <!-- Customer Support Portal Link -->
           <a href="/client" target="_blank" class="btn-top-action primary">
@@ -2495,12 +2491,7 @@
           <button id="tabQueueBtn" class="tab-btn" onclick="switchTab('queue')">
             <span>Ticket Queue</span>
           </button>
-          <button id="tabCompareBtn" class="tab-btn" onclick="switchTab('compare')">
-            <span>Side-by-Side</span>
-          </button>
-          <button id="tabAwsBtn" class="tab-btn" onclick="switchTab('aws')">
-            <span>AWS Deployment & API Hub</span>
-          </button>
+
         </div>
 
         <!-- Panel 1: Live Ingested Stream & Executive Summary -->
@@ -2520,9 +2511,7 @@
                   <button class="btn-feed-action" onclick="loadIngestedFeed()" title="Refresh Feed">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg>
                   </button>
-                  <button class="btn-feed-action primary" onclick="openSimulateModal()" title="Ingest Test Payload">
-                    <span>+ Test</span>
-                  </button>
+
                 </div>
               </div>
               <div class="feed-search">
@@ -2637,221 +2626,32 @@
           </div>
         </div>
 
-        <!-- Panel 4: Side-by-Side Comparison View -->
-        <div id="panelCompare" class="result-panel" style="display: none;">
-          <div id="comparePlaceholder" class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line></svg>
-            <h3>Side-by-Side Benchmark</h3>
-            <p>Click "Compare Both" to benchmark Student Model and Teacher Model simultaneously.</p>
-          </div>
-
-          <div id="compareContent" class="comparison-grid" style="display: none;">
-            <!-- Customer & Ticket Context Header for Comparison -->
-            <div id="compareCustomerHeader" class="customer-info-tag" style="grid-column: 1 / -1; margin-bottom: 4px; display: none; align-items: center; justify-content: space-between; flex-wrap: wrap;">
-              <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                <span class="ticket-id-tag"><strong>ID:</strong> <span id="compTicketId" class="table-ticket-id">—</span></span>
-                <span><strong id="compCustomerName">—</strong></span>
-                <span><span id="compCustomerEmail">—</span></span>
-                <span id="compCustomerPhone">—</span>
-              </div>
-              <span class="badge-outage critical" id="compPriorityBadge" style="display: none;"><span class="kpi-live-dot" style="background:#DC2626; margin-right:4px;"></span> Critical (Auto-Detected)</span>
-            </div>
-
-            <!-- Column 1: Student -->
-            <div id="compareStudentBox" class="summary-box student-accent">
-              <div class="box-header">
-                <span class="model-badge student">Student Model</span>
-                <div class="metrics-chips">
-                  <span id="compStudentLat" class="metric-chip">0 ms</span>
-                </div>
-              </div>
-              <p id="compStudentText" class="summary-text">...</p>
-            </div>
-
-            <!-- Column 2: Teacher -->
-            <div id="compareTeacherBox" class="summary-box teacher-accent">
-              <div class="box-header">
-                <span class="model-badge teacher">Teacher (Groq 120B)</span>
-                <div class="metrics-chips">
-                  <span id="compTeacherLat" class="metric-chip">0 ms</span>
-                </div>
-              </div>
-              <p id="compTeacherText" class="summary-text">...</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel 7: Company Officials Directory & Escalation Roster -->
-        <div id="panelOfficials" class="result-panel" style="display: none; flex-direction: column; gap: 16px;">
-          <!-- Header and Overview -->
-          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
-              <div>
-                <h3 style="margin: 0; font-size: 16px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-                  <span>Company Officials Directory & Escalation Roster</span>
-                </h3>
-                <p style="margin: 4px 0 0; font-size: 12.5px; color: var(--text-muted);">
-                  Maintain verified company officials (Name, Title, Department, and Email) to enable 1-click incident escalation when company-side defects occur.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Add Official Form -->
-          <div style="background: var(--yg-lighter); border: 1.5px solid var(--yg-border); border-radius: var(--radius-md); padding: 16px;">
-            <h4 style="margin: 0 0 12px; font-size: 13.5px; color: var(--yg-deep); display: flex; align-items: center; gap: 6px;">
-              <span>➕ Register New Company Official</span>
-            </h4>
-            <div style="display: grid; grid-template-columns: 1fr 1.2fr 1.2fr 1fr auto; gap: 10px; align-items: end;">
-              <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 11px; margin-bottom: 3px; font-weight: 600;">Full Name</label>
-                <input type="text" id="newOfficialName" class="form-control" placeholder="e.g. Vikram Sharma" style="height: 36px; font-size: 12px;">
-              </div>
-              <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 11px; margin-bottom: 3px; font-weight: 600;">Designation / Title</label>
-                <input type="text" id="newOfficialDesignation" class="form-control" placeholder="e.g. Head of SRE & Cloud Infra" style="height: 36px; font-size: 12px;">
-              </div>
-              <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 11px; margin-bottom: 3px; font-weight: 600;">Official Corporate Email</label>
-                <input type="email" id="newOfficialEmail" class="form-control" placeholder="e.g. official@company.com" style="height: 36px; font-size: 12px;">
-              </div>
-              <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 11px; margin-bottom: 3px; font-weight: 600;">Department</label>
-                <select id="newOfficialDept" class="form-control" style="height: 36px; font-size: 12px;">
-                  <option value="Cloud Infrastructure">Cloud Infrastructure</option>
-                  <option value="Banking & Financial Services">Banking & Payments</option>
-                  <option value="Authentication & Mobile Client">Mobile & Auth</option>
-                  <option value="Cybersecurity & Fraud">Security & Fraud</option>
-                  <option value="Logistics & Fulfillment">Logistics & Supply</option>
-                  <option value="General Engineering">General Engineering</option>
-                </select>
-              </div>
-              <div>
-                <button type="button" onclick="handleAddOfficial()" class="btn-sub-branch" style="background: var(--yg-primary); color: #fff; height: 36px; font-size: 12px; padding: 0 16px; white-space: nowrap; font-weight: 600;">
-                  Save Official
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Officials Roster Container -->
-          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <h4 style="margin: 0; font-size: 14px; color: var(--text-main);">
-                <span>Registered Officials for Escalation</span>
-                <span id="officialsCountBadge" class="tab-badge" style="background: var(--yg-primary); color: #fff; margin-left: 6px;">0</span>
-              </h4>
-              <button onclick="loadOfficials()" class="btn-clear" style="font-size: 11.5px;">Refresh Directory</button>
-            </div>
-            <div id="officialsListContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
-              <!-- Populated dynamically -->
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel 8: AWS Deployment & Client Company API Integration Hub -->
-        <div id="panelAws" class="result-panel" style="display: none; flex-direction: column; gap: 16px;">
-          <!-- Overview Card -->
-          <div style="background: var(--bg-card); border: 1.5px solid var(--yg-border); border-radius: var(--radius-md); padding: 18px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
-              <div>
-                <h3 style="margin: 0; font-size: 16px; color: var(--yg-deep); display: flex; align-items: center; gap: 8px;">
-                  <span>AWS Cloud Production Deployment & Client API Hub</span>
-                </h3>
-                <p style="margin: 4px 0 0; font-size: 12.5px; color: var(--text-muted);">
-                  Architecture for deploying TicketSummarizer DaaS on AWS and integrating with client company support websites.
-                </p>
-              </div>
-              <a href="/client" target="_blank" class="btn" style="background: var(--yg-primary); color: #fff; font-size: 12px; padding: 7px 14px; text-decoration: none;">
-                Launch Client Support Portal
-              </a>
-            </div>
-          </div>
-
-          <!-- Distillation-as-a-Service Value Proposition -->
-          <div style="background: var(--yg-lighter); border: 1px solid var(--yg-border); border-radius: var(--radius-md); padding: 16px;">
-            <h4 style="margin: 0 0 8px; font-size: 13.5px; color: var(--yg-deep);">
-              How Distillation-as-a-Service (DaaS) Works for Client Companies
-            </h4>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; font-size: 12px;">
-              <div style="background: #fff; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
-                <strong style="color: var(--yg-deep); display: block; margin-bottom: 4px;">1. Ultra-Low Latency & Cost</strong>
-                Routine customer queries are summarized locally by the lightweight Student LLM (<code>Qwen2.5-1.5B</code>) in &lt;1ms to ~200ms with zero expensive API tokens.
-              </div>
-              <div style="background: #fff; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
-                <strong style="color: var(--yg-deep); display: block; margin-bottom: 4px;">2. Teacher Safety Escalation</strong>
-                P1 widespread outages and novel domain complaints route automatically to Teacher LLM (<code>Groq 120B</code>) for high-precision SRE incident plans.
-              </div>
-              <div style="background: #fff; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
-                <strong style="color: var(--yg-deep); display: block; margin-bottom: 4px;">3. Continuous Knowledge Distillation</strong>
-                Unseen pairs are captured in <code>teacher_unseen_buffer.jsonl</code> and distilled via GKD/LoRA so the Student model permanently learns the client's domain.
-              </div>
-            </div>
-          </div>
-
-          <!-- Code Integration Snippets for Client Websites -->
-          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <h4 style="margin: 0; font-size: 13.5px; color: var(--text-main);">
-                Client Company API Integration Snippets
-              </h4>
-              <span style="font-size: 11px; background: var(--bg-inset); padding: 2px 8px; border-radius: 4px; font-family: monospace;">
-                POST /api/v1/summarize
-              </span>
-            </div>
-            
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
-              Corporate clients connect their website support forms to your backend with a single HTTP POST call:
-            </p>
-
-            <!-- Code snippet tabs -->
-            <div style="background: #1E2310; border-radius: 8px; padding: 14px; color: #EAF4DC; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.5; overflow-x: auto;">
-<pre style="margin: 0;"><span style="color: #9BB835;"># Python Integration (Client Backend)</span>
-<span style="color: #FBBF24;">import</span> requests
-
-payload = {
-    <span style="color: #A3E635;">"ticket_text"</span>: <span style="color: #A3E635;">"Customer cannot login to banking app post update."</span>,
-    <span style="color: #A3E635;">"customer_name"</span>: <span style="color: #A3E635;">"Customer Name"</span>,
-    <span style="color: #A3E635;">"sector"</span>: <span style="color: #A3E635;">"Banking & Finance"</span>
-}
-response = requests.post(
-    <span style="color: #A3E635;">"https://api.yourdomain.com/api/v1/summarize"</span>,
-    json=payload,
-    headers={<span style="color: #A3E635;">"Authorization"</span>: <span style="color: #A3E635;">"Bearer YOUR_CLIENT_KEY"</span>}
-)
-data = response.json()
-print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} | Priority: {data['priority']}"</span>)</pre>
-            </div>
-          </div>
-
-          <!-- AWS Production Blueprint -->
-          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
-            <h4 style="margin: 0 0 10px; font-size: 13.5px; color: var(--text-main);">
-              AWS Production Deployment Architecture
-            </h4>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 11.5px;">
-              <div style="border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px;">
-                <strong style="color: var(--yg-deep);">1. Container (Amazon ECR)</strong>
-                <p style="margin-top: 4px; color: var(--text-muted);">Built via <code>Dockerfile</code> with multi-stage layers and pushed to AWS ECR repo <code>ticket-summarization-daas</code>.</p>
-              </div>
-              <div style="border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px;">
-                <strong style="color: var(--yg-deep);">2. Compute (Amazon ECS / EC2)</strong>
-                <p style="margin-top: 4px; color: var(--text-muted);">Deployed on ECS Fargate or EC2 instances with GPU/CPU support running <code>uvicorn app.main:app</code> on port 8000.</p>
-              </div>
-              <div style="border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px;">
-                <strong style="color: var(--yg-deep);">3. Load Balancer (AWS ALB)</strong>
-                <p style="margin-top: 4px; color: var(--text-muted);">Application Load Balancer handling HTTPS termination and routing traffic to Target Groups with <code>/health</code> checks.</p>
-              </div>
-              <div style="border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px;">
-                <strong style="color: var(--yg-deep);">4. Domain & Metrics</strong>
-                <p style="margin-top: 4px; color: var(--text-muted);">Route 53 DNS routing + CloudWatch operational metrics tracking P50/P95 latencies and error rates.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </section>
+        </section>
       </main>
+    </div>
+  </div>
+
+    <!-- Modal: Delete Account Confirmation -->
+  <div id="deleteAccountModal" class="simulate-modal-backdrop" style="display: none; z-index: 1200;">
+    <div class="simulate-modal-card" style="max-width: 480px; padding: 24px; border: 1.5px solid #FCA5A5; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h4 style="margin: 0; font-size: 16px; color: #991B1B; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          Confirm Workspace Account Deletion
+        </h4>
+        <button onclick="closeDeleteAccountConfirmModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #64748B;">&times;</button>
+      </div>
+      <p style="font-size: 12.5px; color: #475569; margin-bottom: 12px; line-height: 1.5;">
+        Are you sure you want to permanently delete <strong id="delConfirmCompanyName" style="color: #0F172A;">your workspace</strong>? All associated enterprise configuration, API access keys, and ticket records will be destroyed immediately.
+      </p>
+      <div style="background: #FEF2F2; padding: 10px 12px; border-radius: 6px; font-size: 11.5px; color: #991B1B; margin-bottom: 14px; border: 1px solid #FECACA;">
+        To confirm, please type <strong style="letter-spacing: 1px;">DELETE</strong> in the box below:
+      </div>
+      <input type="text" id="deleteConfirmInput" class="form-control" placeholder="Type DELETE to confirm" style="margin-bottom: 16px; font-family: 'JetBrains Mono', monospace;" oninput="onDeleteConfirmInputChange()">
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn" onclick="closeDeleteAccountConfirmModal()" style="background: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; font-weight: 600; padding: 8px 14px; border-radius: 6px;">Cancel</button>
+        <button type="button" id="confirmDeleteAccountBtn" class="btn" onclick="executeAccountDeletion()" disabled style="background: #DC2626; color: #FFFFFF; border: none; font-weight: 700; padding: 8px 16px; border-radius: 6px; opacity: 0.5; cursor: not-allowed;">Delete My Account</button>
+      </div>
     </div>
   </div>
 
@@ -3014,6 +2814,25 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
               <span>Sign Out of Workspace</span>
             </button>
           </div>
+
+          <!-- Danger Zone: Delete Account -->
+          <div style="margin-top: 12px; padding: 18px; background: #FEF2F2; border: 1.5px solid #FCA5A5; border-radius: 10px;">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+              <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: #FEE2E2; border: 1px solid #F87171; display: flex; align-items: center; justify-content: center; color: #DC2626;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              </div>
+              <div style="flex: 1;">
+                <strong style="font-size: 13.5px; color: #991B1B; display: block; margin-bottom: 4px;">Delete Workspace Account</strong>
+                <p style="font-size: 12px; color: #7F1D1D; margin: 0 0 12px; line-height: 1.45;">
+                  Permanently delete your company account, workspace credentials, API access keys, and ticket history. This action is irreversible and immediately terminates your active enterprise session.
+                </p>
+                <button type="button" class="btn" onclick="openDeleteAccountConfirmModal()" style="background: #DC2626; color: #FFFFFF; border: 1.5px solid #B91C1C; font-weight: 700; font-size: 12px; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+                  Delete Company Account
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -3222,7 +3041,7 @@ print(<span style="color: #A3E635;">f"Generated Ticket ID: {data['ticket_id']} |
     }
 
     function switchTab(tab) {
-      const tabs = ['summary', 'company', 'officials', 'queue', 'compare', 'aws'];
+      const tabs = ['summary', 'company', 'officials', 'queue'];
       tabs.forEach(t => {
         const btn = document.getElementById(`tab${capitalize(t)}Btn`);
         const panel = document.getElementById(`panel${capitalize(t)}`);
@@ -4851,7 +4670,104 @@ How Our Model Learns from Unseen Data:
     }
   }
 
-  async function handleLogout() {
+  async 
+  // =========================================================
+  // DELETE ACCOUNT / WORKSPACE LOGIC
+  // =========================================================
+  function openDeleteAccountConfirmModal() {
+    const raw = localStorage.getItem('daas_auth_company');
+    let compName = 'this company workspace';
+    if (raw) {
+      try {
+        const c = JSON.parse(raw);
+        if (c.company_name) compName = c.company_name;
+      } catch(e) {}
+    }
+    const nameEl = document.getElementById('delConfirmCompanyName');
+    if (nameEl) nameEl.innerText = compName;
+    
+    const inputEl = document.getElementById('deleteConfirmInput');
+    if (inputEl) inputEl.value = '';
+    
+    const btn = document.getElementById('confirmDeleteAccountBtn');
+    if (btn) {
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+      btn.style.cursor = 'not-allowed';
+    }
+    
+    document.getElementById('deleteAccountModal').style.display = 'flex';
+  }
+
+  function closeDeleteAccountConfirmModal() {
+    const m = document.getElementById('deleteAccountModal');
+    if (m) m.style.display = 'none';
+  }
+
+  function onDeleteConfirmInputChange() {
+    const val = (document.getElementById('deleteConfirmInput')?.value || '').trim();
+    const btn = document.getElementById('confirmDeleteAccountBtn');
+    if (btn) {
+      if (val === 'DELETE') {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+      } else {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+      }
+    }
+  }
+
+  async function executeAccountDeletion() {
+    const btn = document.getElementById('confirmDeleteAccountBtn');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerText = 'Deleting...';
+    }
+
+    try {
+      const raw = localStorage.getItem('daas_auth_company');
+      let cid = null;
+      let email = null;
+      let token = null;
+      if (raw) {
+        try {
+          const c = JSON.parse(raw);
+          cid = c.company_id;
+          email = c.email;
+          token = c.token;
+        } catch(e) {}
+      }
+
+      const res = await fetch('/api/v1/auth/account' + (token ? '?token=' + encodeURIComponent(token) : ''), {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company_id: cid,
+          email: email,
+          confirmation: 'DELETE'
+        })
+      });
+
+      localStorage.removeItem('daas_auth_company');
+      closeDeleteAccountConfirmModal();
+      closeSettingsModal();
+      showToast('Account successfully deleted. Redirecting to sign in...');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1200);
+    } catch(err) {
+      showToast('Account deleted locally. Redirecting...');
+      localStorage.removeItem('daas_auth_company');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1000);
+    }
+  }
+
+  function handleLogout() {
     if (confirm("Are you sure you want to sign out of this workspace?")) {
       try {
         const auth = JSON.parse(localStorage.getItem('daas_auth_company') || '{}');
@@ -5009,7 +4925,7 @@ How Our Model Learns from Unseen Data:
       switchTab('company');
     } else if (view === 'help') {
       document.getElementById('sideNavHelp')?.classList.add('active');
-      switchTab('aws');
+      window.open('/client', '_blank');
     }
   }
 
