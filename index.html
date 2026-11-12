@@ -3402,19 +3402,21 @@
     function renderSummaryCard(data) {
       const container = document.getElementById('summaryContent');
       
-      const structured = data.structured || {};
-      const coreIssue = structured.core_issue || 'Multiple banking services unavailable.';
-      const domain = structured.domain || data.sector || 'Cloud Infrastructure';
-      const issueType = structured.issue_type || 'Multi-Service Outage / HTTP 503';
-      const customerImpact = structured.customer_impact || 'More than 500 customers affected; banking access and transaction processing disrupted.';
-      const actions = Array.isArray(structured.recommended_actions) && structured.recommended_actions.length > 0
+      const structured = data.structured || data.structuredSummary || data.structured_summary || {};
+      const coreIssue = structured.core_issue || data.coreIssue || data.summary || 'Customer support inquiry reported.';
+      const domain = structured.domain || data.domain || data.sector || 'General Support';
+      const issueType = structured.issue_type || data.issueType || data.intent || 'General Customer Inquiry';
+      const customerImpact = structured.customer_impact || data.customerImpact || data.customer_impact || 'Individual customer service inquiry with no broad operational disruption detected.';
+      const actions = (Array.isArray(structured.recommended_actions) && structured.recommended_actions.length > 0)
         ? structured.recommended_actions
-        : (structured.key_action_items ? [structured.key_action_items] : [
-            'Escalate to the incident response / SRE team.',
-            'Investigate application health, load balancers, upstream dependencies, and recent deployments.',
-            'Check logs, service metrics, and infrastructure health.',
-            'Restore service and communicate incident updates.'
-          ]);
+        : ((Array.isArray(data.recommendedActions) && data.recommendedActions.length > 0)
+          ? data.recommendedActions
+          : ((Array.isArray(data.recommended_actions) && data.recommended_actions.length > 0)
+            ? data.recommended_actions
+            : (structured.key_action_items ? [structured.key_action_items] : [
+                'Review customer account details and provide standard documentation / support response.',
+                'Verify customer satisfaction and close inquiry.'
+              ])));
 
       const actionsHtml = `<ul class="action-items-list">${actions.map(a => `<li>${formatMarkdown(a)}</li>`).join('')}</ul>`;
 
@@ -3520,11 +3522,11 @@
                 Step-by-Step Guidance Instructions for Customer:
               </p>
               <ul style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; padding-left: 20px;">
-                ${(data.clientGuidance && data.clientGuidance.steps) ? data.clientGuidance.steps.map(s => `<li style="margin-bottom: 3px;">${formatMarkdown(s)}</li>`).join('') : '<li>Check account balance or deposit required funds.</li>'}
+                ${(data.clientGuidance && data.clientGuidance.steps) ? data.clientGuidance.steps.map(s => `<li style="margin-bottom: 3px;">${formatMarkdown(s)}</li>`).join('') : '<li>Verify customer credentials and provide standard troubleshooting guidance.</li>'}
               </ul>
               <div id="guideMsgBox_${data.ticketId}" style="background: rgba(255,255,255,0.85); border: 1px dashed rgba(16, 185, 129, 0.4); border-radius: 4px; padding: 8px 10px; font-size: 11.5px; color: #065F46;">
                 <strong>Ready-to-Send Communication Copy:</strong><br/>
-                "${formatMarkdown((data.clientGuidance && data.clientGuidance.message_template) || 'Dear Customer, your balance is below the requested transaction amount. Please top up your account or switch payment method.')}"
+                "${formatMarkdown((data.clientGuidance && data.clientGuidance.message_template) || 'Dear Customer, we have received your request and our support team is assisting you with resolution. Please follow the instructions provided or reply for additional assistance.')}"
               </div>
             </div>
           ` : `
@@ -3538,7 +3540,7 @@
                 </button>
               </div>
               <div style="font-size: 12px; color: #7F1D1D; margin-bottom: 4px;">
-                <strong>Designated Escalation Authority:</strong> <span style="font-weight: 600;">${(data.escalationDetails && data.escalationDetails.target_official && data.escalationDetails.target_official.name) || 'Vikram Sharma'}</span> (${(data.escalationDetails && data.escalationDetails.target_official && data.escalationDetails.target_official.designation) || 'Head of SRE'}) — <span style="font-family: monospace; font-size: 11.5px;">${(data.escalationDetails && data.escalationDetails.target_official && data.escalationDetails.target_official.email) || 'vikram.sre@company.com'}</span>
+                <strong>Designated Escalation Authority:</strong> <span style="font-weight: 600;">${(data.escalationDetails && data.escalationDetails.target_official && data.escalationDetails.target_official.name) || 'Department Support Lead'}</span> (${(data.escalationDetails && data.escalationDetails.target_official && data.escalationDetails.target_official.designation) || 'Technical Operations'}) — <span style="font-family: monospace; font-size: 11.5px;">${(data.escalationDetails && data.escalationDetails.target_official && data.escalationDetails.target_official.email) || 'escalations@company.com'}</span>
               </div>
               <div style="font-size: 11.5px; color: var(--text-muted);">
                 Pre-formatted incident email notification ready. Click button above to review, adjust, and dispatch to company authority.
@@ -3574,6 +3576,7 @@
     }
 
     function simulateTeacherSummary(id, name, email, phone, text) {
+      const firstSentence = text.split('.')[0] || "Customer support issue reported";
       renderSummaryCard({
         ticketId: id,
         customerName: name,
@@ -3582,10 +3585,17 @@
         title: "Teacher LLM Gold Summary (Groq)",
         badgeClass: "teacher",
         badgeText: "Teacher: Groq (120B)",
-        summary: `Executive Summary: Core issue is ${text.split('.')[0].toLowerCase()}. Recommended action: prioritize immediate ticket resolution and verify credential token state.`,
+        summary: `Executive Summary: Core issue is ${firstSentence.toLowerCase()}. Recommended action: prioritize immediate ticket resolution and verify customer account state.`,
         latency: 1280.4,
         inputTokens: Math.round(text.split(/\s+/).length * 1.3),
-        outputTokens: 32
+        outputTokens: 32,
+        structured: {
+          core_issue: firstSentence,
+          domain: "General Support",
+          issue_type: "Customer Support Inquiry",
+          customer_impact: "Individual customer request logged for resolution.",
+          recommended_actions: ["Investigate customer issue details.", "Provide resolution within SLA."]
+        }
       });
       runFailureAudit(text, text);
     }
@@ -4535,7 +4545,14 @@ How Our Model Learns from Unseen Data:
         latencyBreakdown: t.latency_breakdown,
         inputTokens: (t.ticket_text || '').split(' ').length,
         outputTokens: (t.summary || '').split(' ').length,
+        structured: t.structured_summary,
         structuredSummary: t.structured_summary,
+        domain: t.domain || t.sector,
+        sector: t.sector || t.domain,
+        issueType: t.issue_type || t.intent,
+        customerImpact: t.customer_impact,
+        coreIssue: (t.structured_summary && t.structured_summary.core_issue) || t.summary,
+        recommendedActions: t.recommended_actions || (t.structured_summary && t.structured_summary.recommended_actions),
         issueOrigin: t.issue_origin,
         clientGuidance: t.client_guidance,
         escalationDetails: t.escalation_details,

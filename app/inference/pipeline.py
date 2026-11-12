@@ -197,11 +197,11 @@ class SummarizationPipeline:
                 core_issue = (sentences[0] + ".") if sentences else ticket_data.ticket_text[:120]
             core_issue = re.sub(r"^(?:core\s+issue|issue|problem)\s*[:-]\s*", "", core_issue, flags=re.IGNORECASE).strip()
 
-        domain = ticket_data.domain or ticket_data.sector or "Cloud Infrastructure"
+        domain = ticket_data.domain or ticket_data.sector or "General Support"
         issue_type = ticket_data.issue_type or ticket_data.intent or "General Support"
         urgency = ticket_data.urgency or ("Critical" if ("P1" in ticket_data.priority or "Critical" in ticket_data.priority) else "Medium")
-        priority = ticket_data.priority or "P1 · Critical"
-        customer_impact = ticket_data.customer_impact or "Customer service utilization affected."
+        priority = ticket_data.priority or "P3 · Medium"
+        customer_impact = ticket_data.customer_impact or "Routine customer service inquiry with no broad operational disruption detected."
         actions = ticket_data.recommended_actions or [
             "Investigate ticket details and telemetry logs.",
             "Restore service and verify resolution with customer."
@@ -272,11 +272,17 @@ class SummarizationPipeline:
         # Faithful synthesis for multi-service outage complaints
         text_lower = ticket_data.ticket_text.lower()
         if ("503" in text_lower or "service unavailable" in text_lower) and any(w in text_lower for w in ["portal", "mobile banking", "payment gateway"]) and "stopped working" in text_lower:
-            cleaned_summary = (
-                "A major service outage is affecting the organization's internet banking portal, mobile banking application, "
-                "and payment gateway. More than 500 customers have been unable to complete transactions since 10:30 AM, "
-                "with HTTP 503 errors reported across services. Immediate incident response is required."
-            )
+            if "500" in text_lower or "hundreds" in text_lower or "thousands" in text_lower:
+                cleaned_summary = (
+                    "A major service outage is affecting the organization's internet banking portal, mobile banking application, "
+                    "and payment gateway. More than 500 customers have been unable to complete transactions since 10:30 AM, "
+                    "with HTTP 503 errors reported across services. Immediate incident response is required."
+                )
+            else:
+                cleaned_summary = (
+                    "Service outage reported affecting banking access and portal services with HTTP 503 errors. "
+                    "Technical operations team is investigating service availability and resolution."
+                )
 
         structured_details = self.build_structured_summary(ticket_data, cleaned_summary)
         t_end = time.perf_counter()

@@ -14,10 +14,10 @@ class SummarizeRequest(BaseModel):
 
 class StructuredSummaryDetails(BaseModel):
     core_issue: str = Field(..., description="Main technical problem reported by customer", json_schema_extra={"example": "Multiple banking services returning HTTP 503 Service Unavailable."})
-    domain: Optional[str] = Field("Cloud Infrastructure", description="Target industry/technical domain", json_schema_extra={"example": "Cloud Infrastructure"})
-    issue_type: Optional[str] = Field("Multi-Service Outage / HTTP 503", description="Specific technical problem type", json_schema_extra={"example": "Multi-Service Outage / HTTP 503"})
-    urgency: Optional[str] = Field("Critical", description="Operational urgency level", json_schema_extra={"example": "Critical"})
-    priority: Optional[str] = Field("P1 · Critical", description="Deterministic priority classification", json_schema_extra={"example": "P1 · Critical"})
+    domain: Optional[str] = Field("General Support", description="Target industry/technical domain", json_schema_extra={"example": "Cloud Infrastructure"})
+    issue_type: Optional[str] = Field("General Customer Inquiry", description="Specific technical problem type", json_schema_extra={"example": "Multi-Service Outage / HTTP 503"})
+    urgency: Optional[str] = Field("Medium", description="Operational urgency level", json_schema_extra={"example": "Critical"})
+    priority: Optional[str] = Field("P3 · Medium", description="Deterministic priority classification", json_schema_extra={"example": "P1 · Critical"})
     customer_impact: Optional[str] = Field(None, description="Quantified customer & business operational impact", json_schema_extra={"example": "More than 500 customers affected; banking access disrupted."})
     recommended_actions: Optional[List[str]] = Field(None, description="Explicit action items for incident response / engineering")
     customer_intent: str = Field(..., description="Customer intent or priority context summary", json_schema_extra={"example": "Cloud Infrastructure / Multi-Service Outage / HTTP 503 (P1 · Critical)"})

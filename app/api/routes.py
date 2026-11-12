@@ -257,8 +257,25 @@ def seed_demo_tickets():
     for seed in demo_seeds:
         ticket_dt = base_time + timedelta(minutes=seed["delta_min"])
         formatted_t = ticket_dt.strftime("%I:%M %p, %b %d, %Y")
+        impact_map = {
+            "TICK-1001": "User unable to access mobile banking session; authentication token error.",
+            "TICK-1002": "User mobile banking application crash on authentication.",
+            "TICK-1003": "Corporate office users blocked by invalid session token.",
+            "TICK-1004": "Payment deducted without order confirmation; customer checkout interrupted.",
+            "TICK-1005": "Double charge reported on invoice; billing adjustment requested.",
+            "TICK-1006": "Customer express delivery delayed; tracking stagnant for 4 days.",
+            "TICK-1007": "Order shipment pending warehouse handoff.",
+            "TICK-1008": "Customer eSIM profile conversion request pending."
+        }
+        impact = impact_map.get(seed["ticket_id"], "Customer support inquiry logged for operational review.")
         struct = {
             "core_issue": seed["core_issue"],
+            "domain": seed["sector"],
+            "issue_type": f"{seed['sector']} Support",
+            "urgency": "High" if seed["priority"] in ["Critical", "High"] else "Medium",
+            "priority": seed["priority"],
+            "customer_impact": impact,
+            "recommended_actions": [seed["action"]],
             "customer_intent": f"{seed['sector']} / Support ({seed['priority']} Priority)",
             "key_action_items": seed["action"]
         }
@@ -269,7 +286,12 @@ def seed_demo_tickets():
             model="Qwen/Qwen2.5-1.5B-Instruct",
             latency_ms=124.5,
             sector=seed["sector"],
+            domain=seed["sector"],
+            intent=f"{seed['sector']} Support",
+            issue_type=f"{seed['sector']} Support",
             priority=seed["priority"],
+            customer_impact=impact,
+            recommended_actions=[seed["action"]],
             structured_summary=struct,
             customer_name=seed["name"],
             customer_email=seed["email"],
@@ -321,11 +343,11 @@ def summarize_ticket(
             metrics_counter["total_output_tokens"] += out_toks
 
             struct_obj = None
-            domain = payload.sector or "Cloud Infrastructure"
-            issue_type = teacher_resp.intent or "Multi-Service Outage / HTTP 503"
-            urgency = "Critical" if "P1" in (teacher_resp.priority or "") or "Critical" in (teacher_resp.priority or "") else "High"
-            impact = "Widespread service unavailability reported."
-            actions = ["Escalate to SRE incident response team.", "Restore service and verify status."]
+            domain = payload.sector or "General Support"
+            issue_type = teacher_resp.intent or "General Customer Inquiry"
+            urgency = "Critical" if "P1" in (teacher_resp.priority or "") or "Critical" in (teacher_resp.priority or "") else "Medium"
+            impact = "Customer support inquiry requiring operational review."
+            actions = ["Review customer inquiry and verify details.", "Respond according to standard SLA."]
 
             if teacher_resp.structured_summary:
                 domain = teacher_resp.structured_summary.get("domain") or domain
