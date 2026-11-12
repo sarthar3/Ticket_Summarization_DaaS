@@ -637,7 +637,6 @@
   <script>
     const API_BASE = window.location.origin;
     let recentTickets = [];
-    }
 
     // Copy Ticket ID
     function copyTicketId() {
@@ -762,8 +761,9 @@
         const res = await fetch(`${API_BASE}/api/v1/history`);
         if (res.ok) {
           const hist = await res.json();
-          if (Array.isArray(hist) && hist.length > 0) {
-            recentTickets = hist.slice(0, 8).map(item => ({
+          const items = Array.isArray(hist) ? hist : (hist.items || []);
+          if (items.length > 0) {
+            recentTickets = items.slice(0, 8).map(item => ({
               ticket_id: item.ticket_id,
               subject: (item.intent || item.ticket_text.slice(0, 45)) + "...",
               text: item.ticket_text,

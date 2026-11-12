@@ -2626,7 +2626,76 @@
           </div>
         </div>
 
-        </section>
+        
+        <!-- Panel 7: Company Officials Directory & Escalation Roster -->
+        <div id="panelOfficials" class="result-panel" style="display: none; flex-direction: column; gap: 16px;">
+          <!-- Header and Overview -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3 style="margin: 0; font-size: 16px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                  <span>Company Officials Directory & Escalation Roster</span>
+                </h3>
+                <p style="margin: 4px 0 0; font-size: 12.5px; color: var(--text-muted);">
+                  Maintain verified company officials (Name, Title, Department, and Email) to enable 1-click incident escalation when company-side defects occur.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Official Form -->
+          <div style="background: var(--yg-lighter); border: 1.5px solid var(--yg-border); border-radius: var(--radius-md); padding: 16px;">
+            <h4 style="margin: 0 0 12px; font-size: 13.5px; color: var(--yg-deep); display: flex; align-items: center; gap: 6px;">
+              <span>Register New Company Official</span>
+            </h4>
+            <div style="display: grid; grid-template-columns: 1fr 1.2fr 1.2fr 1fr auto; gap: 10px; align-items: end;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label style="font-size: 11px; margin-bottom: 3px; font-weight: 600;">Full Name</label>
+                <input type="text" id="newOfficialName" class="form-control" placeholder="e.g. Vikram Sharma" style="height: 36px; font-size: 12px;">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label style="font-size: 11px; margin-bottom: 3px; font-weight: 600;">Designation / Title</label>
+                <input type="text" id="newOfficialDesignation" class="form-control" placeholder="e.g. Head of SRE & Cloud Infra" style="height: 36px; font-size: 12px;">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label style="font-size: 11px; margin-bottom: 3px; font-weight: 600;">Official Corporate Email</label>
+                <input type="email" id="newOfficialEmail" class="form-control" placeholder="e.g. official@company.com" style="height: 36px; font-size: 12px;">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label style="font-size: 11px; margin-bottom: 3px; font-weight: 600;">Department</label>
+                <select id="newOfficialDept" class="form-control" style="height: 36px; font-size: 12px;">
+                  <option value="Cloud Infrastructure">Cloud Infrastructure</option>
+                  <option value="Banking & Financial Services">Banking & Payments</option>
+                  <option value="Authentication & Mobile Client">Mobile & Auth</option>
+                  <option value="Cybersecurity & Fraud">Security & Fraud</option>
+                  <option value="Logistics & Fulfillment">Logistics & Supply</option>
+                  <option value="General Engineering">General Engineering</option>
+                </select>
+              </div>
+              <div>
+                <button type="button" onclick="handleAddOfficial()" class="btn-sub-branch" style="background: var(--yg-primary); color: #fff; height: 36px; font-size: 12px; padding: 0 16px; white-space: nowrap; font-weight: 600;">
+                  Save Official
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Officials Roster Container -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h4 style="margin: 0; font-size: 14px; color: var(--text-main);">
+                <span>Registered Officials for Escalation</span>
+                <span id="officialsCountBadge" class="tab-badge" style="background: var(--yg-primary); color: #fff; margin-left: 6px;">0</span>
+              </h4>
+              <button onclick="loadOfficials()" class="btn-clear" style="font-size: 11.5px;">Refresh Directory</button>
+            </div>
+            <div id="officialsListContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+      </section>
       </main>
     </div>
   </div>
@@ -4503,15 +4572,13 @@ How Our Model Learns from Unseen Data:
         try {
           const comp = JSON.parse(saved);
           if (comp.company_name) {
-            document.getElementById('authCompanyName').innerText = comp.company_name;
-            document.getElementById('authCompanyId').innerText = comp.company_id || 'COMP-TENANT';
+            const nameEl = document.getElementById('authCompanyName');
+            if (nameEl) nameEl.innerText = comp.company_name;
+            const idEl = document.getElementById('authCompanyId');
+            if (idEl) idEl.innerText = comp.company_id || 'COMP-TENANT';
             const k = comp.api_key || 'sk_live_apex_99x';
-            document.getElementById('authApiKeySnippet').innerText = k.slice(0, 14) + '...';
-            
-            // Sync simulator defaults
-            if (document.getElementById('customerNameInput')) {
-              document.getElementById('customerNameInput').value = `${comp.company_name.split(' ')[0]} User`;
-            }
+            const snipEl = document.getElementById('authApiKeySnippet');
+            if (snipEl) snipEl.innerText = k.slice(0, 14) + '...';
           }
         } catch (e) {}
       }
@@ -4767,7 +4834,7 @@ How Our Model Learns from Unseen Data:
     }
   }
 
-  function handleLogout() {
+  async function handleLogout() {
     if (confirm("Are you sure you want to sign out of this workspace?")) {
       try {
         const auth = JSON.parse(localStorage.getItem('daas_auth_company') || '{}');
