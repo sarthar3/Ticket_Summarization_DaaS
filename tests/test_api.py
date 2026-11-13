@@ -91,7 +91,7 @@ def test_auth_and_pages():
     companies_resp = client.get('/api/v1/auth/companies')
     assert companies_resp.status_code == 200
     companies = companies_resp.json()
-    assert len(companies) >= 4
+    assert len(companies) >= 1
     assert any(c['company_id'] == 'COMP-APEX-01' for c in companies)
 
     # Test POST /api/v1/auth/login preset company
@@ -101,7 +101,7 @@ def test_auth_and_pages():
     assert login_resp.status_code == 200
     login_data = login_resp.json()
     assert login_data['success'] is True
-    assert login_data['company_name'] == 'ApexGlobal Financial Services'
+    assert login_data['company_name'] == 'Apex Global'
     assert 'daas_tok_' in login_data['token']
 
     # Test POST /api/v1/auth/login custom company

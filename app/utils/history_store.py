@@ -150,6 +150,29 @@ def get_history_by_ticket_id(ticket_id: str) -> Optional[Dict[str, Any]]:
             return item
     return None
 
+def update_history_item(ticket_id: str, updates: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """Updates specific fields of an existing ticket record in history."""
+    _ensure_history_file()
+    with _history_lock:
+        try:
+            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+                history = json.load(f)
+        except Exception:
+            history = []
+
+        target = None
+        for item in history:
+            if item.get("ticket_id") == ticket_id:
+                item.update(updates)
+                target = item
+                break
+
+        if target is not None:
+            with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+                json.dump(history, f, indent=2)
+
+        return target
+
 def clear_history() -> bool:
     """Clears all history records."""
     _ensure_history_file()
