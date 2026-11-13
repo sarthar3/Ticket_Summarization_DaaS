@@ -2286,41 +2286,6 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
     }
 
-    .detail-pane .empty-state {
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      justify-content: center !important;
-      margin: auto !important;
-      text-align: center !important;
-      padding: 60px 24px !important;
-      color: #64748B !important;
-    }
-
-    .detail-pane .empty-state svg {
-      width: 52px !important;
-      height: 52px !important;
-      color: #94A3B8 !important;
-      margin-bottom: 16px !important;
-      stroke-width: 1.5 !important;
-    }
-
-    .detail-pane .empty-state h3 {
-      font-size: 16px !important;
-      font-weight: 800 !important;
-      color: #13293D !important;
-      margin-bottom: 8px !important;
-      letter-spacing: -0.01em !important;
-    }
-
-    .detail-pane .empty-state p {
-      font-size: 13px !important;
-      color: #64748B !important;
-      max-width: 380px !important;
-      line-height: 1.5 !important;
-      margin: 0 auto !important;
-    }
-
     .btn-feed-action.primary {
       background: #183B52 !important;
       border-color: #183B52 !important;
@@ -2716,12 +2681,6 @@
 
             <!-- Right Pane: Analysis & Summary Details -->
             <div class="detail-pane">
-              <div id="summaryPlaceholder" class="empty-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                <h3>Select a Ticket from Ingested Feed</h3>
-                <p>Click any incoming ticket on the left to inspect its AI summary, root cause, priority tier, and official escalation.</p>
-              </div>
-
               <div id="summaryLoading" class="loading-pulse" style="display: none;">
                 <div class="shimmer-line" style="width: 40%;"></div>
                 <div class="shimmer-line" style="width: 100%;"></div>
@@ -3319,7 +3278,6 @@
       }
 
       switchTab('summary');
-      document.getElementById('summaryPlaceholder').style.display = 'none';
       document.getElementById('summaryContent').style.display = 'none';
       document.getElementById('summaryLoading').style.display = 'flex';
 
@@ -3394,7 +3352,6 @@
       }
 
       switchTab('summary');
-      document.getElementById('summaryPlaceholder').style.display = 'none';
       document.getElementById('summaryContent').style.display = 'none';
       document.getElementById('summaryLoading').style.display = 'flex';
 
@@ -3461,7 +3418,6 @@
       }
 
       switchTab('summary');
-      document.getElementById('summaryPlaceholder').style.display = 'none';
       document.getElementById('summaryContent').style.display = 'none';
       document.getElementById('summaryLoading').style.display = 'flex';
 
@@ -3956,8 +3912,6 @@
         activeSelectedTicketId = null;
         allIngestedFeed = [];
         renderIngestedFeed([]);
-        const ph = document.getElementById('summaryPlaceholder');
-        if (ph) ph.style.display = 'block';
         const sc = document.getElementById('summaryContent');
         if (sc) sc.style.display = 'none';
         loadCompanyIssues();
@@ -4813,8 +4767,6 @@ How Our Model Learns from Unseen Data:
       const t = allIngestedFeed.find(x => x.ticket_id === ticketId);
       if (!t) return;
 
-      const ph = document.getElementById('summaryPlaceholder');
-      if (ph) ph.style.display = 'none';
       const sc = document.getElementById('summaryContent');
       if (sc) sc.style.display = 'block';
 
