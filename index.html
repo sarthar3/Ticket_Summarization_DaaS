@@ -5264,10 +5264,7 @@ How Our Model Learns from Unseen Data:
 
   
     function generateTeacherPreview(studentSummary, rawText) {
-      if (!studentSummary && !rawText) return "Teacher supervisory analysis pending.";
-      const src = studentSummary || rawText;
-      const firstSentence = src.split('.')[0] || "Customer support issue";
-      return `Supervisory synthesis: ${firstSentence.trim()}. Validated against source ticket facts with operational triage guidance.`;
+      return '<span style="color: #64748B; font-style: italic;">Teacher model on standby. Click <strong style="color: #BE185D;">Run Live Groq 120B</strong> above to generate real-time supervisory synthesis from the Groq 120B model.</span>';
     }
 
     function calculateSpeedup(teacherMs, studentMs) {
