@@ -29,6 +29,11 @@ class PipelineResponse(BaseModel):
     issue_origin: Optional[str] = "COMPANY_SIDE"
     client_guidance: Optional[Dict[str, Any]] = None
     escalation_details: Optional[Dict[str, Any]] = None
+    ticket_type: Optional[str] = "company_defect"
+    severity: Optional[str] = "medium"
+    confidence_score: Optional[float] = 0.92
+    probable_cause: Optional[str] = None
+    cause_confidence: Optional[float] = None
     model: str
     latency_ms: float
     latency_breakdown: Optional[Dict[str, float]] = None
@@ -218,7 +223,12 @@ class SummarizationPipeline:
             customer_impact=customer_impact,
             recommended_actions=actions,
             customer_intent=customer_intent,
-            key_action_items=key_action_items
+            key_action_items=key_action_items,
+            ticket_type=ticket_data.ticket_type,
+            severity=ticket_data.severity,
+            confidence_score=ticket_data.confidence_score,
+            probable_cause=ticket_data.probable_cause,
+            cause_confidence=ticket_data.cause_confidence
         )
 
     def run(self, raw_ticket: Dict[str, Any]) -> PipelineResponse:
@@ -268,6 +278,12 @@ class SummarizationPipeline:
             # Step 6: Post-processing & Structuring
             t_post_start = time.perf_counter()
             cleaned_summary = self.post_process_summary(raw_output, ticket_text=ticket_data.ticket_text)
+            
+            # Phase 2: Post-generation hallucination sanitization check
+            from app.preprocessing.cleaner import check_hallucinated_entities
+            h_check = check_hallucinated_entities(cleaned_summary, ticket_data.ticket_text)
+            if h_check["is_hallucinated"]:
+                cleaned_summary = h_check["sanitized_summary"]
 
         # Faithful synthesis for multi-service outage complaints
         text_lower = ticket_data.ticket_text.lower()
@@ -328,6 +344,11 @@ class SummarizationPipeline:
             issue_origin=ticket_data.issue_origin,
             client_guidance=ticket_data.client_guidance,
             escalation_details=ticket_data.escalation_details,
+            ticket_type=ticket_data.ticket_type,
+            severity=ticket_data.severity,
+            confidence_score=ticket_data.confidence_score,
+            probable_cause=ticket_data.probable_cause,
+            cause_confidence=ticket_data.cause_confidence,
             model=self.model_wrapper.model_name,
             latency_ms=inf_ms,
             latency_breakdown=breakdown,

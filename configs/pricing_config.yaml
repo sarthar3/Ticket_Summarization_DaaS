@@ -1,0 +1,27 @@
+pricing:
+  student:
+    model: "Qwen/Qwen2.5-1.5B-Instruct"
+    cost_per_1k_input_tokens_usd: 0.0000
+    cost_per_1k_output_tokens_usd: 0.0000
+    description: "Self-hosted Student model (zero external API token cost)"
+  teacher:
+    provider: "groq"
+    model: "openai/gpt-oss-120b"
+    cost_per_1k_input_tokens_usd: 0.00059
+    cost_per_1k_output_tokens_usd: 0.00079
+    description: "Groq Cloud Teacher LLM (GPT-OSS 120B Tier)"
+
+sla:
+  critical:
+    target_resolution_minutes: 15
+    label: "P1 / Critical Outage"
+  high:
+    target_resolution_minutes: 60
+    label: "P2 / High Impact"
+  medium:
+    target_resolution_minutes: 240
+    label: "P3 / Medium Priority"
+  low:
+    target_resolution_minutes: 1440
+    label: "P4 / Routine Request"
+

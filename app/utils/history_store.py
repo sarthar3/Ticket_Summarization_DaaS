@@ -70,6 +70,12 @@ def save_history_item(
     issue_origin: Optional[str] = "COMPANY_SIDE",
     client_guidance: Optional[Dict[str, Any]] = None,
     escalation_details: Optional[Dict[str, Any]] = None,
+    ticket_type: Optional[str] = None,
+    severity: Optional[str] = None,
+    confidence_score: Optional[float] = None,
+    probable_cause: Optional[str] = None,
+    cause_confidence: Optional[float] = None,
+    status: Optional[str] = "new",
     **extra_kwargs
 ) -> Dict[str, Any]:
     """Appends a new summarization record with customer details and routing metadata to history JSON file."""
@@ -83,6 +89,30 @@ def save_history_item(
     now_utc = datetime.now(timezone.utc)
     timestamp_iso = created_at or now_utc.isoformat()
     formatted_time = now_utc.strftime("%I:%M %p, %b %d, %Y")
+
+    # Ensure ticket_type and issue_origin are accurately set if missing
+    if not ticket_type:
+        try:
+            from app.preprocessing.cleaner import TicketPreprocessor
+            pre = TicketPreprocessor()
+            tt, sev, conf, action_rec, prob_cause, cause_conf = pre.classify_ticket_type_and_severity(ticket_text, priority or "Medium", domain or sector or "General Support", issue_type or intent or "")
+            ticket_type = tt
+            severity = severity or sev
+            confidence_score = confidence_score or conf
+            probable_cause = probable_cause or prob_cause
+            cause_confidence = cause_confidence or cause_conf
+            if issue_origin is None or issue_origin == "COMPANY_SIDE" or ticket_type != "company_defect":
+                orig, guid, esc = pre.classify_origin_and_guidance(ticket_text, issue_type or "", domain or "", priority or "")
+                issue_origin = orig
+                if client_guidance is None:
+                    client_guidance = guid
+                if escalation_details is None:
+                    escalation_details = esc
+        except Exception as e:
+            logger.warning(f"Error auto-classifying ticket: {e}")
+            ticket_type = ticket_type or "customer_request"
+            if ticket_type != "company_defect":
+                issue_origin = "CLIENT_SIDE"
     
     item = {
         "ticket_id": t_id,
@@ -101,9 +131,15 @@ def save_history_item(
         "priority_reason": priority_reason,
         "customer_impact": customer_impact,
         "recommended_actions": recommended_actions,
-        "issue_origin": issue_origin or "COMPANY_SIDE",
+        "issue_origin": issue_origin or ("COMPANY_SIDE" if ticket_type == "company_defect" else "CLIENT_SIDE"),
         "client_guidance": client_guidance,
         "escalation_details": escalation_details,
+        "ticket_type": ticket_type,
+        "severity": severity or "medium",
+        "confidence_score": confidence_score if confidence_score is not None else 0.92,
+        "probable_cause": probable_cause,
+        "cause_confidence": cause_confidence,
+        "status": status or "new",
         "summary": summary,
         "structured_summary": structured_summary,
         "model": model,

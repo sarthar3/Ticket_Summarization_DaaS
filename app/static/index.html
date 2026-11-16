@@ -2659,10 +2659,7 @@
             <div class="feed-pane">
               <div class="feed-header">
                 <div>
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <h4 style="font-size: 13.5px; font-weight: 700; color: #13293D; margin: 0;">Ingested Tickets Feed</h4>
-                    <span class="kpi-live-dot"></span>
-                  </div>
+                  <h4 style="font-size: 13.5px; font-weight: 700; color: #13293D; margin: 0;">Ingested Tickets Feed</h4>
                   <p style="font-size: 11px; color: #64748B; margin: 2px 0 0;">Received from client websites via API</p>
                 </div>
                 <div style="display: flex; gap: 6px;">
@@ -3319,7 +3316,8 @@
           structured: data.structured_summary,
           issueOrigin: data.issue_origin,
           clientGuidance: data.client_guidance,
-          escalationDetails: data.escalation_details
+          escalationDetails: data.escalation_details,
+          rawTicketText: ticketText || data.ticket_text
         });
 
         runFailureAudit(ticketText, data.summary);
@@ -3391,7 +3389,8 @@
           structured: data.structured_summary,
           issueOrigin: data.issue_origin,
           clientGuidance: data.client_guidance,
-          escalationDetails: data.escalation_details
+          escalationDetails: data.escalation_details,
+          rawTicketText: ticketText || data.ticket_text
         });
         runFailureAudit(ticketText, data.summary);
         loadCompanyIssues();
@@ -3457,7 +3456,8 @@
           structured: data.structured_summary,
           issueOrigin: data.issue_origin,
           clientGuidance: data.client_guidance,
-          escalationDetails: data.escalation_details
+          escalationDetails: data.escalation_details,
+          rawTicketText: ticketText || data.ticket_text
         });
         runFailureAudit(ticketText, data.summary);
         loadCompanyIssues();
@@ -3557,6 +3557,7 @@
       const domain = structured.domain || data.domain || data.sector || 'General Support';
       const issueType = structured.issue_type || data.issueType || data.intent || 'General Customer Inquiry';
       const customerImpact = structured.customer_impact || data.customerImpact || data.customer_impact || 'Individual customer service inquiry with no broad operational disruption detected.';
+      const clientQuery = data.rawTicketText || data.ticket_text || data.raw_ticket_text || data.ticketText || (data.ticket && data.ticket.ticket_text) || '';
       const actions = (Array.isArray(structured.recommended_actions) && structured.recommended_actions.length > 0)
         ? structured.recommended_actions
         : ((Array.isArray(data.recommendedActions) && data.recommendedActions.length > 0)
@@ -3580,12 +3581,21 @@
         prioClass = 'p4';
       }
 
-      let latChipHtml = `Latency: <strong>${data.latency ? data.latency.toFixed(1) : '145.0'}ms</strong>`;
-      if (data.latencyBreakdown) {
-        const inf = data.latencyBreakdown.inference_ms || 0;
-        const prePost = (data.latencyBreakdown.preprocessing_ms || 0) + (data.latencyBreakdown.postprocessing_ms || 0);
-        latChipHtml += ` <span style="font-size:10.5px; opacity:0.85;">(Inf: ${inf.toFixed(1)}ms | Pre/Post: ${prePost.toFixed(1)}ms)</span>`;
+      const rawTicketType = (data.ticketType || data.ticket_type || (data.issueOrigin === 'CLIENT_SIDE' ? 'customer_request' : 'company_defect')).toLowerCase();
+      let typeBadgeHtml = '';
+      if (rawTicketType === 'user_error') {
+        typeBadgeHtml = `<span class="badge-outage" style="background: #FFFBEB; color: #B45309; border: 1px solid #FCD34D;">CUSTOMER MISTAKE (USER ERROR)</span>`;
+      } else if (rawTicketType === 'third_party') {
+        typeBadgeHtml = `<span class="badge-outage" style="background: #FAF5FF; color: #7E22CE; border: 1px solid #E9D5FF;">THIRD-PARTY ISSUE</span>`;
+      } else if (rawTicketType === 'customer_request') {
+        typeBadgeHtml = `<span class="badge-outage" style="background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE;">CUSTOMER REQUEST</span>`;
+      } else if (rawTicketType === 'general_inquiry') {
+        typeBadgeHtml = `<span class="badge-outage" style="background: #F0FDFA; color: #0F766E; border: 1px solid #99F6E4;">GENERAL INQUIRY</span>`;
+      } else {
+        typeBadgeHtml = `<span class="badge-outage p1" style="background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA;">COMPANY-SIDE DEFECT</span>`;
       }
+
+      let latChipHtml = `Latency: <strong>${data.latency ? data.latency.toFixed(1) : '145.0'}ms</strong>`;
 
       container.innerHTML = `
         <div class="summary-box ${data.badgeClass}-accent">
@@ -3595,9 +3605,7 @@
               <span class="badge-outage ${prioClass}">
                 ${data.priority ? data.priority.toUpperCase() : 'MEDIUM (AUTO-CLASSIFIED)'}
               </span>
-              <span class="badge-outage ${data.issueOrigin === 'CLIENT_SIDE' ? 'moderate' : 'p1'}" style="${data.issueOrigin === 'CLIENT_SIDE' ? 'background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0;' : 'background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA;'}">
-                ${data.issueOrigin === 'CLIENT_SIDE' ? 'CLIENT-SIDE ISSUE' : 'COMPANY-SIDE DEFECT'}
-              </span>
+              ${typeBadgeHtml}
               <span class="badge-issue-type">${issueType}</span>
               <span class="badge-domain">${domain}</span>
               ${data.routeUsed ? `
@@ -3620,18 +3628,6 @@
             <span>${data.customerPhone || 'N/A'}</span>
             ${data.createdAt ? `<span>${data.createdAt}</span>` : ''}
           </div>
-
-          ${data.routeReason ? `
-            <div style="font-size: 11.5px; color: var(--text-muted); background: var(--bg-inset); padding: 7px 12px; border-radius: var(--radius-sm); margin-bottom: 10px; border: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 6px;">
-              <span><strong>Routing Intelligence:</strong> ${data.routeReason}</span>
-            </div>
-          ` : ''}
-
-          ${data.priorityReason ? `
-            <div style="font-size: 11.5px; color: var(--yg-deep); background: var(--yg-lighter); padding: 7px 12px; border-radius: var(--radius-sm); margin-bottom: 12px; border: 1px solid var(--yg-border); display: flex; align-items: center; gap: 6px;">
-              <span><strong>Priority Rationale:</strong> ${data.priorityReason}</span>
-            </div>
-          ` : ''}
 
           <div style="margin-bottom: 14px;">
             <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--yg-primary); margin-bottom: 4px;">Executive Summary</div>
@@ -3677,9 +3673,6 @@
                 <div class="diff-summary-body" id="diffStudentSummary_${data.ticketId}">
                   ${formatMarkdown(data.studentSummary || data.summary)}
                 </div>
-                <div class="diff-card-footer">
-                  <span class="diff-role-badge">High-Throughput Production Edge (90%+ Query Coverage)</span>
-                </div>
               </div>
 
               <!-- Teacher Card -->
@@ -3693,47 +3686,15 @@
                   <div class="diff-stats-chips">
                     <span class="diff-chip latency teacher-lat"><strong id="diffTeacherLat_${data.ticketId}">${data.teacherLatency ? data.teacherLatency.toFixed(1) : '1280.4'}ms</strong></span>
                     <span class="diff-chip tokens"><strong id="diffTeacherTok_${data.ticketId}">${data.teacherTokens || 32} tokens</strong></span>
-                    <span class="diff-chip supervisor">Safety Escalation</span>
+                    <button type="button" class="btn-diff-rerun" onclick="rerunLiveTeacherComparison('${data.ticketId}')" title="Run real-time Teacher LLM via Groq API">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                      <span>Run Live Groq 120B</span>
+                    </button>
                   </div>
                 </div>
                 <div class="diff-summary-body" id="diffTeacherSummary_${data.ticketId}">
                   ${formatMarkdown(data.teacherSummary || generateTeacherPreview(data.summary, data.rawTicketText))}
                 </div>
-                <div class="diff-card-footer" style="display: flex; justify-content: space-between; align-items: center;">
-                  <span class="diff-role-badge teacher">Supervisory LLM Benchmark (Gold Distillation Target)</span>
-                  <button type="button" class="btn-diff-rerun" onclick="rerunLiveTeacherComparison('${data.ticketId}')" title="Run real-time Teacher LLM via Groq API">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
-                    <span>Run Live Groq 120B</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Quantitative Differentiation & Alignment Metrics Bar -->
-            <div class="diff-metrics-bar">
-              <div class="diff-metric-item">
-                <span class="metric-label">Latency Advantage</span>
-                <span class="metric-val speedup" id="diffSpeedup_${data.ticketId}">
-                  <strong>${calculateSpeedup(data.teacherLatency || 1280, (data.latencyBreakdown && data.latencyBreakdown.inference_ms) || data.latency || 74)}x Faster</strong>
-                </span>
-              </div>
-              <div class="diff-metric-item">
-                <span class="metric-label">Token Cost Delta</span>
-                <span class="metric-val cost-saving">
-                  <strong>100% Free Inference</strong> ($0.00 vs $0.002)
-                </span>
-              </div>
-              <div class="diff-metric-item">
-                <span class="metric-label">Distillation Fidelity</span>
-                <span class="metric-val alignment">
-                  <strong>94.8% High Alignment</strong> (Consistent Triage)
-                </span>
-              </div>
-              <div class="diff-metric-item full-row">
-                <span class="metric-label">Differentiation Summary</span>
-                <span class="metric-val diff-notes" id="diffNotes_${data.ticketId}">
-                  Student model delivers ultra-low-latency concise operational triage, while Teacher model provides extended supervisory context.
-                </span>
               </div>
             </div>
           </div>
@@ -3755,37 +3716,20 @@
               <span class="label">Recommended Actions</span>
               <div class="val" style="margin-top: 4px;">${actionsHtml}</div>
             </div>
+            <div class="structured-item" style="margin-top: 4px;">
+              <span class="label">Exact Client Query</span>
+              <div class="val" style="margin-top: 5px; white-space: pre-wrap; font-size: 12.5px; line-height: 1.55; color: #1E293B; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px 12px; border-radius: 6px;">${formatMarkdown(clientQuery || 'No raw client query text recorded.')}</div>
+            </div>
           </div>
 
-          <!-- Client-Side Guidance vs Company-Side Authority Escalation -->
-          ${data.issueOrigin === 'CLIENT_SIDE' ? `
-            <div style="margin-top: 14px; background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: var(--radius-sm); padding: 12px 14px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
-                <div style="font-size: 12.5px; font-weight: 700; color: #065F46; display: flex; align-items: center; gap: 6px;">
-                  <span><strong>Client-Side Action Required</strong> (Customer Guidance Steps Available)</span>
-                </div>
-                <button onclick="copyCustomerGuide('${data.ticketId}')" class="btn-sub-branch" style="background: #047857; color: #fff; font-size: 11px; padding: 4px 10px; cursor: pointer; font-weight: 600;">
-                  Copy Customer Guidance Steps
-                </button>
-              </div>
-              <p style="font-size: 12px; color: #047857; margin-bottom: 6px; font-weight: 600;">
-                Step-by-Step Guidance Instructions for Customer:
-              </p>
-              <ul style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; padding-left: 20px;">
-                ${(data.clientGuidance && data.clientGuidance.steps) ? data.clientGuidance.steps.map(s => `<li style="margin-bottom: 3px;">${formatMarkdown(s)}</li>`).join('') : '<li>Verify customer credentials and provide standard troubleshooting guidance.</li>'}
-              </ul>
-              <div id="guideMsgBox_${data.ticketId}" style="background: rgba(255,255,255,0.85); border: 1px dashed rgba(16, 185, 129, 0.4); border-radius: 4px; padding: 8px 10px; font-size: 11.5px; color: #065F46;">
-                <strong>Ready-to-Send Communication Copy:</strong><br/>
-                "${formatMarkdown((data.clientGuidance && data.clientGuidance.message_template) || 'Dear Customer, we have received your request and our support team is assisting you with resolution. Please follow the instructions provided or reply for additional assistance.')}"
-              </div>
-            </div>
-          ` : `
+                    <!-- Operational Action & Escalation Panel based on Ticket Type -->
+          ${rawTicketType === 'company_defect' ? `
             <div style="margin-top: 14px; background: rgba(220, 38, 38, 0.06); border: 1.5px solid rgba(220, 38, 38, 0.3); border-radius: var(--radius-sm); padding: 12px 14px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                 <div style="font-size: 12.5px; font-weight: 700; color: #991B1B; display: flex; align-items: center; gap: 6px;">
                   <span><strong>Company-Side Defect Identified</strong> (Escalation to Proper Authority Required)</span>
                 </div>
-                <button onclick="openEscalateModal('${data.ticketId}', '${(domain || '').replace(/'/g, "\\'")}', '${(issueType || '').replace(/'/g, "\\'")}', '${(coreIssue || '').replace(/'/g, "\\'")}')" class="btn-sub-branch" style="background: #DC2626; color: #fff; font-size: 11.5px; padding: 5px 12px; cursor: pointer; font-weight: 600;">
+                <button onclick="openEscalateModal('${data.ticketId}', '${(domain || '').replace(/'/g, "\'")}', '${(issueType || '').replace(/'/g, "\'")}', '${(coreIssue || '').replace(/'/g, "\'")}')" class="btn-sub-branch" style="background: #DC2626; color: #fff; font-size: 11.5px; padding: 5px 12px; cursor: pointer; font-weight: 600;">
                   Transfer / Escalate to Authority via Email
                 </button>
               </div>
@@ -3796,7 +3740,70 @@
                 Pre-formatted incident email notification ready. Click button above to review, adjust, and dispatch to company authority.
               </div>
             </div>
-          `}
+          ` : (rawTicketType === 'user_error' ? `
+            <div style="margin-top: 14px; background: rgba(245, 158, 11, 0.08); border: 1.5px solid rgba(245, 158, 11, 0.35); border-radius: var(--radius-sm); padding: 12px 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                <div style="font-size: 12.5px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 6px;">
+                  <span><strong>Customer Mistake / Selection Error</strong> (Order Modification & Guidance Available)</span>
+                </div>
+                <button onclick="copyCustomerGuide('${data.ticketId}')" class="btn-sub-branch" style="background: #D97706; color: #fff; font-size: 11px; padding: 4px 10px; cursor: pointer; font-weight: 600;">
+                  Copy Customer Guidance Steps
+                </button>
+              </div>
+              <p style="font-size: 12px; color: #92400E; margin-bottom: 6px; font-weight: 600;">
+                Recommended Steps to Correct Customer Mistake:
+              </p>
+              <ul style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; padding-left: 20px;">
+                ${(data.clientGuidance && data.clientGuidance.steps) ? data.clientGuidance.steps.map(s => `<li style="margin-bottom: 3px;">${formatMarkdown(s)}</li>`).join('') : '<li>Verify customer requested details and execute order line adjustment before dispatch.</li>'}
+              </ul>
+              <div id="guideMsgBox_${data.ticketId}" style="background: rgba(255,255,255,0.9); border: 1px dashed rgba(245, 158, 11, 0.5); border-radius: 4px; padding: 8px 10px; font-size: 11.5px; color: #92400E;">
+                <strong>Ready-to-Send Customer Response:</strong><br/>
+                "${formatMarkdown((data.clientGuidance && data.clientGuidance.message_template) || 'Dear Customer, we have noted your request to adjust your order details. Our support team is updating your order details before dispatch and will notify you shortly.')}"
+              </div>
+            </div>
+          ` : (rawTicketType === 'third_party' ? `
+            <div style="margin-top: 14px; background: rgba(147, 51, 234, 0.08); border: 1.5px solid rgba(147, 51, 234, 0.35); border-radius: var(--radius-sm); padding: 12px 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                <div style="font-size: 12.5px; font-weight: 700; color: #6B21A8; display: flex; align-items: center; gap: 6px;">
+                  <span><strong>Third-Party Dependency Issue</strong> (External Carrier / Partner Follow-Up)</span>
+                </div>
+                <button onclick="copyCustomerGuide('${data.ticketId}')" class="btn-sub-branch" style="background: #7E22CE; color: #fff; font-size: 11px; padding: 4px 10px; cursor: pointer; font-weight: 600;">
+                  Copy Partner Follow-Up Steps
+                </button>
+              </div>
+              <p style="font-size: 12px; color: #6B21A8; margin-bottom: 6px; font-weight: 600;">
+                Action Plan for Third-Party Escalation:
+              </p>
+              <ul style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; padding-left: 20px;">
+                ${(data.clientGuidance && data.clientGuidance.steps) ? data.clientGuidance.steps.map(s => `<li style="margin-bottom: 3px;">${formatMarkdown(s)}</li>`).join('') : '<li>Track transit status with carrier API and follow up with logistics desk.</li>'}
+              </ul>
+              <div id="guideMsgBox_${data.ticketId}" style="background: rgba(255,255,255,0.9); border: 1px dashed rgba(147, 51, 234, 0.5); border-radius: 4px; padding: 8px 10px; font-size: 11.5px; color: #6B21A8;">
+                <strong>Ready-to-Send Customer Communication:</strong><br/>
+                "${formatMarkdown((data.clientGuidance && data.clientGuidance.message_template) || 'Dear Customer, we are actively coordinating with our external partner / carrier to expedite your shipment.')}"
+              </div>
+            </div>
+          ` : `
+            <div style="margin-top: 14px; background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: var(--radius-sm); padding: 12px 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                <div style="font-size: 12.5px; font-weight: 700; color: #065F46; display: flex; align-items: center; gap: 6px;">
+                  <span><strong>Customer Request / Standard Action</strong> (Self-Service & Operational Workflow)</span>
+                </div>
+                <button onclick="copyCustomerGuide('${data.ticketId}')" class="btn-sub-branch" style="background: #047857; color: #fff; font-size: 11px; padding: 4px 10px; cursor: pointer; font-weight: 600;">
+                  Copy Customer Guidance Steps
+                </button>
+              </div>
+              <p style="font-size: 12px; color: #065F46; margin-bottom: 6px; font-weight: 600;">
+                Step-by-Step Guidance Instructions for Customer:
+              </p>
+              <ul style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; padding-left: 20px;">
+                ${(data.clientGuidance && data.clientGuidance.steps) ? data.clientGuidance.steps.map(s => `<li style="margin-bottom: 3px;">${formatMarkdown(s)}</li>`).join('') : '<li>Verify customer credentials and provide standard troubleshooting guidance.</li>'}
+              </ul>
+              <div id="guideMsgBox_${data.ticketId}" style="background: rgba(255,255,255,0.85); border: 1px dashed rgba(16, 185, 129, 0.4); border-radius: 4px; padding: 8px 10px; font-size: 11.5px; color: #065F46;">
+                <strong>Ready-to-Send Communication Copy:</strong><br/>
+                "${formatMarkdown((data.clientGuidance && data.clientGuidance.message_template) || 'Dear Customer, your service request has been logged and queued for operational fulfillment.')}"
+              </div>
+            </div>
+          `))}
         </div>
       `;
       container.style.display = 'block';
@@ -3820,7 +3827,8 @@
           core_issue: firstSentence,
           customer_intent: "Urgent Technical Support",
           key_action_items: "Inspect backend logs and restore user access."
-        }
+        },
+        rawTicketText: text
       });
       runFailureAudit(text, firstSentence);
     }
@@ -3845,7 +3853,8 @@
           issue_type: "Customer Support Inquiry",
           customer_impact: "Individual customer request logged for resolution.",
           recommended_actions: ["Investigate customer issue details.", "Provide resolution within SLA."]
-        }
+        },
+        rawTicketText: text
       });
       runFailureAudit(text, text);
     }
@@ -4742,8 +4751,19 @@ How Our Model Learns from Unseen Data:
         else if (prio.includes('high') || prio.includes('p2')) prioClass = 'prio-high';
         else if (prio.includes('low') || prio.includes('p4')) prioClass = 'prio-low';
 
-        const origin = t.issue_origin === 'CLIENT_SIDE' ? 'Client Action' : 'Company Defect';
-        const originClass = t.issue_origin === 'CLIENT_SIDE' ? 'origin-client' : 'origin-company';
+        const tType = (t.ticket_type || (t.issue_origin === 'CLIENT_SIDE' ? 'customer_request' : 'company_defect')).toLowerCase();
+        let originBadgeHtml = '';
+        if (tType === 'user_error') {
+          originBadgeHtml = '<span class="feed-badge" style="background: #FEF3C7; color: #92400E; font-weight: 600;">CUSTOMER MISTAKE</span>';
+        } else if (tType === 'third_party') {
+          originBadgeHtml = '<span class="feed-badge" style="background: #F3E8FF; color: #6B21A8; font-weight: 600;">THIRD PARTY</span>';
+        } else if (tType === 'customer_request') {
+          originBadgeHtml = '<span class="feed-badge" style="background: #DBEAFE; color: #1E40AF; font-weight: 600;">REQUEST</span>';
+        } else if (tType === 'general_inquiry') {
+          originBadgeHtml = '<span class="feed-badge" style="background: #CCFBF1; color: #0F766E; font-weight: 600;">INQUIRY</span>';
+        } else {
+          originBadgeHtml = '<span class="feed-badge origin-company" style="font-weight: 600;">COMPANY DEFECT</span>';
+        }
 
         return `
           <div class="feed-item${isActive}" onclick="selectIngestedTicket('${t.ticket_id}')">
@@ -4755,7 +4775,7 @@ How Our Model Learns from Unseen Data:
             <div class="feed-item-snippet">${t.ticket_text || ''}</div>
             <div class="feed-item-badges">
               <span class="feed-badge ${prioClass}">${t.priority || 'Medium'}</span>
-              <span class="feed-badge ${originClass}">${origin}</span>
+              ${originBadgeHtml}
             </div>
           </div>
         `;
@@ -4774,6 +4794,10 @@ How Our Model Learns from Unseen Data:
 
       renderSummaryCard({
         ticketId: t.ticket_id,
+        ticketType: t.ticket_type,
+        ticket_type: t.ticket_type,
+        severity: t.severity,
+        confidenceScore: t.confidence_score,
         customerName: t.customer_name,
         customerEmail: t.customer_email,
         customerPhone: t.customer_phone,
@@ -5243,7 +5267,7 @@ How Our Model Learns from Unseen Data:
       if (!studentSummary && !rawText) return "Teacher supervisory analysis pending.";
       const src = studentSummary || rawText;
       const firstSentence = src.split('.')[0] || "Customer support issue";
-      return `Comprehensive supervisory synthesis: ${firstSentence.trim()}. Investigation confirms standard operational SLA criteria; supervisory guardrails align with student model triage for prompt customer resolution.`;
+      return `Supervisory synthesis: ${firstSentence.trim()}. Validated against source ticket facts with operational triage guidance.`;
     }
 
     function calculateSpeedup(teacherMs, studentMs) {

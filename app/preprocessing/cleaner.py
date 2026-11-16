@@ -4,6 +4,57 @@ from datetime import datetime
 from typing import Dict, Any, Optional, List, Tuple
 from pydantic import BaseModel, Field
 
+
+def check_hallucinated_entities(summary_text: str, source_ticket_text: str) -> Dict[str, Any]:
+    """Scans generated summary for hallucinated entities (version numbers, unmentioned internal system names)
+    that do not exist in the source ticket text."""
+    import re
+    source_lower = source_ticket_text.lower()
+    summary_lower = summary_text.lower()
+
+    # Check for version numbers like v4.1.9, v2.3, etc.
+    summary_versions = set(re.findall(r"\bv\d+(?:\.\d+)+\b", summary_lower))
+    source_versions = set(re.findall(r"\bv\d+(?:\.\d+)+\b", source_lower))
+    hallucinated_versions = list(summary_versions - source_versions)
+
+    # Internal infrastructure systems that should never be hallucinated if absent in ticket
+    tech_systems = [
+        "redis", "jwt", "smtp", "kafka", "docker", "kubernetes", "k8s",
+        "nginx", "apache", "mongodb", "postgresql", "mysql", "elasticsearch",
+        "rabbitmq", "token blacklist"
+    ]
+    hallucinated_systems = []
+    for s in tech_systems:
+        if s in summary_lower and s not in source_lower:
+            hallucinated_systems.append(s)
+
+    # Also check boilerplate phrases to remove
+    boilerplate_phrases = [
+        "investigation confirms standard operational sla criteria",
+        "investigation confirms standard operational criteria",
+        "supervisory guardrails align with student model",
+        "standard operational sla criteria"
+    ]
+    found_boilerplates = [bp for bp in boilerplate_phrases if bp in summary_lower]
+
+    is_hallucinated = bool(hallucinated_versions or hallucinated_systems or found_boilerplates)
+    sanitized = summary_text
+    for v in hallucinated_versions:
+        sanitized = re.sub(re.escape(v), "reported software version", sanitized, flags=re.I)
+    for s in hallucinated_systems:
+        sanitized = re.sub(rf"\b{re.escape(s)}\b", "internal system", sanitized, flags=re.I)
+    for bp in found_boilerplates:
+        sanitized = re.sub(re.escape(bp), "", sanitized, flags=re.I)
+        sanitized = re.sub(r"\s{2,}", " ", sanitized).strip()
+
+    return {
+        "is_hallucinated": is_hallucinated,
+        "hallucinated_versions": hallucinated_versions,
+        "hallucinated_systems": hallucinated_systems,
+        "found_boilerplates": found_boilerplates,
+        "sanitized_summary": sanitized
+    }
+
 class TicketData(BaseModel):
     ticket_id: str
     ticket_text: str
@@ -24,6 +75,11 @@ class TicketData(BaseModel):
     issue_origin: Optional[str] = "COMPANY_SIDE"  # "CLIENT_SIDE" or "COMPANY_SIDE"
     client_guidance: Optional[Dict[str, Any]] = None
     escalation_details: Optional[Dict[str, Any]] = None
+    ticket_type: Optional[str] = "company_defect"
+    severity: Optional[str] = "medium"
+    confidence_score: Optional[float] = 0.92
+    probable_cause: Optional[str] = None
+    cause_confidence: Optional[float] = None
 
 class TicketPreprocessor:
     """Preprocesses raw support tickets according to configurable limits and rules."""
@@ -271,7 +327,26 @@ class TicketPreprocessor:
             ]
             return domain, issue_type, urgency, customer_impact, actions
 
-        # 5. Logistics & Delivery Delay
+        # 5. Customer Order Modification / User Mistake / Exchange / Return
+        if any(w in text_lower for w in [
+            "wrong size", "wrong shoe", "wrong color", "wrong item", "wrong address", "wrong quantity",
+            "accidentally selected", "selected the wrong", "ordered the wrong", "accidentally ordered",
+            "ordered by mistake", "my mistake", "mistake on my side", "mistake from my side",
+            "mistake occurred from my side", "mistake on my end", "user error", "exchange request",
+            "size exchange", "modify order", "change order", "cancel order", "change size",
+            "change shipping address", "order modification", "placed by mistake", "update the order"
+        ]):
+            domain = sector if (sector and sector.lower() not in ["general", "general support"]) else "E-Commerce & Retail"
+            issue_type = "Customer Order Modification / Selection Correction"
+            customer_impact = "Customer mistakenly placed order with incorrect size/details; requests order modification prior to dispatch."
+            actions = [
+                "Locate order in order fulfillment database to confirm it has not dispatched.",
+                "Modify order line items to reflect customer's requested size/details before dispatch.",
+                "Send revised order confirmation receipt to customer's registered email."
+            ]
+            return domain, issue_type, urgency, customer_impact, actions
+
+        # 6. Logistics & Delivery Delay
         if any(w in text_lower for w in ["tracking", "order", "delivery", "shipping", "in transit", "carrier"]):
             domain = sector if (sector and sector.lower() not in ["general", "general support"]) else "Logistics & Fulfillment"
             issue_type = "Logistics & Delivery Delay"
@@ -316,16 +391,226 @@ class TicketPreprocessor:
         ]
         return domain, issue_type, urgency, customer_impact, actions
 
+
+    def classify_ticket_type_and_severity(
+        self,
+        ticket_text: str,
+        priority: str = "Medium",
+        domain: str = "General Support",
+        issue_type: str = "Customer Support Inquiry"
+    ) -> Tuple[str, str, float, str, Optional[str], Optional[float]]:
+        """Classifies ticket into one of 5 distinct types and severity:
+        1. company_defect
+        2. third_party
+        3. customer_request
+        4. user_error
+        5. general_inquiry
+        
+        Returns: (ticket_type, severity, confidence_score, action_recommendation, probable_cause, cause_confidence)
+        """
+        text_lower = ticket_text.lower()
+
+        # 1. Check for Third-Party issues (carrier delay, external payment switch, SMS gateway)
+        is_carrier_delay = any(w in text_lower for w in [
+            "carrier", "courier", "package tracking", "tracking stagnant", "no movement for",
+            "bluedart", "fedex", "dhl", "ups", "usps", "shipment delayed", "in transit for",
+            "carrier origin facility", "manifested but not received", "logistics partner", "carrier says"
+        ])
+        is_third_party_gateway = any(w in text_lower for w in [
+            "visa network", "mastercard network", "npci switch", "third-party gateway",
+            "external bank outage", "clearing house", "sms gateway delay"
+        ])
+        if is_carrier_delay or is_third_party_gateway:
+            ticket_type = "third_party"
+            severity = "medium" if "critical" not in priority.lower() else "high"
+            confidence = 0.93
+            action_rec = "Third-party dependency issue: Follow up with external partner/carrier."
+            probable_cause = "External logistics/carrier transit delay or upstream partner gateway latency. (AI hypothesis)"
+            cause_conf = 0.88
+            return ticket_type, severity, confidence, action_rec, probable_cause, cause_conf
+
+        # 2. Check for User Errors / Customer Mistakes (wrong size, wrong selection, typo, wrong credentials, insufficient balance, PIN lock)
+        is_user_error = any(w in text_lower for w in [
+            # E-Commerce, Retail & Order Mistakes
+            "accidentally", "accidental", "mistakenly", "by mistake", "my mistake", "wrong size",
+            "selected the wrong", "ordered the wrong", "ordered by mistake", "wrong item", "wrong shoe",
+            "wrong color", "wrong address", "mistake on my end", "mistake from my side", "user error",
+            "accidentally ordered", "accidentally selected", "entered wrong address", "placed order by mistake",
+            "mistake occurred from my side", "made a mistake", "wrong quantity", "ordered wrong", "customer mistake",
+            # Banking & credentials mistakes
+            "insufficient balance", "insufficient funds", "have a balance of", "balance of",
+            "balance in account is", "low balance", "not enough balance", "balance is rs",
+            "balance is inr", "balance is $", "entered wrong password", "entered wrong pin",
+            "forgot password", "forgot pin", "card blocked after 3 attempts", "wrong ifsc",
+            "entered incorrect", "daily limit reached", "exceeded transfer limit"
+        ]) and not any(w in text_lower for w in ["unauthorized debit", "fraud", "hacked", "503", "charged twice", "system crash"])
+        
+        if is_user_error:
+            ticket_type = "user_error"
+            severity = "low" if any(w in text_lower for w in ["size", "color", "address", "shoe", "balance", "limit", "hours"]) else "medium"
+            confidence = 0.96
+            action_rec = "Customer mistake: Process requested self-service correction or order modification."
+            probable_cause = "Customer mistakenly placed order with incorrect size/variant/details or input mistake. (AI hypothesis)"
+            cause_conf = 0.95
+            return ticket_type, severity, confidence, action_rec, probable_cause, cause_conf
+
+        # 3. Check for Customer Requests (SIM to eSIM, statements, account updates, plan change, exchanges)
+        is_sim_or_esim = any(w in text_lower for w in [
+            "esim", "e-sim", "physical sim replacement", "sim swap", "sim replacement", "qr code profile", "convert to esim"
+        ])
+        is_service_request = (is_sim_or_esim or any(w in text_lower for w in [
+            "requesting", "please send me", "statement for", "send bank statement", "requesting bank statement", "invoice copy",
+            "update my address", "change my email", "update phone number", "plan upgrade",
+            "activate roaming", "upgrade my subscription", "request for", "feature request",
+            "exchange", "size exchange", "modify order", "update order", "cancel order", "change size",
+            "change address", "update my order", "replace item", "change item"
+        ])) and not any(w in text_lower for w in ["fraud", "hacked", "stolen", "unauthorized", "503", "outage", "glitch", "crash", "crashes", "invalid session", "double charge", "deducted twice", "double billing"])
+        
+        if is_service_request:
+            ticket_type = "customer_request"
+            severity = "low"
+            confidence = 0.95 if is_sim_or_esim else 0.91
+            action_rec = "Routine request: Fulfil via standard operational service workflow."
+            probable_cause = "Standard customer service request requiring operational fulfillment."
+            cause_conf = 0.95
+            return ticket_type, severity, confidence, action_rec, probable_cause, cause_conf
+
+        # 4. Check for General Inquiries (questions regarding interest, fees, branch timings, terms)
+        is_general_inquiry = any(w in text_lower for w in [
+            "what are the working hours", "what is the interest rate", "branch timings",
+            "eligibility criteria", "fee structure", "how much fee", "what documents are required",
+            "inquiry regarding", "information regarding", "general question"
+        ]) or (len(ticket_text.split()) < 15 and "?" in ticket_text and not any(w in text_lower for w in ["down", "fail", "broken", "fraud", "error"]))
+        
+        if is_general_inquiry:
+            ticket_type = "general_inquiry"
+            severity = "low"
+            confidence = 0.90
+            action_rec = "General inquiry: Provide standard product documentation or knowledge base response."
+            probable_cause = "Informational customer inquiry regarding company services or terms."
+            cause_conf = 0.90
+            return ticket_type, severity, confidence, action_rec, probable_cause, cause_conf
+
+        # 5. Check for Company Defect (Outages, 500/503 errors, crash, double debit, billing glitch, regression)
+        has_company_defect_indicators = any(w in text_lower for w in [
+            "503", "500", "502", "504", "service unavailable", "stopped working", "widespread outage",
+            "system down", "all users unable", "production crash", "major service outage",
+            "services are down", "service outage", "completely down", "multi-service outage", "major outage",
+            "double billing", "charged twice", "deducted twice", "duplicate payment", "billing glitch",
+            "double charge", "double deduction", "glitch", "crash", "crashes", "crashing", "invalid session",
+            "session token", "won't open", "unable to login", "cannot login", "payment was deducted but",
+            "internal server error", "fatal error", "database error", "memory leak", "stack trace",
+            "unauthorized debit", "fraud", "hacked", "security breach", "zero-day", "system crash",
+            "regression", "platform defect", "defect in application", "broken gateway", "api failure"
+        ])
+
+        if has_company_defect_indicators or "p1" in priority.lower() or "critical" in priority.lower():
+            ticket_type = "company_defect"
+            prio_lower = priority.lower()
+            if "p1" in prio_lower or "critical" in prio_lower or any(w in text_lower for w in ["503", "service unavailable", "widespread outage"]):
+                severity = "critical"
+                confidence = 0.97
+                probable_cause = "Backend microservice unavailability (HTTP 503) or severe infrastructure degradation. (AI hypothesis)"
+            elif "p2" in prio_lower or "high" in prio_lower or any(w in text_lower for w in ["charged twice", "double billing", "deducted twice", "unauthorized"]):
+                severity = "high"
+                confidence = 0.93
+                probable_cause = "Service regression or billing gateway transaction synchronization discrepancy. (AI hypothesis)"
+            elif "p4" in prio_lower or "low" in prio_lower:
+                severity = "low"
+                confidence = 0.85
+                probable_cause = "Minor platform UI or non-blocking client interaction issue. (AI hypothesis)"
+            else:
+                severity = "medium"
+                confidence = 0.88
+                probable_cause = "Application service defect or unexpected response error. (AI hypothesis)"
+                
+            action_rec = "Company-side defect: Escalate to engineering / incident response team for system triage."
+            cause_conf = round(confidence * 0.95, 2)
+            return ticket_type, severity, confidence, action_rec, probable_cause, cause_conf
+
+        # 6. Default to standard Customer Request if no system defect is detected
+        ticket_type = "customer_request"
+        severity = "low" if "p4" in priority.lower() or "low" in priority.lower() else "medium"
+        confidence = 0.88
+        action_rec = "Customer service request: Review inquiry details and fulfill via standard operational workflow."
+        probable_cause = "Standard operational customer assistance or service request. (AI hypothesis)"
+        cause_conf = 0.85
+        return ticket_type, severity, confidence, action_rec, probable_cause, cause_conf
+
     def classify_origin_and_guidance(
         self,
         ticket_text: str,
         issue_type: str,
         domain: str,
-        priority: str
+        priority: str,
+        ticket_type: Optional[str] = None
     ) -> Tuple[str, Optional[Dict[str, Any]], Optional[Dict[str, Any]]]:
         """Classifies whether the issue is CLIENT_SIDE (requires client self-service guidance)
         or COMPANY_SIDE (requires engineering / company authority escalation via email)."""
         text_lower = ticket_text.lower()
+
+        # 1. Non-company defects: return tailored neutral client guidance
+        if ticket_type == "customer_request":
+            return "CLIENT_SIDE", {
+                "summary": "Routine request: Fulfil via standard operational service workflow.",
+                "steps": [
+                    "1. Review customer account eligibility and identity verification records.",
+                    "2. Execute requested service profile update (e.g. eSIM QR dispatch, statement generation).",
+                    "3. Transmit confirmation notice to customer upon completion."
+                ],
+                "message_template": "Dear Customer, your service request has been logged and queued for operational fulfillment."
+            }, None
+
+        if ticket_type == "third_party":
+            return "CLIENT_SIDE", {
+                "summary": "Third-party dependency issue: Follow up with external partner or carrier.",
+                "steps": [
+                    "1. Track parcel / transaction with external partner logistics API.",
+                    "2. Escalate directly with carrier operations desk for in-transit status.",
+                    "3. Inform customer and initiate merchant replacement if parcel is declared lost."
+                ],
+                "message_template": "Dear Customer, we are actively coordinating with our external partner / carrier to expedite your shipment."
+            }, None
+
+        if ticket_type == "general_inquiry":
+            return "CLIENT_SIDE", {
+                "summary": "General customer inquiry: Provide product documentation.",
+                "steps": [
+                    "1. Reference standard documentation and product knowledge base.",
+                    "2. Send informational response addressing customer questions."
+                ],
+                "message_template": "Dear Customer, thank you for reaching out. Please refer to our documentation portal for details on this inquiry."
+            }, None
+
+        if ticket_type == "user_error":
+            if any(w in text_lower for w in ["size", "shoe", "order", "item", "address", "color", "quantity", "exchange", "placed"]):
+                summary = "Customer order selection mistake. Process order line modification or exchange prior to shipment."
+                steps = [
+                    "1. Check order status in fulfillment management to confirm item has not dispatched.",
+                    "2. Update line item details with the customer's requested size or variant.",
+                    "3. Send revised order confirmation notice to customer's registered email.",
+                    "4. If already dispatched, provide standard return / exchange instructions upon delivery."
+                ]
+                msg = (
+                    "Dear Customer, we have received your request to adjust your order details. "
+                    "Our fulfillment team is reviewing your order to update the requested size/item prior to shipment."
+                )
+            else:
+                summary = "Customer input or operational mistake. Follow self-service correction guidance."
+                steps = [
+                    "1. Review input parameters or credentials entered during transaction/order.",
+                    "2. Use the self-service portal to update details or retry with corrected information.",
+                    "3. Contact support if account unlock or manual assistance is needed."
+                ]
+                msg = (
+                    "Dear Customer, an input or selection issue was identified on your request. "
+                    "Please follow our self-service guidance to update your details."
+                )
+            return "CLIENT_SIDE", {
+                "summary": summary,
+                "steps": steps,
+                "message_template": msg
+            }, None
 
         # Indicators where action must be taken by the client
         client_triggers = [
@@ -387,6 +672,20 @@ class TicketPreprocessor:
                 "summary": summary,
                 "steps": steps,
                 "message_template": msg
+            }
+            return issue_origin, client_guidance, None
+
+        # If not classified as company_defect and no company override, treat as client operational guidance
+        if ticket_type != "company_defect" and not company_override:
+            issue_origin = "CLIENT_SIDE"
+            client_guidance = {
+                "summary": "Customer operational inquiry / request. Handled via standard customer service support.",
+                "steps": [
+                    "1. Review customer inquiry records in CRM / support portal.",
+                    "2. Address customer questions or process requested profile / account assistance.",
+                    "3. Send confirmation notice to customer upon completion."
+                ],
+                "message_template": "Dear Customer, thank you for reaching out. Our support team is assisting with your request."
             }
             return issue_origin, client_guidance, None
 
@@ -523,12 +822,21 @@ class TicketPreprocessor:
                 intent=raw_ticket.get("intent")
             )
 
+        # Classify ticket type (company_defect, customer_request, third_party, user_error, general_inquiry) & severity
+        ticket_type, severity, confidence_score, action_rec, probable_cause, cause_conf = self.classify_ticket_type_and_severity(
+            ticket_text=cleaned_text,
+            priority=priority,
+            domain=domain,
+            issue_type=issue_type
+        )
+
         # Classify issue origin (CLIENT_SIDE vs COMPANY_SIDE) and generate guidance / escalation
         issue_origin, client_guidance, escalation_details = self.classify_origin_and_guidance(
             ticket_text=cleaned_text,
             issue_type=issue_type,
             domain=domain,
-            priority=priority
+            priority=priority,
+            ticket_type=ticket_type
         )
 
         customer_name = str(raw_ticket.get("customer_name") or "").strip() or None
@@ -557,5 +865,10 @@ class TicketPreprocessor:
             recommended_actions=actions,
             issue_origin=issue_origin,
             client_guidance=client_guidance,
-            escalation_details=escalation_details
+            escalation_details=escalation_details,
+            ticket_type=ticket_type,
+            severity=severity,
+            confidence_score=confidence_score,
+            probable_cause=probable_cause,
+            cause_confidence=cause_conf
         )

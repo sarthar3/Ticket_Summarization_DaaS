@@ -21,14 +21,20 @@ generation:
 
 prompt:
   template: |
-    You are a factual support ticket summarizer. State only direct facts.
-    If the customer reports money debited that was 'not done by me', identify it as an unauthorized / fraudulent transaction (never as a deposit or credit delay).
+    You are a factual support ticket summarizer. State only direct facts explicitly mentioned in the ticket.
+    Do NOT invent systems, version numbers, or internal investigations. If unsure, state 'Insufficient information'.
+    If the customer reports money debited that was 'not done by me', identify it as an unauthorized / fraudulent transaction.
     Summarize this ticket in 1-2 direct sentences without prefixes:
 
     Ticket:
     {ticket_text}
 
     Summary:
+
+clustering:
+  similarity_threshold: 0.65
+  time_window_minutes: 60
+  min_distinct_customers_for_outage: 2
 
 evaluation:
   rouge_types:

@@ -72,3 +72,24 @@ def test_insufficient_balance_classification_and_routing():
     assert "(None)" not in routing_reason
     assert "Student Model" in routing_reason
 
+
+def test_ticket_types_classification():
+    preprocessor = TicketPreprocessor()
+    test_cases = [
+        ("I ordered size 8 shoes but accidentally selected the wrong size. Please change to size 9 before shipping.", "user_error", "CLIENT_SIDE"),
+        ("Package tracking for Order #88410 has had no movement for 5 days. Carrier says they haven't received it.", "third_party", "CLIENT_SIDE"),
+        ("Requesting physical SIM replacement to eSIM QR code profile for new device.", "customer_request", "CLIENT_SIDE"),
+        ("What are your branch opening hours and fee structure for corporate savings accounts?", "general_inquiry", "CLIENT_SIDE"),
+        ("Mobile banking app crashes with invalid session token and HTTP 503 gateway timeout.", "company_defect", "COMPANY_SIDE"),
+    ]
+    for text, expected_type, expected_origin in test_cases:
+        tt, sev, conf, rec, prob, c_conf = preprocessor.classify_ticket_type_and_severity(text)
+        assert tt == expected_type, f"Expected {expected_type} for text '{text}', got {tt}"
+        orig, guid, esc = preprocessor.classify_origin_and_guidance(text, "", "", sev)
+        assert orig == expected_origin, f"Expected origin {expected_origin} for type {expected_type}, got {orig}"
+        if expected_type == "company_defect":
+            assert esc is not None, "Company defect should have escalation details"
+        else:
+            assert guid is not None, f"Non-defect ticket {expected_type} should have customer guidance steps"
+
+

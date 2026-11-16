@@ -9,8 +9,11 @@ teacher:
 prompt:
   teacher_template: |
     You are an expert customer support ticket summarizer. Generate a single, concise telegraphic summary sentence (10-18 words max).
-    CRITICAL FORMAT RULES:
-    - State who the customer/user is, the exact problem, and include any entity IDs, account numbers, or error codes verbatim.
+    CRITICAL FACTUALITY RULES:
+    - State ONLY direct facts explicitly present in the ticket text.
+    - NEVER invent version numbers, internal systems (like Redis, JWT, SMTP queues), or imaginary investigations.
+    - If root cause or system is not mentioned in ticket, state 'Insufficient information'.
+    - Do NOT output boilerplate such as 'Investigation confirms standard operational SLA criteria'.
     - Do NOT include resolution suggestions, troubleshooting advice, lists, or markdown bullets.
     - Do NOT output prefixes like 'Summary:', 'Issue:', or 'Incident Summary:'.
     - Write as a clean, continuous single sentence.

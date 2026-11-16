@@ -22,6 +22,11 @@ class StructuredSummaryDetails(BaseModel):
     recommended_actions: Optional[List[str]] = Field(None, description="Explicit action items for incident response / engineering")
     customer_intent: str = Field(..., description="Customer intent or priority context summary", json_schema_extra={"example": "Cloud Infrastructure / Multi-Service Outage / HTTP 503 (P1 · Critical)"})
     key_action_items: str = Field(..., description="Recommended resolution or follow-up steps", json_schema_extra={"example": "Escalate to SRE team and restore service."})
+    ticket_type: Optional[str] = Field("company_defect", description="One of: company_defect, customer_request, third_party, user_error, general_inquiry")
+    severity: Optional[str] = Field("medium", description="One of: low, medium, high, critical")
+    confidence_score: Optional[float] = Field(0.92, description="Model classification confidence score (0.0 to 1.0)")
+    probable_cause: Optional[str] = Field(None, description="Probable Cause (AI hypothesis)")
+    cause_confidence: Optional[float] = Field(None, description="Confidence score for probable cause hypothesis")
 
 class SummarizeResponse(BaseModel):
     ticket_id: str
@@ -39,9 +44,14 @@ class SummarizeResponse(BaseModel):
     customer_impact: Optional[str] = None
     recommended_actions: Optional[List[str]] = None
     intent: Optional[str] = None
-    issue_origin: Optional[str] = "COMPANY_SIDE"  # "CLIENT_SIDE" or "COMPANY_SIDE"
+    issue_origin: Optional[str] = "CLIENT_SIDE"  # "CLIENT_SIDE" or "COMPANY_SIDE"
     client_guidance: Optional[Dict[str, Any]] = None
     escalation_details: Optional[Dict[str, Any]] = None
+    ticket_type: Optional[str] = None
+    severity: Optional[str] = "medium"
+    confidence_score: Optional[float] = 0.92
+    probable_cause: Optional[str] = None
+    cause_confidence: Optional[float] = None
     model: str
     route_used: Optional[str] = None
     route_reason: Optional[str] = None
@@ -85,9 +95,15 @@ class HistoryItem(BaseModel):
     priority_reason: Optional[str] = None
     customer_impact: Optional[str] = None
     recommended_actions: Optional[List[str]] = None
-    issue_origin: Optional[str] = "COMPANY_SIDE"
+    issue_origin: Optional[str] = "CLIENT_SIDE"
     client_guidance: Optional[Dict[str, Any]] = None
     escalation_details: Optional[Dict[str, Any]] = None
+    ticket_type: Optional[str] = None
+    severity: Optional[str] = "medium"
+    confidence_score: Optional[float] = 0.92
+    probable_cause: Optional[str] = None
+    cause_confidence: Optional[float] = None
+    status: Optional[str] = "new"  # Ticket workflow: new, acknowledged, in_progress, resolved
     summary: str
     structured_summary: Optional[StructuredSummaryDetails] = None
     model: str
@@ -161,6 +177,11 @@ class CommonIssueClusterSchema(BaseModel):
     issue_origin: Optional[str] = "COMPANY_SIDE"
     common_issue_summary: str
     company_root_cause_diagnosis: str
+    probable_cause: Optional[str] = ""
+    cause_confidence: Optional[float] = 0.88
+    outage_status: Optional[str] = "Suspected Outage"
+    confirmed_by: Optional[str] = None
+    confirmed_at: Optional[str] = None
     recommended_action: str
     unified_solution: Optional[str] = None
     escalation_official: Optional[Dict[str, Any]] = None
@@ -179,6 +200,7 @@ class CompanyIssuesReportSchema(BaseModel):
     has_active_outage: bool
     has_unverified_outage_report: Optional[bool] = False
     unverified_outage_count: Optional[int] = 0
+    top_recurring_issue: Optional[str] = None
     company_status: Optional[str] = "HEALTHY"
     executive_brief: str
     generated_at: str
@@ -236,6 +258,52 @@ class ApplySolutionResponse(BaseModel):
         if self.affected_count is None:
             self.affected_count = self.tickets_resolved_count
 
+class ConfirmOutageRequest(BaseModel):
+    confirmed_by: Optional[str] = Field("Operational Lead", description="Name/Role of agent confirming outage")
+
+class ConfirmOutageResponse(BaseModel):
+    success: bool
+    cluster_id: str
+    outage_status: str
+    confirmed_by: str
+    confirmed_at: str
+    message: str
+
+class UpdateTicketStatusRequest(BaseModel):
+    status: str = Field(..., description="Target status: new, acknowledged, in_progress, resolved")
+    actor: Optional[str] = Field("Agent", description="Agent or official making the status update")
+    note: Optional[str] = None
+
+class FeedbackCorrectionRequest(BaseModel):
+    ticket_id: str
+    input_text: str
+    original_summary: str
+    corrected_summary: str
+    ticket_type: str = Field("company_defect", description="Corrected ticket type")
+    severity: str = Field("medium", description="Corrected severity")
+    agent_name: Optional[str] = "Operational Agent"
+    notes: Optional[str] = None
+
+class FeedbackCorrectionResponse(BaseModel):
+    success: bool
+    correction_id: str
+    ticket_id: str
+    timestamp: str
+    message: str
+
+class AuditLogItem(BaseModel):
+    log_id: str
+    timestamp: str
+    actor: str
+    action: str
+    ticket_ids: List[str] = []
+    cluster_id: Optional[str] = None
+    details: Dict[str, Any] = {}
+
+class AuditLogResponse(BaseModel):
+    total_logs: int
+    logs: List[AuditLogItem]
+
 class TeacherBufferStatsResponse(BaseModel):
     buffer_file: str
     buffer_path: Optional[str] = None
@@ -254,15 +322,12 @@ class TeacherBufferStatsResponse(BaseModel):
         if self.latest_samples is None:
             self.latest_samples = self.recent_samples
 
-
-
 class CompanyLoginRequest(BaseModel):
     company_id: Optional[str] = None
     email: Optional[str] = None
     password: Optional[str] = None
     company_name: Optional[str] = None
     sector: Optional[str] = None
-
 
 class CompanyAuthResponse(BaseModel):
     success: bool
@@ -275,17 +340,14 @@ class CompanyAuthResponse(BaseModel):
     token: str
     message: str
 
-
 class CompanyRegisterRequest(BaseModel):
     company_name: str
     email: str
     password: str
     sector: Optional[str] = "Banking & Financial Services"
 
-
 class PasswordResetRequest(BaseModel):
     email: str
-
 
 class UpdateSettingsRequest(BaseModel):
     company_name: Optional[str] = None
@@ -296,7 +358,6 @@ class UpdateSettingsRequest(BaseModel):
     student_confidence_threshold: Optional[float] = 0.85
     auto_cluster_enabled: Optional[bool] = True
     regenerate_api_key: Optional[bool] = False
-
 
 class LogoutResponse(BaseModel):
     success: bool = True

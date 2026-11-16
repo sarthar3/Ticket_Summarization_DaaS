@@ -382,6 +382,12 @@ def summarize_ticket(
                 domain=domain,
                 priority=teacher_resp.priority or "P1 · Critical"
             )
+            t_ticket_type, t_severity, t_confidence, _, t_probable_cause, t_cause_conf = preprocessor.classify_ticket_type_and_severity(
+                payload.ticket_text,
+                teacher_resp.priority or "P1 · Critical",
+                domain,
+                issue_type
+            )
 
             # Continuous Learning Buffer: Persist unseen ticket with Teacher supervision for student fine-tuning / GKD
             try:
@@ -426,7 +432,10 @@ def summarize_ticket(
                 latency_breakdown=t_breakdown,
                 issue_origin=t_origin,
                 client_guidance=t_guidance,
-                escalation_details=t_escalation
+                escalation_details=t_escalation,
+                ticket_type=t_ticket_type,
+                severity=t_severity,
+                confidence_score=t_confidence
             )
 
             return SummarizeResponse(
@@ -448,6 +457,9 @@ def summarize_ticket(
                 issue_origin=t_origin,
                 client_guidance=t_guidance,
                 escalation_details=t_escalation,
+                ticket_type=t_ticket_type,
+                severity=t_severity,
+                confidence_score=t_confidence,
                 model=f"{teacher_resp.teacher_model} (Teacher)",
                 route_used="teacher",
                 route_reason=route_reason if route == "auto" else "Explicit manual override: Forced Teacher LLM",
@@ -506,7 +518,12 @@ def summarize_ticket(
             latency_breakdown=response.latency_breakdown,
             issue_origin=getattr(response, "issue_origin", "COMPANY_SIDE"),
             client_guidance=getattr(response, "client_guidance", None),
-            escalation_details=getattr(response, "escalation_details", None)
+            escalation_details=getattr(response, "escalation_details", None),
+            ticket_type=response.ticket_type,
+            severity=response.severity,
+            confidence_score=response.confidence_score,
+            probable_cause=response.probable_cause,
+            cause_confidence=response.cause_confidence
         )
 
         return SummarizeResponse(
@@ -528,6 +545,11 @@ def summarize_ticket(
             issue_origin=getattr(response, "issue_origin", "COMPANY_SIDE"),
             client_guidance=getattr(response, "client_guidance", None),
             escalation_details=getattr(response, "escalation_details", None),
+            ticket_type=response.ticket_type,
+            severity=response.severity,
+            confidence_score=response.confidence_score,
+            probable_cause=response.probable_cause,
+            cause_confidence=response.cause_confidence,
             model=response.model,
             route_used="student",
             route_reason=route_reason if route == "auto" else "Explicit manual override: Forced Student Model",
