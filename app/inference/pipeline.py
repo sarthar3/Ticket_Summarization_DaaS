@@ -57,17 +57,18 @@ class SummarizationPipeline:
         self.model_wrapper = model_wrapper or StudentModelWrapper(settings=self.settings)
 
     def format_prompt(self, ticket_text: str) -> str:
+        clean_text = ticket_text.strip().replace("\n", " ")
         if hasattr(self.model_wrapper, "tokenizer") and self.model_wrapper.tokenizer is not None:
             tokenizer = self.model_wrapper.tokenizer
             if hasattr(tokenizer, "apply_chat_template") and getattr(tokenizer, "chat_template", None) is not None:
                 messages = [
                     {
                         "role": "system",
-                        "content": "You are a factual support ticket summarizer. State only direct facts from the ticket in 1 concise sentence (under 25 words) without prefixes or conversational filler."
+                        "content": "Summarize the core issue in 6-10 words directly without filler."
                     },
                     {
                         "role": "user",
-                        "content": f"Summarize this support ticket:\n{ticket_text.strip()}\n\nSummary:"
+                        "content": f"Ticket: {clean_text}\n\nSummary:"
                     }
                 ]
                 try:
@@ -75,7 +76,7 @@ class SummarizationPipeline:
                 except Exception:
                     pass
 
-        return f"Summarize this support ticket in 1 sentence:\n{ticket_text.strip()}\n\nSummary:"
+        return f"<|im_start|>system\nSummarize the core issue in 6-10 words directly without filler.<|im_end|>\n<|im_start|>user\nTicket: {clean_text}\n\nSummary:<|im_end|>\n<|im_start|>assistant\n"
 
     def post_process_summary(self, generated_text: str, ticket_text: str = "") -> str:
         """Cleans and post-processes raw LLM text generation output, stripping meta-commentary and label prefixes."""
@@ -168,11 +169,12 @@ class SummarizationPipeline:
             ).strip()
             final_summary = re.sub(r"\.\s*\.", ".", final_summary)
 
-        # Guard against truncated words (e.g. 'con alternative' -> 'considering alternative') and trailing incomplete words
+        # Guard against truncated words and trailing incomplete prepositions / conjunctions
         final_summary = re.sub(r"\bcon\s+alternative\b", "considering alternative", final_summary, flags=re.IGNORECASE)
-        final_summary = re.sub(r"\s+\b(?:con|and|or|with|to|by|for|in|of)\s*$", ".", final_summary, flags=re.IGNORECASE).strip()
-        if final_summary and final_summary[-1].isalnum():
-            final_summary += "."
+        cleaned_str = final_summary.strip().rstrip(" .,;:")
+        while re.search(r"\s+\b(?:con|and|or|with|to|by|for|in|of|due|ongoing|from|at|on|the|a|an|into)\b$", cleaned_str, re.IGNORECASE):
+            cleaned_str = re.sub(r"\s+\b(?:con|and|or|with|to|by|for|in|of|due|ongoing|from|at|on|the|a|an|into)\b$", "", cleaned_str, flags=re.IGNORECASE).strip()
+        final_summary = (cleaned_str + ".") if cleaned_str else final_summary
         final_summary = re.sub(r"\.\s*\.", ".", final_summary)
 
         return final_summary

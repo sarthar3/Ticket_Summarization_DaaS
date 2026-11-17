@@ -90,9 +90,10 @@ def save_history_item(
     if not t_id or t_id.upper() in ["AUTO", "NONE", "AUTO-ASSIGN", "PENDING", "WAITING"]:
         t_id = get_next_ticket_id()
 
+    now_local = datetime.now().astimezone()
     now_utc = datetime.now(timezone.utc)
     timestamp_iso = created_at or now_utc.isoformat()
-    formatted_time = now_utc.strftime("%I:%M %p, %b %d, %Y")
+    formatted_time = now_local.strftime("%I:%M %p, %b %d, %Y")
 
     # Ensure ticket_type and issue_origin are accurately set if missing
     if not ticket_type:

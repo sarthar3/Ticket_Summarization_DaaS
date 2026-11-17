@@ -755,6 +755,48 @@
       `).join('');
     }
 
+    // Robust date parser converting stored UTC/ISO timestamps to browser local Date
+    function parseTicketDate(item) {
+      if (!item) return new Date();
+      if (typeof item === 'string') {
+        const d = new Date(item);
+        if (!isNaN(d.getTime())) return d;
+        return new Date();
+      }
+      if (item.timestamp) {
+        const d = new Date(item.timestamp);
+        if (!isNaN(d.getTime())) return d;
+      }
+      const rawStr = item.createdAt || item.created_at_formatted || item.created_at;
+      if (rawStr && typeof rawStr === 'string') {
+        const d = new Date(rawStr);
+        if (!isNaN(d.getTime())) return d;
+      }
+      return new Date();
+    }
+
+    function formatFeedTimestamp(item) {
+      const d = parseTicketDate(item);
+      if (!d || isNaN(d.getTime())) return 'Recent';
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const ticketDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const diffDays = Math.round((today.getTime() - ticketDay.getTime()) / msPerDay);
+
+      if (diffDays === 0) {
+        return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+      } else if (diffDays === 1) {
+        return 'Yesterday';
+      } else {
+        if (d.getFullYear() === now.getFullYear()) {
+          return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        } else {
+          return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+      }
+    }
+
     // Auto-load history on page load
     async function fetchServerHistory() {
       try {
@@ -767,7 +809,7 @@
               ticket_id: item.ticket_id,
               subject: (item.intent || item.ticket_text.slice(0, 45)) + "...",
               text: item.ticket_text,
-              time: item.created_at_formatted ? item.created_at_formatted.split(' ')[0] : "Recent",
+              time: formatFeedTimestamp(item),
               priority: item.priority || "Medium",
               origin: item.issue_origin || "COMPANY_SIDE"
             }));
