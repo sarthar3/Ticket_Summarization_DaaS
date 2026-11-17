@@ -2658,7 +2658,6 @@
           </button>
           <button id="tabOfficialsBtn" class="tab-btn" onclick="switchTab('officials')">
             <span>Officials Directory</span>
-            <span id="officialsTabBadge" class="tab-badge neutral" style="display: none;">0</span>
           </button>
         </div>
 
@@ -4174,8 +4173,6 @@
         officialsCache = data.officials || [];
         
         // Update badge counts
-        const badge1 = document.getElementById('officialsTabBadge');
-        if (badge1) { badge1.innerText = officialsCache.length; badge1.style.display = officialsCache.length > 0 ? 'inline-block' : 'none'; }
         const badge2 = document.getElementById('officialsCountBadge');
         if (badge2) badge2.innerText = officialsCache.length;
 
