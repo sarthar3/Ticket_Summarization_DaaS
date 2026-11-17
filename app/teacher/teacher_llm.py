@@ -506,12 +506,22 @@ def get_teacher_llm(config_path: Optional[Path] = None, provider_override: Optio
     logger.info(f"Instantiating Teacher LLM: Provider='{provider}', Model='{model_name}'")
 
     if provider == "groq":
+        if not os.getenv("GROQ_API_KEY"):
+            logger.info("GROQ_API_KEY not found in environment; falling back to offline Mock Teacher.")
+            return MockTeacher(model_name="mock-teacher-70b")
         return GroqTeacher(model_name=model_name)
     elif provider == "gemini":
+        if not os.getenv("GEMINI_API_KEY"):
+            logger.info("GEMINI_API_KEY not found in environment; falling back to offline Mock Teacher.")
+            return MockTeacher(model_name="mock-teacher-70b")
         return GeminiTeacher(model_name=model_name)
     elif provider == "openai":
+        if not os.getenv("OPENAI_API_KEY"):
+            return MockTeacher(model_name="mock-teacher-70b")
         return OpenAITeacher(model_name=model_name)
     elif provider == "anthropic":
+        if not os.getenv("ANTHROPIC_API_KEY"):
+            return MockTeacher(model_name="mock-teacher-70b")
         return AnthropicTeacher(model_name=model_name)
     else:
         return MockTeacher(model_name=model_name if provider != "mock" else "mock-teacher-70b")

@@ -11,8 +11,8 @@ context:
   truncation_side: "right"
 
 generation:
-  max_new_tokens: 96
-  min_new_tokens: 10
+  max_new_tokens: 38
+  min_new_tokens: 8
   do_sample: false
   temperature: 0.7
   top_p: 0.9
@@ -21,10 +21,7 @@ generation:
 
 prompt:
   template: |
-    You are a factual support ticket summarizer. State only direct facts explicitly mentioned in the ticket.
-    Do NOT invent systems, version numbers, or internal investigations. If unsure, state 'Insufficient information'.
-    If the customer reports money debited that was 'not done by me', identify it as an unauthorized / fraudulent transaction.
-    Summarize this ticket in 1-2 direct sentences without prefixes:
+    You are a factual support ticket summarizer. State only direct facts in 1-2 concise sentences without prefixes:
 
     Ticket:
     {ticket_text}

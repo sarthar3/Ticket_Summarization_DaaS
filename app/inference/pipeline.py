@@ -63,25 +63,19 @@ class SummarizationPipeline:
                 messages = [
                     {
                         "role": "system",
-                        "content": (
-                            "You are a factual, concise customer support ticket summarizer.\n"
-                            "CRITICAL INSTRUCTIONS:\n"
-                            "1. State ONLY facts directly present in the ticket text. Never hallucinate, invent, or distort facts.\n"
-                            "2. If a customer states 'money has been debited but it is not done by me' or similar, this is an UNAUTHORIZED / FRAUDULENT transaction. Do NOT describe it as 'not credited' or a deposit failure.\n"
-                            "3. Output ONLY a clean single-sentence telegraphic summary (10-20 words max) of who the customer is and the exact problem.\n"
-                            "4. Do NOT output resolution advice, troubleshooting steps, or contact support boilerplate.\n"
-                            "5. Do NOT output label prefixes like 'Summary:', 'Core issue:', or 'Resolution:'."
-                        )
+                        "content": "You are a factual support ticket summarizer. State only direct facts from the ticket in 1 concise sentence (under 25 words) without prefixes or conversational filler."
                     },
-                    {"role": "user", "content": f"Summarize this customer support ticket in one concise sentence:\n{ticket_text}\n\nSummary:"}
+                    {
+                        "role": "user",
+                        "content": f"Summarize this support ticket:\n{ticket_text.strip()}\n\nSummary:"
+                    }
                 ]
                 try:
                     return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
                 except Exception:
                     pass
 
-        template = self.settings.prompt.template
-        return template.format(ticket_text=ticket_text)
+        return f"Summarize this support ticket in 1 sentence:\n{ticket_text.strip()}\n\nSummary:"
 
     def post_process_summary(self, generated_text: str, ticket_text: str = "") -> str:
         """Cleans and post-processes raw LLM text generation output, stripping meta-commentary and label prefixes."""

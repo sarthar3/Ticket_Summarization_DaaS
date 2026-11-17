@@ -128,7 +128,7 @@ class StudentModelWrapper:
         device = next(self.model.parameters()).device
         if device.type == "cpu":
             try:
-                num_threads = min(8, max(2, (os.cpu_count() or 4) - 1))
+                num_threads = min(10, max(4, (os.cpu_count() or 4) - 2))
                 torch.set_num_threads(num_threads)
             except Exception:
                 pass
@@ -145,15 +145,41 @@ class StudentModelWrapper:
         input_tokens_count = int(inputs["input_ids"].shape[1])
         tokenization_ms = round((time.perf_counter() - t0) * 1000.0, 2)
 
-        # Generation parameters
-        max_new = min(self.settings.generation.max_new_tokens, 96)
+        # Collect all valid EOS / Stop token IDs for Qwen and Causal models
+        eos_ids = [self.tokenizer.eos_token_id] if self.tokenizer.eos_token_id is not None else []
+        if hasattr(self.tokenizer, "convert_tokens_to_ids"):
+            im_end = self.tokenizer.convert_tokens_to_ids("<|im_end|>")
+            if im_end is not None and im_end not in eos_ids:
+                eos_ids.append(im_end)
+            end_of_text = self.tokenizer.convert_tokens_to_ids("<|endoftext|>")
+            if end_of_text is not None and end_of_text not in eos_ids:
+                eos_ids.append(end_of_text)
+
+        # Early stopping criteria on newline sequence to prevent rambling beyond summary
+        from transformers import StoppingCriteria, StoppingCriteriaList
+        class StopOnNewlineCriteria(StoppingCriteria):
+            def __init__(self, start_len: int, tokenizer):
+                self.start_len = start_len
+                self.tokenizer = tokenizer
+            def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor, **kwargs) -> bool:
+                if input_ids.shape[1] - self.start_len < 6:
+                    return False
+                last_tokens = input_ids[0, self.start_len:]
+                text = self.tokenizer.decode(last_tokens, skip_special_tokens=False)
+                return "\n\n" in text or "\nHuman:" in text or "\nTicket:" in text
+
+        stopping_criteria = StoppingCriteriaList([StopOnNewlineCriteria(input_tokens_count, self.tokenizer)])
+
+        # Generation parameters (capped to 38 tokens max for sub-5s CPU response)
+        max_new = min(self.settings.generation.max_new_tokens, 38)
         gen_kwargs = {
             "max_new_tokens": max_new,
-            "min_new_tokens": self.settings.generation.min_new_tokens,
+            "min_new_tokens": min(self.settings.generation.min_new_tokens, 8),
             "do_sample": self.settings.generation.do_sample,
             "repetition_penalty": self.settings.generation.repetition_penalty,
-            "pad_token_id": self.tokenizer.pad_token_id,
-            "eos_token_id": self.tokenizer.eos_token_id,
+            "pad_token_id": self.tokenizer.pad_token_id or self.tokenizer.eos_token_id,
+            "eos_token_id": eos_ids if len(eos_ids) > 1 else (eos_ids[0] if eos_ids else None),
+            "stopping_criteria": stopping_criteria,
             "use_cache": True
         }
 
