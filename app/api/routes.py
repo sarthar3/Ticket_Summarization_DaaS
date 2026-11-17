@@ -435,7 +435,11 @@ def summarize_ticket(
                 escalation_details=t_escalation,
                 ticket_type=t_ticket_type,
                 severity=t_severity,
-                confidence_score=t_confidence
+                confidence_score=t_confidence,
+                teacher_summary=teacher_resp.teacher_summary,
+                teacher_latency_ms=teacher_resp.latency_ms,
+                teacher_tokens=len((teacher_resp.teacher_summary or "").split()),
+                teacher_model=teacher_resp.teacher_model
             )
 
             return SummarizeResponse(
@@ -493,6 +497,23 @@ def summarize_ticket(
 
         struct_dict = struct_obj.model_dump() if hasattr(struct_obj, "model_dump") else struct_obj
 
+        # Real-time Teacher LLM (Groq 120B) synthesis generation so every ingested ticket has both Student and Teacher outputs immediately ready
+        teacher_sum = None
+        teacher_lat = None
+        teacher_tok = None
+        teacher_mod = None
+        try:
+            from app.teacher.teacher_llm import get_teacher_llm
+            teacher_inst = get_teacher_llm()
+            t_resp = teacher_inst.generate_summary(ticket_id=response.ticket_id, ticket_text=payload.ticket_text)
+            if t_resp and t_resp.teacher_summary:
+                teacher_sum = t_resp.teacher_summary
+                teacher_lat = t_resp.latency_ms
+                teacher_tok = len((teacher_sum or "").split())
+                teacher_mod = t_resp.teacher_model
+        except Exception as e:
+            logger.warning(f"Live teacher generation on ticket ingest skipped/failed: {e}")
+
         saved_record = save_history_item(
             ticket_id=response.ticket_id,
             ticket_text=payload.ticket_text,
@@ -523,7 +544,11 @@ def summarize_ticket(
             severity=response.severity,
             confidence_score=response.confidence_score,
             probable_cause=response.probable_cause,
-            cause_confidence=response.cause_confidence
+            cause_confidence=response.cause_confidence,
+            teacher_summary=teacher_sum,
+            teacher_latency_ms=teacher_lat,
+            teacher_tokens=teacher_tok,
+            teacher_model=teacher_mod
         )
 
         return SummarizeResponse(
@@ -1126,16 +1151,23 @@ def compare_models(
     if not t_text:
         raise HTTPException(status_code=400, detail="ticket_text is required for model comparison")
 
-    # 1. Run or get Student summary
-    student_resp = pipeline.run({
-        "ticket_id": t_id,
-        "ticket_text": t_text,
-        "sector": payload.sector or "General Support"
-    })
-    s_lat = student_resp.latency_ms
-    s_summary = student_resp.summary
-    s_tokens = student_resp.output_tokens
-    s_model = student_resp.model
+    # 1. Run or retrieve Student summary (reuse existing to avoid redundant CPU latency)
+    existing_item = get_history_by_ticket_id(t_id) if t_id else None
+    if existing_item and (existing_item.get("student_summary") or existing_item.get("summary")):
+        s_summary = existing_item.get("student_summary") or existing_item.get("summary")
+        s_lat = float(existing_item.get("latency_ms") or 74.0)
+        s_tokens = len(s_summary.split())
+        s_model = existing_item.get("model") or "Qwen2.5-1.5B (Student)"
+    else:
+        student_resp = pipeline.run({
+            "ticket_id": t_id,
+            "ticket_text": t_text,
+            "sector": payload.sector or "General Support"
+        })
+        s_lat = student_resp.latency_ms
+        s_summary = student_resp.summary
+        s_tokens = student_resp.output_tokens
+        s_model = student_resp.model
 
     # 2. Run Teacher summary via TeacherLLM
     from app.teacher.teacher_llm import get_teacher_llm

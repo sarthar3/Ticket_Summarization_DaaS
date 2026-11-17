@@ -76,6 +76,10 @@ def save_history_item(
     probable_cause: Optional[str] = None,
     cause_confidence: Optional[float] = None,
     status: Optional[str] = "new",
+    teacher_summary: Optional[str] = None,
+    teacher_latency_ms: Optional[float] = None,
+    teacher_tokens: Optional[int] = None,
+    teacher_model: Optional[str] = None,
     **extra_kwargs
 ) -> Dict[str, Any]:
     """Appends a new summarization record with customer details and routing metadata to history JSON file."""
@@ -147,7 +151,11 @@ def save_history_item(
         "latency_breakdown": latency_breakdown,
         "route_used": route_used,
         "route_reason": route_reason,
-        "is_unseen": is_unseen
+        "is_unseen": is_unseen,
+        "teacher_summary": teacher_summary or extra_kwargs.get("teacher_summary"),
+        "teacher_latency_ms": teacher_latency_ms or extra_kwargs.get("teacher_latency_ms"),
+        "teacher_tokens": teacher_tokens or extra_kwargs.get("teacher_tokens"),
+        "teacher_model": teacher_model or extra_kwargs.get("teacher_model")
     }
     
     with _history_lock:

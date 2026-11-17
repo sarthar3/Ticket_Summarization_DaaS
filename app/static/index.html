@@ -2374,6 +2374,16 @@
   }
 }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+  display: inline-block;
+}
+
 .diff-card {
   display: flex;
   flex-direction: column;
@@ -4832,6 +4842,11 @@ How Our Model Learns from Unseen Data:
         teacherLatency: t.teacher_latency_ms,
         teacherTokens: t.teacher_tokens
       });
+
+      // Automatically trigger live Groq 120B teacher synthesis if not yet present
+      if (!t.teacher_summary) {
+        rerunLiveTeacherComparison(ticketId, true);
+      }
     }
 
     
@@ -5264,7 +5279,7 @@ How Our Model Learns from Unseen Data:
 
   
     function generateTeacherPreview(studentSummary, rawText) {
-      return '<span style="color: #64748B; font-style: italic;">Teacher model on standby. Click <strong style="color: #BE185D;">Run Live Groq 120B</strong> above to generate real-time supervisory synthesis from the Groq 120B model.</span>';
+      return '<span style="color: #BE185D; font-style: italic; display: inline-flex; align-items: center; gap: 8px;"><svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generating Groq 120B Teacher synthesis in real time...</span>';
     }
 
     function calculateSpeedup(teacherMs, studentMs) {
@@ -5301,17 +5316,21 @@ How Our Model Learns from Unseen Data:
       }
     }
 
-    async function rerunLiveTeacherComparison(ticketId) {
+    async function rerunLiveTeacherComparison(ticketId, isAuto = false) {
       const t = allIngestedFeed.find(x => x.ticket_id === ticketId);
       if (!t) return;
-      showToast("Invoking Teacher LLM (Groq 120B) for real-time comparison...");
+      if (!isAuto) {
+        showToast("Invoking Teacher LLM (Groq 120B) for real-time comparison...");
+      }
       
       const sumEl = document.getElementById(`diffTeacherSummary_${ticketId}`);
       const latEl = document.getElementById(`diffTeacherLat_${ticketId}`);
       const tokEl = document.getElementById(`diffTeacherTok_${ticketId}`);
       const speedEl = document.getElementById(`diffSpeedup_${ticketId}`);
 
-      if (sumEl) sumEl.innerHTML = '<span style="color: var(--text-muted); font-style: italic;">Querying Groq 120B Teacher LLM API...</span>';
+      if (sumEl) {
+        sumEl.innerHTML = '<span style="color: #BE185D; font-style: italic; display: inline-flex; align-items: center; gap: 8px;"><svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generating Groq 120B Teacher synthesis in real time...</span>';
+      }
 
       try {
         const res = await fetch('/api/v1/compare-models', {
@@ -5333,15 +5352,17 @@ How Our Model Learns from Unseen Data:
           t.teacher_summary = data.teacher_summary;
           t.teacher_latency_ms = data.teacher_latency_ms;
           t.teacher_tokens = data.teacher_tokens;
-          showToast("Live Teacher comparison completed successfully!");
+          if (!isAuto) {
+            showToast("Live Teacher comparison completed successfully!");
+          }
         } else {
-          showToast("Teacher API request returned error; using distillation baseline.");
-          if (sumEl) sumEl.innerHTML = formatMarkdown(generateTeacherPreview(t.summary, t.ticket_text));
+          if (!isAuto) showToast("Teacher API request returned error.");
+          if (sumEl) sumEl.innerHTML = '<span style="color: #64748B; font-style: italic;">Teacher model temporarily unavailable. Click <strong>Run Live Groq 120B</strong> to retry.</span>';
         }
       } catch (err) {
         console.error("Live teacher comparison failed:", err);
-        showToast("Teacher API unreachable; preview fallback shown.");
-        if (sumEl) sumEl.innerHTML = formatMarkdown(generateTeacherPreview(t.summary, t.ticket_text));
+        if (!isAuto) showToast("Teacher API unreachable.");
+        if (sumEl) sumEl.innerHTML = '<span style="color: #64748B; font-style: italic;">Teacher model temporarily offline. Click <strong>Run Live Groq 120B</strong> to retry.</span>';
       }
     }
 
