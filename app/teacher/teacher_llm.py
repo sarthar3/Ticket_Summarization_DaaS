@@ -31,6 +31,9 @@ class TeacherResponse(BaseModel):
     priority_reason: Optional[str] = None
     intent: Optional[str] = None
     structured_summary: Optional[Dict[str, Any]] = None
+    prompt_tokens: Optional[int] = 0
+    completion_tokens: Optional[int] = 0
+    total_tokens: Optional[int] = 0
 
 class TeacherLLM(ABC):
     """Abstract Base Class for Teacher LLM Integration Providers."""
@@ -256,6 +259,11 @@ class OpenAITeacher(TeacherLLM):
         teacher_summary = clean_teacher_summary(raw_summary)
         latency_ms = (time.perf_counter() - start_time) * 1000.0
 
+        usage = res_json.get("usage", {})
+        p_toks = usage.get("prompt_tokens") or len(prompt.split())
+        c_toks = usage.get("completion_tokens") or len(raw_summary.split())
+        t_toks = usage.get("total_tokens") or (p_toks + c_toks)
+
         prio, reason, intent, struct = extract_teacher_metadata(ticket_text, teacher_summary)
 
         return TeacherResponse(
@@ -267,7 +275,10 @@ class OpenAITeacher(TeacherLLM):
             priority=prio,
             priority_reason=reason,
             intent=intent,
-            structured_summary=struct
+            structured_summary=struct,
+            prompt_tokens=p_toks,
+            completion_tokens=c_toks,
+            total_tokens=t_toks
         )
 
 class AnthropicTeacher(TeacherLLM):
@@ -391,6 +402,11 @@ class GroqTeacher(TeacherLLM):
         teacher_summary = clean_teacher_summary(raw_summary)
         latency_ms = (time.perf_counter() - start_time) * 1000.0
 
+        usage = res_json.get("usage", {})
+        p_toks = usage.get("prompt_tokens") or len(prompt.split())
+        c_toks = usage.get("completion_tokens") or len(raw_summary.split())
+        t_toks = usage.get("total_tokens") or (p_toks + c_toks)
+
         prio, reason, intent, struct = extract_teacher_metadata(ticket_text, teacher_summary)
 
         return TeacherResponse(
@@ -402,7 +418,10 @@ class GroqTeacher(TeacherLLM):
             priority=prio,
             priority_reason=reason,
             intent=intent,
-            structured_summary=struct
+            structured_summary=struct,
+            prompt_tokens=p_toks,
+            completion_tokens=c_toks,
+            total_tokens=t_toks
         )
 
 class GeminiTeacher(TeacherLLM):

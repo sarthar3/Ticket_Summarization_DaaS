@@ -554,22 +554,9 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="custEmail">Email Address <span class="required">*</span></label>
-            <input type="email" id="custEmail"  required placeholder="e.g. customer@example.com">
-          </div>
-          <div class="form-group">
-            <label for="ticketSector">Department / Sector</label>
-            <select id="ticketSector">
-              <option value="Banking & Financial Services" selected>Banking & Financial Services</option>
-              <option value="E-Commerce & Retail">E-Commerce & Retail</option>
-              <option value="Cloud Infrastructure">Cloud Infrastructure</option>
-              <option value="Telecommunications">Telecommunications</option>
-              <option value="Healthcare & Medical">Healthcare & Medical</option>
-              <option value="IT & Tech Support">IT & Tech Support</option>
-            </select>
-          </div>
+        <div class="form-group">
+          <label for="custEmail">Email Address <span class="required">*</span></label>
+          <input type="email" id="custEmail" required placeholder="e.g. customer@example.com">
         </div>
 
         <div class="form-group">
@@ -646,6 +633,17 @@
       });
     }
 
+    function formatPriority(val) {
+      if (!val) return 'Medium';
+      const s = String(val).trim();
+      if (/^p1$/i.test(s) || /critical/i.test(s)) return 'Critical';
+      if (/^p2$/i.test(s) || /high/i.test(s)) return 'High';
+      if (/^p3$/i.test(s) || /medium/i.test(s)) return 'Medium';
+      if (/^p4$/i.test(s) || /low/i.test(s)) return 'Low';
+      const cleaned = s.replace(/^P\d+\s*[\·\-\/\:\•]?\s*/i, '').trim();
+      return cleaned || 'Medium';
+    }
+
     // Handle Form Submit
     document.getElementById('ticketForm').addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -658,7 +656,6 @@
       const name = document.getElementById('custName').value.trim();
       const phone = document.getElementById('custPhone').value.trim();
       const email = document.getElementById('custEmail').value.trim();
-      const sector = document.getElementById('ticketSector').value;
       const text = document.getElementById('ticketQuery').value.trim();
 
       if (!text) {
@@ -675,7 +672,7 @@
           customer_name: name,
           customer_phone: phone,
           customer_email: email,
-          sector: sector
+          sector: "IT & Cloud Operations"
         };
 
         const res = await fetch(`${API_BASE}/api/v1/summarize?route=auto`, {
@@ -695,7 +692,7 @@
         // Update Confirmation Card
         document.getElementById('resTicketId').innerText = data.ticket_id || "TICK-AUTO";
         document.getElementById('resSummary').innerText = data.summary || "Summary generated successfully.";
-        document.getElementById('resPriority').innerText = data.priority || "P3 · Medium";
+        document.getElementById('resPriority').innerText = formatPriority(data.priority);
         document.getElementById('resOrigin').innerText = data.issue_origin === "CLIENT_SIDE" ? "Client-Side (User Action)" : "Company-Side Defect";
 
         // Guidance Check
@@ -718,7 +715,7 @@
           subject: text.slice(0, 48) + "...",
           text: text,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          priority: data.priority || "Medium",
+          priority: formatPriority(data.priority),
           origin: data.issue_origin || "COMPANY_SIDE"
         });
 
@@ -749,7 +746,7 @@
           <div class="ticket-item-snippet">${t.text}</div>
           <div>
             <span class="status-badge registered">Registered</span>
-            <span style="font-size: 10px; color: #64748B; margin-left: 6px; font-weight: 600;">${t.priority}</span>
+            <span style="font-size: 10px; color: #64748B; margin-left: 6px; font-weight: 600;">${formatPriority(t.priority)}</span>
           </div>
         </div>
       `).join('');
@@ -810,7 +807,7 @@
               subject: (item.intent || item.ticket_text.slice(0, 45)) + "...",
               text: item.ticket_text,
               time: formatFeedTimestamp(item),
-              priority: item.priority || "Medium",
+              priority: formatPriority(item.priority),
               origin: item.issue_origin || "COMPANY_SIDE"
             }));
             renderRecentTickets();

@@ -407,6 +407,27 @@ def summarize_ticket(
             except Exception as be:
                 logger.warning(f"Failed to append to teacher distillation buffer: {be}")
 
+            # Audit log for Teacher invocation
+            try:
+                from app.utils.daas_audit import log_daas_audit
+                p_toks = getattr(teacher_resp, "prompt_tokens", None) or in_toks
+                c_toks = getattr(teacher_resp, "completion_tokens", None) or out_toks
+                pri_toks = max(int(p_toks * 0.25), 18)
+                sum_toks = c_toks
+                log_daas_audit(
+                    ticket_id=t_id,
+                    route_used="teacher",
+                    teacher_invoked=True,
+                    teacher_model=teacher_resp.teacher_model,
+                    teacher_prompt_tokens=p_toks,
+                    teacher_completion_tokens=c_toks,
+                    escalation_reason=route_reason if route == "auto" else "Explicit manual override: Forced Teacher LLM",
+                    priority_tokens=pri_toks,
+                    summary_tokens=sum_toks
+                )
+            except Exception as ae:
+                logger.warning(f"DaaS audit logging error: {ae}")
+
             saved_record = save_history_item(
                 ticket_id=t_id,
                 ticket_text=payload.ticket_text,
@@ -474,9 +495,164 @@ def summarize_ticket(
                 output_tokens=out_toks
             )
 
-        # Standard Student Route (Qwen2.5-1.5B)
-        response = pipeline.run(raw_ticket)
+        # Standard Student Route (Qwen2.5-1.5B) - DaaS Edge First Execution
+        student_failed = False
+        response = None
+        try:
+            response = pipeline.run(raw_ticket)
+            if not response or not response.summary or not response.summary.strip():
+                student_failed = True
+        except Exception as se:
+            logger.warning(f"Student model execution failed on ticket {t_id}, falling back to Teacher: {se}")
+            student_failed = True
 
+        if student_failed:
+            # Automated Teacher Fallback (Only executed when Student fails)
+            from app.teacher.teacher_llm import get_teacher_llm
+            teacher = get_teacher_llm()
+            teacher_resp = teacher.generate_summary(t_id, payload.ticket_text)
+            
+            in_toks = len(payload.ticket_text.split())
+            out_toks = len(teacher_resp.teacher_summary.split())
+            metrics_counter["successful_requests"] += 1
+            metrics_counter["total_latency_ms"] += teacher_resp.latency_ms
+            metrics_counter["total_input_tokens"] += in_toks
+            metrics_counter["total_output_tokens"] += out_toks
+
+            # Audit log for Teacher Fallback
+            try:
+                from app.utils.daas_audit import log_daas_audit
+                p_toks = getattr(teacher_resp, "prompt_tokens", None) or in_toks
+                c_toks = getattr(teacher_resp, "completion_tokens", None) or out_toks
+                pri_toks = max(int(p_toks * 0.25), 18)
+                sum_toks = c_toks
+                log_daas_audit(
+                    ticket_id=t_id,
+                    route_used="teacher",
+                    teacher_invoked=True,
+                    teacher_model=teacher_resp.teacher_model,
+                    teacher_prompt_tokens=p_toks,
+                    teacher_completion_tokens=c_toks,
+                    escalation_reason="Student model failed - Automated Teacher Fallback",
+                    priority_tokens=pri_toks,
+                    summary_tokens=sum_toks
+                )
+            except Exception as ae:
+                logger.warning(f"DaaS audit logging error: {ae}")
+
+            struct_obj = None
+            domain = payload.sector or "General Support"
+            issue_type = teacher_resp.intent or "General Customer Inquiry"
+            urgency = "Critical" if "P1" in (teacher_resp.priority or "") or "Critical" in (teacher_resp.priority or "") else "Medium"
+            impact = "Customer support inquiry requiring operational review."
+            actions = ["Review customer inquiry and verify details.", "Respond according to standard SLA."]
+
+            if teacher_resp.structured_summary:
+                domain = teacher_resp.structured_summary.get("domain") or domain
+                issue_type = teacher_resp.structured_summary.get("issue_type") or issue_type
+                urgency = teacher_resp.structured_summary.get("urgency") or urgency
+                impact = teacher_resp.structured_summary.get("customer_impact") or impact
+                actions = teacher_resp.structured_summary.get("recommended_actions") or actions
+                struct_obj = StructuredSummaryDetails(
+                    core_issue=teacher_resp.structured_summary.get("core_issue", ""),
+                    domain=domain,
+                    issue_type=issue_type,
+                    urgency=urgency,
+                    priority=teacher_resp.priority or "P1 · Critical",
+                    customer_impact=impact,
+                    recommended_actions=actions,
+                    customer_intent=teacher_resp.structured_summary.get("customer_intent", f"{domain} / {issue_type}"),
+                    key_action_items=teacher_resp.structured_summary.get("key_action_items", "")
+                )
+
+            t_breakdown = {
+                "preprocessing_ms": 2.0,
+                "inference_ms": teacher_resp.latency_ms,
+                "postprocessing_ms": 1.5,
+                "total_ms": teacher_resp.latency_ms + 3.5
+            }
+
+            t_origin, t_guidance, t_escalation = preprocessor.classify_origin_and_guidance(
+                ticket_text=payload.ticket_text,
+                issue_type=issue_type,
+                domain=domain,
+                priority=teacher_resp.priority or "P1 · Critical"
+            )
+            t_ticket_type, t_severity, t_confidence, _, t_probable_cause, t_cause_conf = preprocessor.classify_ticket_type_and_severity(
+                payload.ticket_text,
+                teacher_resp.priority or "P1 · Critical",
+                domain,
+                issue_type
+            )
+
+            saved_record = save_history_item(
+                ticket_id=t_id,
+                ticket_text=payload.ticket_text,
+                summary=teacher_resp.teacher_summary,
+                model=f"{teacher_resp.teacher_model} (Teacher Fallback)",
+                latency_ms=teacher_resp.latency_ms,
+                sector=domain,
+                domain=domain,
+                intent=issue_type,
+                issue_type=issue_type,
+                urgency=urgency,
+                priority=teacher_resp.priority or "P1 · Critical",
+                priority_reason=teacher_resp.priority_reason,
+                customer_impact=impact,
+                recommended_actions=actions,
+                structured_summary=teacher_resp.structured_summary,
+                customer_name=payload.customer_name,
+                customer_email=payload.customer_email,
+                customer_phone=payload.customer_phone,
+                route_used="teacher",
+                route_reason="Student model failed - Automated Teacher Fallback",
+                is_unseen=True,
+                latency_breakdown=t_breakdown,
+                issue_origin=t_origin,
+                client_guidance=t_guidance,
+                escalation_details=t_escalation,
+                ticket_type=t_ticket_type,
+                severity=t_severity,
+                confidence_score=t_confidence,
+                teacher_summary=teacher_resp.teacher_summary,
+                teacher_latency_ms=teacher_resp.latency_ms,
+                teacher_tokens=len((teacher_resp.teacher_summary or "").split()),
+                teacher_model=teacher_resp.teacher_model
+            )
+
+            return SummarizeResponse(
+                ticket_id=t_id,
+                customer_name=payload.customer_name,
+                customer_email=payload.customer_email,
+                customer_phone=payload.customer_phone,
+                created_at=saved_record.get("created_at_formatted"),
+                summary=teacher_resp.teacher_summary,
+                structured_summary=struct_obj,
+                domain=domain,
+                issue_type=issue_type,
+                urgency=urgency,
+                priority=teacher_resp.priority or "P1 · Critical",
+                priority_reason=teacher_resp.priority_reason,
+                customer_impact=impact,
+                recommended_actions=actions,
+                intent=issue_type,
+                issue_origin=t_origin,
+                client_guidance=t_guidance,
+                escalation_details=t_escalation,
+                ticket_type=t_ticket_type,
+                severity=t_severity,
+                confidence_score=t_confidence,
+                model=f"{teacher_resp.teacher_model} (Teacher Fallback)",
+                route_used="teacher",
+                route_reason="Student model failed - Automated Teacher Fallback",
+                is_unseen=True,
+                latency_ms=teacher_resp.latency_ms,
+                latency_breakdown=t_breakdown,
+                input_tokens=in_toks,
+                output_tokens=out_toks
+            )
+
+        # Successful Student Execution
         metrics_counter["successful_requests"] += 1
         metrics_counter["total_latency_ms"] += response.latency_ms
         metrics_counter["total_input_tokens"] += response.input_tokens
@@ -497,22 +673,24 @@ def summarize_ticket(
 
         struct_dict = struct_obj.model_dump() if hasattr(struct_obj, "model_dump") else struct_obj
 
-        # Real-time Teacher LLM (Groq 120B) synthesis generation so every ingested ticket has both Student and Teacher outputs immediately ready
-        teacher_sum = None
-        teacher_lat = None
-        teacher_tok = None
-        teacher_mod = None
+        # DaaS Zero-Cost Enforcement: Teacher model is NOT invoked when Student successfully serves
         try:
-            from app.teacher.teacher_llm import get_teacher_llm
-            teacher_inst = get_teacher_llm()
-            t_resp = teacher_inst.generate_summary(ticket_id=response.ticket_id, ticket_text=payload.ticket_text)
-            if t_resp and t_resp.teacher_summary:
-                teacher_sum = t_resp.teacher_summary
-                teacher_lat = t_resp.latency_ms
-                teacher_tok = len((teacher_sum or "").split())
-                teacher_mod = t_resp.teacher_model
-        except Exception as e:
-            logger.warning(f"Live teacher generation on ticket ingest skipped/failed: {e}")
+            from app.utils.daas_audit import log_daas_audit
+            log_daas_audit(
+                ticket_id=response.ticket_id,
+                route_used="student",
+                student_latency_ms=response.latency_ms,
+                student_input_tokens=response.input_tokens,
+                student_output_tokens=response.output_tokens,
+                teacher_invoked=False
+            )
+        except Exception as ae:
+            logger.warning(f"DaaS audit logging error: {ae}")
+
+        teacher_sum = None
+        teacher_lat = 0.0
+        teacher_tok = 0
+        teacher_mod = None
 
         saved_record = save_history_item(
             ticket_id=response.ticket_id,

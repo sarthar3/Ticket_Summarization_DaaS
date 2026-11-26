@@ -2900,15 +2900,8 @@
             <input type="text" id="setCompanyName" class="form-control" value="Apex Global">
           </div>
           <div class="form-group">
-            <label style="font-size: 12px; font-weight: 700;">Industry / Domain Sector</label>
-            <select id="setSector" class="form-control">
-              <option value="Banking & Financial Services">Banking & Financial Services</option>
-              <option value="Cloud Infrastructure">Cloud Infrastructure</option>
-              <option value="E-Commerce & Retail">E-Commerce & Retail</option>
-              <option value="Healthcare & Medical">Healthcare & Medical</option>
-              <option value="Telecommunications">Telecommunications</option>
-              <option value="IT & Tech Support">IT & Tech Support</option>
-            </select>
+            <label style="font-size: 12px; font-weight: 700;">Operating Sector</label>
+            <input type="text" id="setSector" class="form-control" value="IT & Cloud Operations" readonly style="background: var(--bg-inset); color: var(--text-muted); cursor: not-allowed; font-weight: 600;">
           </div>
         </div>
         <div class="form-row">
@@ -3070,7 +3063,7 @@
         <button onclick="closeSimulateModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
       </div>
 
-      <div class="form-row">
+      <div class="form-row" style="grid-template-columns: 1fr 1fr;">
         <div class="form-group">
           <label for="ticketIdInput">
             <span>Ticket ID</span>
@@ -3082,27 +3075,16 @@
           <label for="customerNameInput">Customer Name</label>
           <input type="text" id="customerNameInput" class="form-control" placeholder="e.g. John Doe">
         </div>
-        <div class="form-group">
-          <label for="customerEmailInput">Email Address</label>
-          <input type="email" id="customerEmailInput" class="form-control" placeholder="e.g. customer@example.com">
-        </div>
       </div>
 
       <div class="form-row" style="grid-template-columns: 1fr 1fr;">
         <div class="form-group">
-          <label for="customerPhoneInput">Phone Number</label>
-          <input type="text" id="customerPhoneInput" class="form-control" placeholder="e.g. +1 555-0100">
+          <label for="customerEmailInput">Email Address</label>
+          <input type="email" id="customerEmailInput" class="form-control" placeholder="e.g. customer@example.com">
         </div>
         <div class="form-group">
-          <label for="sectorInput">Sector / Domain</label>
-          <select id="sectorInput" class="form-control">
-            <option value="Banking & Financial Services" selected>Banking & Finance</option>
-            <option value="Cloud Infrastructure">Cloud Infrastructure</option>
-            <option value="Healthcare & Medical">Healthcare</option>
-            <option value="E-Commerce & Retail">E-Commerce</option>
-            <option value="Telecommunications">Telecom</option>
-            <option value="IT & Tech Support">IT Support</option>
-          </select>
+          <label for="customerPhoneInput">Phone Number</label>
+          <input type="text" id="customerPhoneInput" class="form-control" placeholder="e.g. +1 555-0100">
         </div>
       </div>
 
@@ -3291,7 +3273,7 @@
       const customerEmail = document.getElementById('customerEmailInput').value.trim();
       const customerPhone = document.getElementById('customerPhoneInput').value.trim();
       const ticketText = document.getElementById('ticketTextInput').value.trim();
-      const sector = document.getElementById('sectorInput').value;
+      const sector = "IT & Cloud Operations";
 
       if (!ticketText) {
         showToast("Please enter customer complaint text first.");
@@ -3366,7 +3348,7 @@
       const customerEmail = document.getElementById('customerEmailInput').value.trim();
       const customerPhone = document.getElementById('customerPhoneInput').value.trim();
       const ticketText = document.getElementById('ticketTextInput').value.trim();
-      const sector = document.getElementById('sectorInput').value;
+      const sector = "IT & Cloud Operations";
 
       if (!ticketText) {
         showToast("Please enter customer complaint text first.");
@@ -3433,7 +3415,7 @@
       const customerEmail = document.getElementById('customerEmailInput').value.trim();
       const customerPhone = document.getElementById('customerPhoneInput').value.trim();
       const ticketText = document.getElementById('ticketTextInput').value.trim();
-      const sector = document.getElementById('sectorInput').value;
+      const sector = "IT & Cloud Operations";
 
       if (!ticketText) {
         showToast("Please enter customer complaint text first.");
@@ -3500,7 +3482,7 @@
       const customerEmail = document.getElementById('customerEmailInput').value.trim();
       const customerPhone = document.getElementById('customerPhoneInput').value.trim();
       const ticketText = document.getElementById('ticketTextInput').value.trim();
-      const sector = document.getElementById('sectorInput').value;
+      const sector = "IT & Cloud Operations";
 
       if (!ticketText) {
         showToast("Please enter ticket text first.");
@@ -3549,7 +3531,7 @@
         document.getElementById('compCustomerPhone').innerText = customerPhone || 'N/A';
         const prio = (studentRes && studentRes.priority) || (teacherRes && teacherRes.priority) || "Critical";
         const prioBadge = document.getElementById('compPriorityBadge');
-        prioBadge.innerText = `${prio} (Auto-Detected)`;
+        prioBadge.innerText = `${formatPriority(prio)} (Auto-Detected)`;
         prioBadge.className = `badge-outage ${prio === 'Critical' ? 'critical' : prio === 'High' ? 'high' : 'moderate'}`;
         headerEl.style.display = 'flex';
       }
@@ -3629,6 +3611,17 @@
       return `${timeStr}, ${dateStr}`;
     }
 
+    function formatPriority(val) {
+      if (!val) return 'MEDIUM';
+      const s = String(val).trim();
+      if (/^p1$/i.test(s) || /critical/i.test(s)) return 'CRITICAL';
+      if (/^p2$/i.test(s) || /high/i.test(s)) return 'HIGH';
+      if (/^p3$/i.test(s) || /medium/i.test(s)) return 'MEDIUM';
+      if (/^p4$/i.test(s) || /low/i.test(s)) return 'LOW';
+      const cleaned = s.replace(/^P\d+\s*[\·\-\/\:\•]?\s*/i, '').trim();
+      return cleaned.toUpperCase() || 'MEDIUM';
+    }
+
     function renderSummaryCard(data) {
       const container = document.getElementById('summaryContent');
       const formattedExecTime = formatExecutiveTimestamp(data);
@@ -3684,16 +3677,9 @@
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
               <span class="table-ticket-id">${data.ticketId || 'TICK-NEW'}</span>
               <span class="badge-outage ${prioClass}">
-                ${data.priority ? data.priority.toUpperCase() : 'MEDIUM (AUTO-CLASSIFIED)'}
+                ${formatPriority(data.priority)}
               </span>
               ${typeBadgeHtml}
-              <span class="badge-issue-type">${issueType}</span>
-              <span class="badge-domain">${domain}</span>
-              ${data.routeUsed ? `
-                <span class="route-pill ${data.routeUsed}">
-                  ${data.routeUsed === 'teacher' ? 'Groq 120B Teacher Route' : 'Qwen 1.5B Student Route'}
-                </span>
-              ` : ''}
             </div>
             <div class="metrics-chips">
               <span class="metric-chip">${latChipHtml}</span>
@@ -3712,74 +3698,12 @@
             ${formattedExecTime ? `<span class="customer-info-time">${formattedExecTime}</span>` : (data.createdAt ? `<span class="customer-info-time">${data.createdAt}</span>` : '')}
           </div>
 
-          <div style="margin-bottom: 14px;">
-            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--yg-primary); margin-bottom: 4px;">Executive Summary</div>
-            <p class="summary-text" style="margin-bottom: 0;">${formatMarkdown(data.summary)}</p>
-          </div>
-
-          <!-- Model Differentiation: Student vs Teacher -->
-          <div class="model-diff-container" id="modelDiffContainer_${data.ticketId}">
-            <div class="model-diff-header">
-              <div class="diff-header-title">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                <span>Model Differentiation: Student (Qwen 1.5B) vs Teacher (Groq 120B)</span>
-              </div>
-              <div class="diff-view-toggles">
-                <button type="button" class="btn-diff-toggle active" id="btnDiffSideBySide_${data.ticketId}" onclick="switchDiffView('${data.ticketId}', 'side-by-side')">
-                  Side-by-Side
-                </button>
-                <button type="button" class="btn-diff-toggle" id="btnDiffStudent_${data.ticketId}" onclick="switchDiffView('${data.ticketId}', 'student')">
-                  Student Only
-                </button>
-                <button type="button" class="btn-diff-toggle" id="btnDiffTeacher_${data.ticketId}" onclick="switchDiffView('${data.ticketId}', 'teacher')">
-                  Teacher Only
-                </button>
-              </div>
+          <!-- Executive Summary Card (Served DaaS Output) -->
+          <div style="margin-bottom: 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--yg-primary);">Executive Summary</div>
             </div>
-
-            <!-- Model Differentiation Cards Grid -->
-            <div class="diff-grid" id="diffGrid_${data.ticketId}">
-              <!-- Student Card -->
-              <div class="diff-card student-diff-card" id="diffStudentCard_${data.ticketId}">
-                <div class="diff-card-top">
-                  <div class="diff-model-tag student">
-                    <span class="diff-model-icon">⚡</span>
-                    <strong>Student: Qwen 2.5-1.5B</strong>
-                    <span class="diff-tier-tag">Edge Distillation</span>
-                  </div>
-                  <div class="diff-stats-chips">
-                    <span class="diff-chip latency"><strong id="diffStudentLat_${data.ticketId}">${(data.latencyBreakdown && data.latencyBreakdown.inference_ms) ? data.latencyBreakdown.inference_ms.toFixed(1) : (data.latency ? data.latency.toFixed(1) : '1.2')}ms</strong></span>
-                    <span class="diff-chip tokens"><strong id="diffStudentTok_${data.ticketId}">${data.outputTokens || 18} tokens</strong></span>
-                    <span class="diff-chip cost">Zero Cost ($0.00)</span>
-                  </div>
-                </div>
-                <div class="diff-summary-body" id="diffStudentSummary_${data.ticketId}">
-                  ${formatMarkdown(data.studentSummary || data.summary)}
-                </div>
-              </div>
-
-              <!-- Teacher Card -->
-              <div class="diff-card teacher-diff-card" id="diffTeacherCard_${data.ticketId}">
-                <div class="diff-card-top">
-                  <div class="diff-model-tag teacher">
-                    <span class="diff-model-icon">🧠</span>
-                    <strong>Teacher: Groq 120B</strong>
-                    <span class="diff-tier-tag">Gold Supervision</span>
-                  </div>
-                  <div class="diff-stats-chips">
-                    <span class="diff-chip latency teacher-lat"><strong id="diffTeacherLat_${data.ticketId}">${data.teacherLatency ? data.teacherLatency.toFixed(1) : '1280.4'}ms</strong></span>
-                    <span class="diff-chip tokens"><strong id="diffTeacherTok_${data.ticketId}">${data.teacherTokens || 32} tokens</strong></span>
-                    <button type="button" class="btn-diff-rerun" onclick="rerunLiveTeacherComparison('${data.ticketId}')" title="Run real-time Teacher LLM via Groq API">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
-                      <span>Run Live Groq 120B</span>
-                    </button>
-                  </div>
-                </div>
-                <div class="diff-summary-body" id="diffTeacherSummary_${data.ticketId}">
-                  ${formatMarkdown(data.teacherSummary || generateTeacherPreview(data.summary, data.rawTicketText))}
-                </div>
-              </div>
-            </div>
+            <p class="summary-text" style="margin-bottom: 0; font-size: 14px; line-height: 1.6; color: var(--text-main); font-weight: 450;">${formatMarkdown(data.summary)}</p>
           </div>
 
           <div class="structured-grid">
@@ -3793,7 +3717,7 @@
             </div>
             <div class="structured-item">
               <span class="label">Customer Intent / Urgency</span>
-              <span class="val">${domain} / ${issueType} (${data.priority})</span>
+              <span class="val">${domain} / ${issueType} (${formatPriority(data.priority)})</span>
             </div>
             <div class="structured-item">
               <span class="label">Recommended Actions</span>
@@ -4226,7 +4150,7 @@
               <td>${t.formatted_time || '10:00 AM'}</td>
               <td><strong>${t.customer_name}</strong></td>
               <td>${t.customer_email}<br><span style="color:var(--text-light); font-size:11px;">${t.customer_phone}</span></td>
-              <td><span style="font-weight:700; color: ${prioColor};">${t.priority}</span></td>
+              <td><span style="font-weight:700; color: ${prioColor};">${formatPriority(t.priority)}</span></td>
               <td>${formatMarkdown(t.summary || t.core_issue)}</td>
             </tr>
           `;
@@ -4852,10 +4776,10 @@ How Our Model Learns from Unseen Data:
               <span class="feed-item-id">${t.ticket_id}</span>
               <span class="feed-item-time">${formatFeedTimestamp(t)}</span>
             </div>
-            <div class="feed-item-name">${t.customer_name || 'Anonymous User'} • <span style="color: var(--text-light); font-weight: 500;">${t.sector || t.domain || 'Support'}</span></div>
+            <div class="feed-item-name">${t.customer_name || 'Anonymous User'} • <span style="color: var(--text-light); font-weight: 500;">${t.category || t.domain || t.sector || 'IT Support'}</span></div>
             <div class="feed-item-snippet">${t.ticket_text || ''}</div>
             <div class="feed-item-badges">
-              <span class="feed-badge ${prioClass}">${t.priority || 'Medium'}</span>
+              <span class="feed-badge ${prioClass}">${formatPriority(t.priority)}</span>
               ${originBadgeHtml}
             </div>
           </div>
@@ -4915,10 +4839,7 @@ How Our Model Learns from Unseen Data:
         teacherTokens: t.teacher_tokens
       });
 
-      // Automatically trigger live Groq 120B teacher synthesis if not yet present
-      if (!t.teacher_summary) {
-        rerunLiveTeacherComparison(ticketId, true);
-      }
+      // Ingested ticket selected - rendered with served model output
     }
 
     

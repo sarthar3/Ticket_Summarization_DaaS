@@ -1,5 +1,5 @@
 model:
-  name: "Qwen/Qwen2.5-1.5B-Instruct"
+  name: "Qwen/Qwen2.5-3B-Instruct"
   precision: "float16" # Options: float32, float16, bfloat16, int8, int4
   device: "auto"       # Options: auto, cuda, cpu, mps
   trust_remote_code: true

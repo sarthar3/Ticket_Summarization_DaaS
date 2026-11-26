@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parents[2] / "configs" / "default_config.yaml"
 
 class ModelSettings(BaseModel):
-    name: str = "Qwen/Qwen2.5-1.5B-Instruct"
+    name: str = "Qwen/Qwen2.5-3B-Instruct"
     precision: str = "float16"
     device: str = "auto"
     trust_remote_code: bool = True
