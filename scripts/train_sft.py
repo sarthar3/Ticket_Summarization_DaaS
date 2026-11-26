@@ -17,6 +17,7 @@ def main():
     parser.add_argument("--config", type=str, default="configs/sft_config.yaml", help="Path to SFT YAML config")
     parser.add_argument("--train_path", type=str, default="data/processed/train.jsonl", help="Path to train split")
     parser.add_argument("--val_path", type=str, default="data/processed/val.jsonl", help="Path to validation split")
+    parser.add_argument("--max_samples", type=int, default=None, help="Optional subset of samples for quick training verification")
     args = parser.parse_args()
 
     sft_config_path = PROJECT_ROOT / args.config
@@ -32,9 +33,11 @@ def main():
     print(f"SFT Config File    : {sft_config_path}")
     print(f"Training Dataset   : {train_path}")
     print(f"Validation Dataset : {val_path}")
+    if args.max_samples:
+        print(f"Sample Limit Subset: {args.max_samples} tickets (Quick Local Run)")
 
     trainer = StudentSFTTrainer(config_path=sft_config_path, settings=settings)
-    saved_dir = trainer.train(train_path=train_path, val_path=val_path)
+    saved_dir = trainer.train(train_path=train_path, val_path=val_path, max_train_samples=args.max_samples)
 
     print("\n" + "=" * 65)
     print("            SFT TRAINING COMPLETE")

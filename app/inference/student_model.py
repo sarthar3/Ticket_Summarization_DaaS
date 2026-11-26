@@ -102,6 +102,19 @@ class StudentModelWrapper:
                 self.model = AutoModelForCausalLM.from_pretrained(self.model_name)
                 device = "cpu"
 
+            # Attach trained LoRA adapter if present in checkpoints/
+            try:
+                from peft import PeftModel
+                from pathlib import Path
+                gkd_path = Path("checkpoints/gkd_student")
+                sft_path = Path("checkpoints/sft_student")
+                target_adapter = gkd_path if (gkd_path / "adapter_config.json").exists() else (sft_path if (sft_path / "adapter_config.json").exists() else None)
+                if target_adapter:
+                    logger.info(f"Attaching trained LoRA adapter from: {target_adapter}")
+                    self.model = PeftModel.from_pretrained(self.model, str(target_adapter))
+            except Exception as peft_load_err:
+                logger.debug(f"LoRA adapter check: {peft_load_err}")
+
             self.model.eval()
             self.is_loaded = True
             

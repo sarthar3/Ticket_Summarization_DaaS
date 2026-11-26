@@ -132,21 +132,33 @@ class GKDSFTTrainer:
             tokenized_val = tokenized_val.add_column("labels", tokenized_val["input_ids"])
 
             tr_cfg = self.gkd_config.get("training", {})
-            training_args = TrainingArguments(
-                output_dir=str(output_dir),
-                learning_rate=float(tr_cfg.get("learning_rate", 1.5e-4)),
-                num_train_epochs=int(tr_cfg.get("num_train_epochs", 3)),
-                per_device_train_batch_size=int(tr_cfg.get("per_device_train_batch_size", 2)),
-                per_device_eval_batch_size=int(tr_cfg.get("per_device_eval_batch_size", 2)),
-                gradient_accumulation_steps=int(tr_cfg.get("gradient_accumulation_steps", 4)),
-                warmup_ratio=float(tr_cfg.get("warmup_ratio", 0.05)),
-                weight_decay=float(tr_cfg.get("weight_decay", 0.01)),
-                logging_steps=int(tr_cfg.get("logging_steps", 1)),
-                save_strategy="epoch",
-                evaluation_strategy="epoch",
-                fp16=torch.cuda.is_available(),
-                report_to="none"
-            )
+            import inspect
+            sig_params = inspect.signature(TrainingArguments.__init__).parameters
+
+            args_kwargs = {
+                "output_dir": str(output_dir),
+                "learning_rate": float(tr_cfg.get("learning_rate", 1.5e-4)),
+                "num_train_epochs": int(tr_cfg.get("num_train_epochs", 3)),
+                "per_device_train_batch_size": int(tr_cfg.get("per_device_train_batch_size", 2)),
+                "per_device_eval_batch_size": int(tr_cfg.get("per_device_eval_batch_size", 2)),
+                "gradient_accumulation_steps": int(tr_cfg.get("gradient_accumulation_steps", 4)),
+                "weight_decay": float(tr_cfg.get("weight_decay", 0.01)),
+                "logging_steps": int(tr_cfg.get("logging_steps", 1)),
+                "save_strategy": "epoch",
+                "fp16": torch.cuda.is_available(),
+                "report_to": "none"
+            }
+            if "eval_strategy" in sig_params:
+                args_kwargs["eval_strategy"] = "epoch"
+            elif "evaluation_strategy" in sig_params:
+                args_kwargs["evaluation_strategy"] = "epoch"
+
+            if "warmup_ratio" in sig_params:
+                args_kwargs["warmup_ratio"] = float(tr_cfg.get("warmup_ratio", 0.05))
+            elif "warmup_steps" in sig_params:
+                args_kwargs["warmup_steps"] = int(tr_cfg.get("warmup_steps", 10))
+
+            training_args = TrainingArguments(**args_kwargs)
 
             trainer = Trainer(
                 model=model,

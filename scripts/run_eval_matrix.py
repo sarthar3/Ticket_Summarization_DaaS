@@ -28,13 +28,10 @@ def run_evaluation_matrix(dataset_path: Optional[Path] = None, max_samples: int 
     pipeline = SummarizationPipeline(settings=settings)
     preprocessor = TicketPreprocessor()
 
-    default_data_path = PROJECT_ROOT / "data" / "sample" / "sample_tickets.jsonl"
+    test_path = PROJECT_ROOT / "data" / "processed" / "test.jsonl"
+    sample_path = PROJECT_ROOT / "data" / "sample" / "sample_tickets.jsonl"
     if not dataset_path or not dataset_path.exists():
-        dataset_path = default_data_path
-        if not dataset_path.exists():
-            test_path = PROJECT_ROOT / "data" / "processed" / "test.jsonl"
-            if test_path.exists():
-                dataset_path = test_path
+        dataset_path = test_path if test_path.exists() else sample_path
 
     print("\n" + "=" * 78)
     print("      DISTILLATION-AS-A-SERVICE (DaaS) COMPREHENSIVE EVALUATION MATRIX")
